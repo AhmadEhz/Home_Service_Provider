@@ -2,15 +2,23 @@ package org.homeservice.entity;
 
 import jakarta.persistence.*;
 
+import java.util.Set;
+
 @Entity
-public class Bid {
+public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @ManyToOne
+    private Customer customer;
+
+    @OneToMany(mappedBy = "order")
+    private Set<Bid> bids;
 
     @ManyToOne
     private Specialist specialist;
 
-    @ManyToOne
-    private Order order;
+    @OneToOne
+    private Rate rate;
+
 }

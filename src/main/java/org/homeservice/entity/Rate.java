@@ -3,14 +3,14 @@ package org.homeservice.entity;
 import jakarta.persistence.*;
 
 @Entity
-public class Bid {
+public class Rate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private Specialist specialist;
+    private double score;
+    private String comment;
 
-    @ManyToOne
+    @OneToOne(mappedBy = "rate")
     private Order order;
 }

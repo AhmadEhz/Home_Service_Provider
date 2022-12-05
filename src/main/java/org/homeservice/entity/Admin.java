@@ -1,5 +1,8 @@
 package org.homeservice.entity;
 
+import jakarta.persistence.Entity;
 
-public class Admin {
+@Entity
+public class Admin extends Person {
+
 }
