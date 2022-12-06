@@ -1,8 +1,6 @@
 package org.homeservice.service.impl;
 
-import org.homeservice.entity.Admin;
-import org.homeservice.entity.Service;
-import org.homeservice.entity.SubService;
+import org.homeservice.entity.*;
 import org.homeservice.repository.*;
 import org.homeservice.repository.impl.*;
 import org.homeservice.service.AdminService;
