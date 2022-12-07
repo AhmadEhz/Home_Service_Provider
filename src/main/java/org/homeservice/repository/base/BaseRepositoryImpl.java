@@ -3,6 +3,7 @@ package org.homeservice.repository.base;
 import org.homeservice.util.HibernateUtil;
 
 import java.util.List;
+import java.util.Optional;
 
 public abstract class BaseRepositoryImpl<E, ID> implements BaseRepository<E, ID> {
 
@@ -10,9 +11,9 @@ public abstract class BaseRepositoryImpl<E, ID> implements BaseRepository<E, ID>
     }
 
     @Override
-    public E readById(ID id) {
-        return HibernateUtil.getCurrentEntityManager().
-                find(getEntityClass(), id);
+    public Optional<E> findById(ID id) {
+        return Optional.ofNullable(HibernateUtil.getCurrentEntityManager().
+                find(getEntityClass(), id));
     }
 
     @Override

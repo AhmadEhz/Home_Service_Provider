@@ -5,6 +5,8 @@ import org.homeservice.repository.SubServiceRepository;
 import org.homeservice.repository.base.BaseRepositoryImpl;
 import org.homeservice.util.HibernateUtil;
 
+import java.util.Optional;
+
 public class SubServiceRepositoryImpl extends BaseRepositoryImpl<SubService, Long> implements SubServiceRepository {
 
     private static SubServiceRepository repository;
@@ -30,6 +32,14 @@ public class SubServiceRepositoryImpl extends BaseRepositoryImpl<SubService, Lon
         String query = "update SubService set basePrice =:desc where id =:id";
         return HibernateUtil.getCurrentEntityManager().createQuery(query)
                 .setParameter("price", basePrice).setParameter("id", id).executeUpdate();
+    }
+
+    @Override
+    public Optional<SubService> readByName(String name) {
+        String query = "select s from SubService as s where s.name =:name";
+        return Optional.ofNullable(HibernateUtil.getCurrentEntityManager().createQuery(query,SubService.class)
+                .setParameter("name",name).getSingleResult());
+
     }
 
     public static SubServiceRepository getRepository() {

@@ -5,6 +5,8 @@ import jakarta.persistence.RollbackException;
 import org.homeservice.repository.base.BaseRepository;
 import org.homeservice.util.HibernateUtil;
 
+import java.util.Optional;
+
 public class BaseServiceImpl<E, ID, R extends BaseRepository<E, ID>> implements BaseService<E, ID> {
     protected final R repository;
     protected BaseServiceImpl(R repository) {
@@ -12,8 +14,8 @@ public class BaseServiceImpl<E, ID, R extends BaseRepository<E, ID>> implements 
     }
 
     @Override
-    public E loadById(ID id) {
-        return repository.readById(id);
+    public Optional<E> loadById(ID id) {
+        return repository.findById(id);
     }
 
     @Override
