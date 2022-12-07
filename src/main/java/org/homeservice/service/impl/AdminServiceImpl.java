@@ -4,6 +4,9 @@ import org.homeservice.entity.*;
 import org.homeservice.repository.*;
 import org.homeservice.repository.impl.*;
 import org.homeservice.service.AdminService;
+import org.homeservice.service.ServiceService;
+import org.homeservice.service.SpecialistService;
+import org.homeservice.service.SubServiceService;
 import org.homeservice.service.base.BaseServiceImpl;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 
@@ -14,21 +17,29 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
     private static AdminService adminService;
     private final ServiceRepository serviceRepository;
     private final SubServiceRepository subServiceRepository;
+    private final SpecialistRepository specialistRepository;
+    private final ServiceService serviceService;
+    private final SubServiceService subServiceService;
+    private final SpecialistService specialistService;
 
     private AdminServiceImpl() {
         super(AdminRepositoryImpl.getRepository());
         serviceRepository = ServiceRepositoryImpl.getRepository();
         subServiceRepository = SubServiceRepositoryImpl.getRepository();
+        specialistRepository = SpecialistRepositoryImpl.getRepository();
+        specialistService = SpecialistServiceImpl.getService();
+        serviceService = ServiceServiceImpl.getService();
+        subServiceService = SubServiceServiceImpl.getService();
     }
 
     @Override
-    public Service saveService(String name){
-        return saveService(name,null);
+    public Service saveService(String name) {
+        return saveService(name, null);
     }
 
     @Override
     public Service saveService(String name, SubService... subServices) {
-        if(serviceRepository.findByName(name).isPresent())
+        if (serviceRepository.findByName(name).isPresent())
             throw new CustomIllegalArgumentException("This service is exist.");
 
         Service service = new Service(name);
@@ -41,8 +52,8 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
 
     @Override
     public SubService saveSubService(String name, String description, Double basePrice, Long serviceId) {
-        Optional<Service> optionalService = serviceRepository.findById(serviceId);
-        if(optionalService.isEmpty())
+        Optional<Service> optionalService = serviceService.loadById(serviceId);
+        if (optionalService.isEmpty())
             throw new CustomIllegalArgumentException("Service not found.");
         SubService subService = new SubService(name, description, basePrice, optionalService.get());
         executeUpdate(() -> subServiceRepository.save(subService));
@@ -50,8 +61,13 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
     }
 
     @Override
+    public void verifySpecialist(Long specialistId) {
+        specialistService.changeStatus(specialistId, SpecialistStatus.ACCEPTED);
+    }
+
+    @Override
     public List<Specialist> loadNewSpecialists() {
-        return null;
+        return specialistService.loadNewSpecialists();
     }
 
     public static AdminService getAdminService() {
