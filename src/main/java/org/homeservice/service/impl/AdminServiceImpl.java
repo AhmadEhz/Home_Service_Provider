@@ -18,7 +18,7 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
     }
 
     @Override
-    public Service addService(String name, SubService... subServices) {
+    public Service saveService(String name, SubService... subServices) {
         Service service = new Service(name);
         for (SubService s : subServices) {
             service.addSubService(s);
@@ -27,7 +27,8 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
         return service;
     }
 
-    public SubService addSubService(String name, String description, Double basePrice, Long serviceId) {
+    @Override
+    public SubService saveSubService(String name, String description, Double basePrice, Long serviceId) {
         SubService subService = new SubService(name, description, basePrice, new Service(serviceId));
         executeUpdate(() -> subServiceRepository.save(subService));
         return subService;

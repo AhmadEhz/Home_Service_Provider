@@ -6,7 +6,7 @@ import org.homeservice.repository.base.BaseRepository;
 import org.homeservice.util.HibernateUtil;
 
 public class BaseServiceImpl<E, ID, R extends BaseRepository<E, ID>> implements BaseService<E, ID> {
-    private final R repository;
+    protected final R repository;
     protected BaseServiceImpl(R repository) {
         this.repository = repository;
     }

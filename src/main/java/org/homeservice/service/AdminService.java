@@ -6,5 +6,7 @@ import org.homeservice.entity.SubService;
 import org.homeservice.service.base.BaseService;
 
 public interface AdminService extends BaseService<Admin,Long> {
-    Service addService(String name, SubService... subServices);
+    Service saveService(String name, SubService... subServices);
+
+    SubService saveSubService(String name, String description, Double basePrice, Long serviceId);
 }
