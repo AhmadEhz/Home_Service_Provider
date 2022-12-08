@@ -16,4 +16,28 @@ public class SubServiceSpecialist {
     @Id
     @ManyToOne
     private Specialist specialist;
+
+    public SubServiceSpecialist() {
+    }
+
+    public SubServiceSpecialist(Specialist specialist, SubService subService) {
+        this.subService = subService;
+        this.specialist = specialist;
+    }
+
+    public SubService getSubService() {
+        return subService;
+    }
+
+    public void setSubService(SubService subService) {
+        this.subService = subService;
+    }
+
+    public Specialist getSpecialist() {
+        return specialist;
+    }
+
+    public void setSpecialist(Specialist specialist) {
+        this.specialist = specialist;
+    }
 }

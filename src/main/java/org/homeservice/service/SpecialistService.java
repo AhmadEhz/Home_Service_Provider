@@ -12,4 +12,12 @@ public interface SpecialistService extends BaseService<Specialist,Long> {
     List<Specialist> loadVerifiedSpecialists();
 
     void changeStatus(Long specialistId, SpecialistStatus status);
+
+    void addToService(Long specialistId, Long serviceId);
+
+    void addToSubService(Long specialistId, Long subServiceId);
+
+    void removeFromService(Long specialistId, Long serviceId);
+
+    void removeFromSubService(Long specialistId, Long subServiceId);
 }
