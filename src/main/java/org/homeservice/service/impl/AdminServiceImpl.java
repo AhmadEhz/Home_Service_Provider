@@ -48,6 +48,7 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
         for (SubService s : subServices) {
             service.addSubService(s);
         }
+        checkEntity(service);
         serviceRepository.save(service);
         return service;
     }
@@ -58,6 +59,7 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
         if (optionalService.isEmpty())
             throw new CustomIllegalArgumentException("Service not found.");
         SubService subService = new SubService(name, description, basePrice, optionalService.get());
+        checkEntity(subService);
         executeUpdate(() -> subServiceRepository.save(subService));
         return subService;
     }
