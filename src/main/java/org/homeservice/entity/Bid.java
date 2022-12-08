@@ -21,8 +21,6 @@ public class Bid {
 
     public Duration timeSpent;
 
-    @CreationTimestamp
-    private LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(nullable = false)
@@ -34,8 +32,21 @@ public class Bid {
     @NotNull
     private Order order;
 
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
     {
         timeSpent = Duration.ZERO;
+    }
+
+    public Bid() {
+    }
+
+    public Bid(Double offerPrice, Duration timeSpent, Specialist specialist, Order order) {
+        this.offerPrice = offerPrice;
+        this.timeSpent = timeSpent;
+        this.specialist = specialist;
+        this.order = order;
     }
 
     public Long getId() {
