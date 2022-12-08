@@ -15,10 +15,10 @@ public class SpecialistRepositoryImpl extends BaseRepositoryImpl<Specialist, Lon
     }
 
     @Override
-    public List<Specialist> findNewSpecialists() {
+    public List<Specialist> findAll(SpecialistStatus status) {
         String query = "select s from Specialist as s where s.status=:status";
         return HibernateUtil.getCurrentEntityManager().createQuery(query, Specialist.class)
-                .setParameter("status", SpecialistStatus.NEW).getResultList();
+                .setParameter("status",status).getResultList();
     }
 
     @Override

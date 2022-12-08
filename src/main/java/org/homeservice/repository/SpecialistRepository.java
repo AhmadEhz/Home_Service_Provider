@@ -6,8 +6,9 @@ import org.homeservice.repository.base.BaseRepository;
 
 import java.util.List;
 
-public interface SpecialistRepository extends BaseRepository<Specialist,Long> {
-    List<Specialist> findNewSpecialists();
+public interface SpecialistRepository extends BaseRepository<Specialist, Long> {
+
+    List<Specialist> findAll(SpecialistStatus status);
 
     int changeStatus(Long specialistId, SpecialistStatus status);
 }

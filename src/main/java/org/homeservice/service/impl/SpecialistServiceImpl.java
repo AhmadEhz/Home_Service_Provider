@@ -20,7 +20,12 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
 
     @Override
     public List<Specialist> loadNewSpecialists() {
-        return repository.findNewSpecialists();
+        return repository.findAll(SpecialistStatus.NEW);
+    }
+
+    @Override
+    public List<Specialist> loadVerifiedSpecialists() {
+        return repository.findAll(SpecialistStatus.ACCEPTED);
     }
 
     @Override
