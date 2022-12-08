@@ -5,6 +5,8 @@ import org.homeservice.repository.SpecialistRepository;
 import org.homeservice.repository.impl.SpecialistRepositoryImpl;
 import org.homeservice.service.*;
 import org.homeservice.service.base.BaseServiceImpl;
+import org.homeservice.util.HibernateUtil;
+import org.homeservice.util.QueryUtil;
 import org.homeservice.util.exception.*;
 
 import java.util.List;
@@ -40,71 +42,16 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
             throw new CustomIllegalArgumentException("Specialist with this id not found.");
     }
 
-    @Override
-    public void addToService(Long specialistId, Long serviceId) {
-        Optional<Specialist> optionalSpecialist = loadById(specialistId);
-        Optional<Service> optionalService = serviceService.loadById(serviceId);
-        if (optionalSpecialist.isEmpty())
-            throw new CustomIllegalArgumentException();
-        if (optionalService.isEmpty())
-            throw new CustomIllegalArgumentException();
 
-        optionalSpecialist.get().addService(optionalService.get());
-        executeUpdate(() -> repository.update(optionalSpecialist.get()));
-    }
 
     @Override
-    public void addToSubService(Long specialistId, Long subServiceId) {
-        Optional<Specialist> optionalSpecialist = loadById(specialistId);
-        Optional<SubService> optionalSubService = subServiceService.loadById(subServiceId);
-
-        if (optionalSpecialist.isEmpty())
-            throw new NotFoundException();
-        if (optionalSubService.isEmpty())
-            throw new NotFoundException();
-
-        checkSpecialistStatus(optionalSpecialist.get());
-        optionalSpecialist.get().addSubService(optionalSubService.get());
-        executeUpdate(() -> repository.update(optionalSpecialist.get()));
-    }
-
-    @Override
-    public void removeFromService(Long specialistId, Long serviceId) {
-        Optional<Specialist> optionalSpecialist = loadById(specialistId);
-        Optional<Service> optionalService = serviceService.loadById(serviceId);
-        if (optionalSpecialist.isEmpty())
-            throw new CustomIllegalArgumentException();
-        if (optionalService.isEmpty())
-            throw new CustomIllegalArgumentException();
-
-        checkSpecialistStatus(optionalSpecialist.get());
-        optionalSpecialist.get().removeService(optionalService.get());
-        removeSubServicesFromSpecialist(optionalSpecialist.get(), optionalService.get());
-        executeUpdate(() -> repository.update(optionalSpecialist.get()));
-    }
-
-    @Override
-    public void removeFromSubService(Long specialistId, Long subServiceId) {
-        Optional<Specialist> optionalSpecialist = loadById(specialistId);
-        Optional<SubService> optionalService = subServiceService.loadById(subServiceId);
-        if (optionalSpecialist.isEmpty())
-            throw new CustomIllegalArgumentException();
-        if (optionalService.isEmpty())
-            throw new CustomIllegalArgumentException();
-
-        optionalSpecialist.get().removeSubService(optionalService.get());
-        executeUpdate(() -> repository.update(optionalSpecialist.get()));
-    }
-
-    private void removeSubServicesFromSpecialist(Specialist specialist, Service service) {
-        for (SubService subService : service.getSubServices()) {
-            specialist.removeSubService(subService);
-        }
-    }
-
-    private void checkSpecialistStatus(Specialist specialist) throws NotVerifiedException {
-        if (specialist.getStatus() != SpecialistStatus.ACCEPTED)
-            throw new NotVerifiedException("This specialist is not verified");
+    public int updateScore(Long id) {
+        String query = """
+                update Specialist set score =
+                (select avg(r.score) from Rate as r where r.order.specialist.id=:id)
+                where id = :id""";
+        return HibernateUtil.getCurrentEntityManager()
+                .createQuery(query).setParameter("id", id).executeUpdate();
     }
 
     public static SpecialistService getService() {

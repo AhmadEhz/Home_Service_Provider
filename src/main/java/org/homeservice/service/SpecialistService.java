@@ -13,11 +13,5 @@ public interface SpecialistService extends BaseService<Specialist,Long> {
 
     void changeStatus(Long specialistId, SpecialistStatus status);
 
-    void addToService(Long specialistId, Long serviceId);
-
-    void addToSubService(Long specialistId, Long subServiceId);
-
-    void removeFromService(Long specialistId, Long serviceId);
-
-    void removeFromSubService(Long specialistId, Long subServiceId);
+    int updateScore(Long id);
 }

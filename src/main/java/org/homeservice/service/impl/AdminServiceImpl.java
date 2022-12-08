@@ -9,6 +9,8 @@ import org.homeservice.service.SpecialistService;
 import org.homeservice.service.SubServiceService;
 import org.homeservice.service.base.BaseServiceImpl;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
+import org.homeservice.util.exception.NotFoundException;
+import org.homeservice.util.exception.NotVerifiedException;
 
 import java.util.List;
 import java.util.Optional;
@@ -59,10 +61,76 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
         executeUpdate(() -> subServiceRepository.save(subService));
         return subService;
     }
+    @Override
+    public void addSpecialistToService(Long specialistId, Long serviceId) {
+        Optional<Specialist> optionalSpecialist = specialistService.loadById(specialistId);
+        Optional<Service> optionalService = serviceService.loadById(serviceId);
+        if (optionalSpecialist.isEmpty())
+            throw new CustomIllegalArgumentException();
+        if (optionalService.isEmpty())
+            throw new CustomIllegalArgumentException();
+
+        optionalSpecialist.get().addService(optionalService.get());
+        executeUpdate(() -> specialistRepository.update(optionalSpecialist.get()));
+    }
+
+    @Override
+    public void addSpecialistToSubService(Long specialistId, Long subServiceId) {
+        Optional<Specialist> optionalSpecialist = specialistService.loadById(specialistId);
+        Optional<SubService> optionalSubService = subServiceService.loadById(subServiceId);
+
+        if (optionalSpecialist.isEmpty())
+            throw new NotFoundException();
+        if (optionalSubService.isEmpty())
+            throw new NotFoundException();
+
+        checkSpecialistStatus(optionalSpecialist.get());
+        optionalSpecialist.get().addSubService(optionalSubService.get());
+        executeUpdate(() -> specialistRepository.update(optionalSpecialist.get()));
+    }
+
+    @Override
+    public void removeSpecialistFromService(Long specialistId, Long serviceId) {
+        Optional<Specialist> optionalSpecialist = specialistService.loadById(specialistId);
+        Optional<Service> optionalService = serviceService.loadById(serviceId);
+        if (optionalSpecialist.isEmpty())
+            throw new CustomIllegalArgumentException();
+        if (optionalService.isEmpty())
+            throw new CustomIllegalArgumentException();
+
+        checkSpecialistStatus(optionalSpecialist.get());
+        optionalSpecialist.get().removeService(optionalService.get());
+        removeSubServicesFromSpecialist(optionalSpecialist.get(), optionalService.get());
+        executeUpdate(() -> specialistRepository.update(optionalSpecialist.get()));
+    }
+
+    @Override
+    public void removeSpecialistFromSubService(Long specialistId, Long subServiceId) {
+        Optional<Specialist> optionalSpecialist = specialistService.loadById(specialistId);
+        Optional<SubService> optionalService = subServiceService.loadById(subServiceId);
+        if (optionalSpecialist.isEmpty())
+            throw new CustomIllegalArgumentException();
+        if (optionalService.isEmpty())
+            throw new CustomIllegalArgumentException();
+
+        optionalSpecialist.get().removeSubService(optionalService.get());
+        executeUpdate(() -> specialistRepository.update(optionalSpecialist.get()));
+    }
 
     @Override
     public void verifySpecialist(Long specialistId) {
         specialistService.changeStatus(specialistId, SpecialistStatus.ACCEPTED);
+    }
+
+    private void removeSubServicesFromSpecialist(Specialist specialist, Service service) {
+        for (SubService subService : service.getSubServices()) {
+            specialist.removeSubService(subService);
+        }
+    }
+
+    private void checkSpecialistStatus(Specialist specialist) throws NotVerifiedException {
+        if (specialist.getStatus() != SpecialistStatus.ACCEPTED)
+            throw new NotVerifiedException("This specialist is not verified");
     }
 
     @Override
