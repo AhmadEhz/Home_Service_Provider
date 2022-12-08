@@ -29,6 +29,16 @@ public class SpecialistRepositoryImpl extends BaseRepositoryImpl<Specialist, Lon
     }
 
     @Override
+    public int updateScore(Long id) {
+        String query = """
+                update Specialist set score =
+                (select avg(r.score) from Rate as r where r.order.specialist.id=:id)
+                where id = :id""";
+        return HibernateUtil.getCurrentEntityManager()
+                .createQuery(query).setParameter("id", id).executeUpdate();
+    }
+
+    @Override
     protected Class<Specialist> getEntityClass() {
         return Specialist.class;
     }

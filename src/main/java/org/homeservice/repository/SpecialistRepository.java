@@ -11,4 +11,6 @@ public interface SpecialistRepository extends BaseRepository<Specialist, Long> {
     List<Specialist> findAll(SpecialistStatus status);
 
     int changeStatus(Long specialistId, SpecialistStatus status);
+
+    int updateScore(Long id);
 }
