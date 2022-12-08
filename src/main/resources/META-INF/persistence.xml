@@ -7,7 +7,7 @@
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
             <!--  DB Driver  -->
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://127.0.0.1/home-service-provider"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://127.0.0.1/home_service_provider"/>
             <!--  BD Mane  -->
             <property name="jakarta.persistence.jdbc.user" value="postgres"/>
             <!--  DB domain  -->
