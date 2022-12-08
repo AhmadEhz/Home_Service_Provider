@@ -1,6 +1,7 @@
 package org.homeservice.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -14,16 +15,23 @@ public class Bid {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    @NotNull
     private Double offerPrice;
 
     public Duration timeSpent;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+
     @ManyToOne
+    @JoinColumn(nullable = false)
+    @NotNull
     private Specialist specialist;
 
     @ManyToOne
+    @JoinColumn(nullable = false)
+    @NotNull
     private Order order;
 
     {

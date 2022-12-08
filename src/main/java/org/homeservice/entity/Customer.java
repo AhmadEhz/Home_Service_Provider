@@ -1,6 +1,8 @@
 package org.homeservice.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -12,7 +14,9 @@ import java.util.Set;
 @Entity
 public class Customer extends Person {
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
+    @Email
+    @NotNull
     private String email;
 
     @CreationTimestamp

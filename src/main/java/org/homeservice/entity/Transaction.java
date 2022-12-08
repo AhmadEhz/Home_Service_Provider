@@ -1,6 +1,8 @@
 package org.homeservice.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -12,8 +14,11 @@ public class Transaction {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(nullable = false,unique = true)
+    @NotNull
     private Credit credit;
 
+    @ColumnDefault("0")
     private Double amount;
 
     @CreationTimestamp

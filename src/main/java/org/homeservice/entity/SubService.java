@@ -1,7 +1,7 @@
 package org.homeservice.entity;
 
 import jakarta.persistence.*;
-import lombok.ToString;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Set;
 
@@ -11,16 +11,19 @@ public class SubService {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
+    @NotNull
     private String name;
 
-    @Column(columnDefinition = "text")
+    @Column(columnDefinition = "text", nullable = false)
+    @NotNull
     private String description;
 
-    private double basePrice;
+    private Double basePrice;
 
     @ManyToOne
     @JoinColumn(nullable = false)
+    @NotNull(message = "Service must be set")
     private Service service;
 
     @OneToMany(mappedBy = "subService")
@@ -60,11 +63,11 @@ public class SubService {
         this.description = description;
     }
 
-    public double getBasePrice() {
+    public Double getBasePrice() {
         return basePrice;
     }
 
-    public void setBasePrice(double basePrice) {
+    public void setBasePrice(Double basePrice) {
         this.basePrice = basePrice;
     }
 

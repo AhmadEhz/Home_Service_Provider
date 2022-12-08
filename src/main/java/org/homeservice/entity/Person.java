@@ -1,9 +1,8 @@
 package org.homeservice.entity;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 @MappedSuperclass
 public abstract class Person {
@@ -11,12 +10,24 @@ public abstract class Person {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    @NotNull
     private String firstName;
 
+    @Column
+    @NotNull
     private String lastName;
 
+    @Column
+    @NotNull
+    @Pattern(regexp = "^[A-Za-z0-9_.]{5,128}$",
+            message = "Username pattern incorrect!")
     private String username;
 
+    @Column
+    @NotNull
+    @Pattern(regexp = "^[A-Za-z0-9._$%^&*#!@\\-/\\\\]{8,256}$",
+            message = "Password must contains at least 8 character")
     private String password;
 
     protected Person() {

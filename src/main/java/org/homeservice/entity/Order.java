@@ -1,6 +1,7 @@
 package org.homeservice.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -15,15 +16,19 @@ public class Order {
     private Long id;
 
     @Column(nullable = false)
+    @NotNull
     private Double customerOfferPrice;
 
-    @Column(columnDefinition = "text")
+    @Column(columnDefinition = "text", nullable = false)
+    @NotNull
     private String description;
 
     @Column(nullable = false)
+    @NotNull
     private LocalDateTime workingTime;
 
     @Column(nullable = false)
+    @NotNull
     private String address;
 
     private Double finalPrice;
@@ -33,15 +38,21 @@ public class Order {
     private LocalDateTime endWorkingTime;
 
     @Enumerated(value = EnumType.STRING)
+    @Column(nullable = false)
+    @NotNull
     private OrderStatus status;
 
     @ManyToOne
+    @JoinColumn(nullable = false)
+    @NotNull
     private Customer customer;
 
     @OneToMany(mappedBy = "order")
     private Set<Bid> bids;
 
     @ManyToOne
+    @JoinColumn(nullable = false)
+    @NotNull
     private SubService subService;
 
     @ManyToOne
