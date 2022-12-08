@@ -2,13 +2,17 @@ package org.homeservice.service.base;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.RollbackException;
+import jakarta.validation.ConstraintViolation;
 import org.homeservice.repository.base.BaseRepository;
 import org.homeservice.util.HibernateUtil;
+import org.homeservice.util.exception.CustomIllegalArgumentException;
 
 import java.util.Optional;
+import java.util.Set;
 
 public class BaseServiceImpl<E, ID, R extends BaseRepository<E, ID>> implements BaseService<E, ID> {
     protected final R repository;
+
     protected BaseServiceImpl(R repository) {
         this.repository = repository;
     }
@@ -20,11 +24,13 @@ public class BaseServiceImpl<E, ID, R extends BaseRepository<E, ID>> implements 
 
     @Override
     public void save(E e) {
+        checkEntity(e);
         executeUpdate(() -> repository.save(e));
     }
 
     @Override
     public void update(E e) {
+        checkEntity(e);
         executeUpdate(() -> repository.update(e));
     }
 
@@ -40,13 +46,22 @@ public class BaseServiceImpl<E, ID, R extends BaseRepository<E, ID>> implements 
             runnable.run();
             em.getTransaction().commit();
         } catch (Exception e) {
+
             try {
                 em.getTransaction().rollback();
             } catch (RollbackException re) {
-                e.printStackTrace();
+                re.addSuppressed(e);
+                throw re;
             }
-            e.printStackTrace();
+
+            throw e;
         }
         em.close();
+    }
+
+    protected <T> void checkEntity(T t) {
+        Set<ConstraintViolation<T>> validate = HibernateUtil.getValidator().validate(t);
+        if (!validate.isEmpty())
+            throw new CustomIllegalArgumentException(validate.toString());
     }
 }

@@ -20,14 +20,18 @@ public abstract class Person {
 
     @Column
     @NotNull
-    @Pattern(regexp = "^[A-Za-z0-9_.]{5,128}$",
-            message = "Username pattern incorrect!")
+    @Pattern(regexp = "^{5,128}$",
+            message = "Username must be between 8 and 128 characters")
+    @Pattern(regexp = "^[A-Za-z0-9_.]$",
+            message = "The username should only contains letters, numbers, '_' and '.'")
     private String username;
 
     @Column
     @NotNull
-    @Pattern(regexp = "^[A-Za-z0-9._$%^&*#!@\\-/\\\\]{8,256}$",
-            message = "Password must contains at least 8 character")
+    @Pattern(regexp = "^{8,256}$",
+            message = "The password must be between 8 and characters")
+    @Pattern(regexp = "^[A-Za-z0-9._$%^&*#!@\\-/\\\\]$",
+            message = "The password should only contain letters and numbers, '._$%^&*#!@\\' and '/'")
     private String password;
 
     protected Person() {
