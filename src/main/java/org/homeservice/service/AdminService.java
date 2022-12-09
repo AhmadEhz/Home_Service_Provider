@@ -36,5 +36,9 @@ public interface AdminService extends BaseService<Admin,Long> {
 
     List<Specialist> loadVerifiedSpecialists();
 
+    void editSubServiceBasePrice(double price, Long subServiceId);
+
+    void editSubServiceDescription(String description, Long subServiceId);
+
     void changePassword(Long id, String oldPassword, String newPassword);
 }

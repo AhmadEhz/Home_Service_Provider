@@ -40,7 +40,6 @@ public class SubServiceRepositoryImpl extends BaseRepositoryImpl<SubService, Lon
         String query = "select s from SubService as s where s.name =:name";
         return Optional.ofNullable(HibernateUtil.getCurrentEntityManager().createQuery(query, SubService.class)
                 .setParameter("name", name).getSingleResult());
-
     }
 
     @Override

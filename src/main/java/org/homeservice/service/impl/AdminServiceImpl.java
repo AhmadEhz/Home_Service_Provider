@@ -177,6 +177,16 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
     }
 
     @Override
+    public void editSubServiceBasePrice(double price, Long subServiceId) {
+        subServiceService.editBasePrice(price, subServiceId);
+    }
+
+    @Override
+    public void editSubServiceDescription(String description, Long subServiceId) {
+        subServiceService.editDescription(description, subServiceId);
+    }
+
+    @Override
     public void changePassword(Long id, String oldPassword, String newPassword) {
         Optional<Admin> optionalAdmin = loadById(id);
         if (optionalAdmin.isEmpty())

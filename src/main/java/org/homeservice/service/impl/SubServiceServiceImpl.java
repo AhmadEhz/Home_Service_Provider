@@ -1,5 +1,6 @@
 package org.homeservice.service.impl;
 
+import lombok.NonNull;
 import org.homeservice.entity.SubService;
 import org.homeservice.repository.SubServiceRepository;
 import org.homeservice.repository.impl.SubServiceRepositoryImpl;
@@ -21,9 +22,9 @@ public class SubServiceServiceImpl extends BaseServiceImpl<SubService, Long, Sub
     public List<SubService> loadAll(Long serviceId) {
         return repository.findAll(serviceId);
     }
-    
+
     @Override
-    public void editDescription(String newDescription, Long id) {
+    public void editDescription(@NonNull String newDescription, @NonNull Long id) {
         int update = repository.updateDescription(newDescription, id);
         if (update < 1) {
             throw new CustomIllegalArgumentException
@@ -32,7 +33,7 @@ public class SubServiceServiceImpl extends BaseServiceImpl<SubService, Long, Sub
     }
 
     @Override
-    public void editBasePrice(double price, Long id) {
+    public void editBasePrice(double price, @NonNull Long id) {
         int update = repository.updateBasePrice(price, id);
         if (update < 1) {
             throw new CustomIllegalArgumentException
