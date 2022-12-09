@@ -18,7 +18,7 @@ public class SubServiceServiceImpl extends BaseServiceImpl<SubService, Long, Sub
     }
 
     @Override
-    public List<SubService> findAll(Long serviceId) {
+    public List<SubService> loadAll(Long serviceId) {
         return repository.findAll(serviceId);
     }
     

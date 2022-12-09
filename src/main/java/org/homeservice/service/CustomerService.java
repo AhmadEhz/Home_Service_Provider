@@ -1,9 +1,6 @@
 package org.homeservice.service;
 
-import org.homeservice.entity.Customer;
-import org.homeservice.entity.Order;
-import org.homeservice.entity.Rate;
-import org.homeservice.entity.Specialist;
+import org.homeservice.entity.*;
 import org.homeservice.service.base.BaseService;
 
 import java.time.LocalDateTime;
@@ -15,6 +12,12 @@ public interface CustomerService extends BaseService<Customer,Long> {
     Order saveOrder(String description, Double offerPrice, LocalDateTime workingTime, String address);
 
     List<Specialist> findAllVerifiedSpecialist();
+
+    List<Service> loadAllServices();
+
+    List<SubService> loadAllSubServices();
+
+    List<SubService> loadSubServicesOfService(Long serviceId);
 
     Rate saveRate(Long customerId, Double score, String comment, Long orderId);
 

@@ -18,12 +18,16 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
     private final SpecialistService specialistService;
     private final OrderRepository orderRepository;
     private final RateRepository rateRepository;
+    private final ServiceService serviceService;
+    private final SubServiceService subServiceService;
 
     private CustomerServiceImpl() {
         super(CustomerRepositoryImpl.getRepository());
         specialistService = SpecialistServiceImpl.getService();
         orderRepository = OrderRepositoryImpl.getRepository();
         rateRepository = RateRepositoryImpl.getRepository();
+        serviceService = ServiceServiceImpl.getService();
+        subServiceService = SubServiceServiceImpl.getService();
     }
 
     @Override
@@ -50,6 +54,21 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
     @Override
     public List<Specialist> findAllVerifiedSpecialist() {
         return specialistService.loadVerifiedSpecialists();
+    }
+
+    @Override
+    public List<Service> loadAllServices(){
+        return serviceService.loadAll();
+    }
+
+    @Override
+    public List<SubService> loadAllSubServices() {
+        return subServiceService.loadAll();
+    }
+
+    @Override
+    public List<SubService> loadSubServicesOfService(Long serviceId) {
+        return subServiceService.loadAll(serviceId);
     }
 
     @Override

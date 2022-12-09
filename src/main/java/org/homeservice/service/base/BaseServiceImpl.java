@@ -7,6 +7,7 @@ import org.homeservice.repository.base.BaseRepository;
 import org.homeservice.util.HibernateUtil;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -20,6 +21,11 @@ public class BaseServiceImpl<E, ID, R extends BaseRepository<E, ID>> implements 
     @Override
     public Optional<E> loadById(ID id) {
         return repository.findById(id);
+    }
+
+    @Override
+    public List<E> loadAll() {
+        return repository.findAll();
     }
 
     @Override

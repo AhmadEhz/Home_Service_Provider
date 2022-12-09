@@ -70,6 +70,21 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
     }
 
     @Override
+    public List<Service> loadAllServices() {
+        return serviceService.loadAll();
+    }
+
+    @Override
+    public List<SubService> loadAllSubServices() {
+        return subServiceService.loadAll();
+    }
+
+    @Override
+    public List<SubService> loadSubServiceOfService(Long serviceId) {
+        return subServiceService.loadAll(serviceId);
+    }
+
+    @Override
     public void addSpecialistToService(Long specialistId, Long serviceId) {
         Optional<Specialist> optionalSpecialist = specialistService.loadById(specialistId);
         Optional<Service> optionalService = serviceService.loadById(serviceId);
@@ -154,6 +169,11 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
     @Override
     public List<Specialist> loadNewSpecialists() {
         return specialistService.loadNewSpecialists();
+    }
+
+    @Override
+    public List<Specialist> loadVerifiedSpecialists() {
+        return specialistService.loadVerifiedSpecialists();
     }
 
     @Override

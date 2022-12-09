@@ -6,7 +6,7 @@ import org.homeservice.service.base.BaseService;
 import java.util.List;
 
 public interface SubServiceService extends BaseService<SubService, Long> {
-    List<SubService> findAll(Long serviceId);
+    List<SubService> loadAll(Long serviceId);
 
     void editDescription(String newDescription, Long id);
 

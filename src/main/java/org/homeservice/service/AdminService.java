@@ -16,6 +16,12 @@ public interface AdminService extends BaseService<Admin,Long> {
 
     SubService saveSubService(String name, String description, Long serviceId);
 
+    List<Service> loadAllServices();
+
+    List<SubService> loadAllSubServices();
+
+    List<SubService> loadSubServiceOfService(Long serviceId);
+
     void addSpecialistToService(Long specialistId, Long serviceId);
 
     void addSpecialistToSubService(Long specialistId, Long subServiceId);
@@ -27,6 +33,8 @@ public interface AdminService extends BaseService<Admin,Long> {
     void verifySpecialist(Long specialistId);
 
     List<Specialist> loadNewSpecialists();
+
+    List<Specialist> loadVerifiedSpecialists();
 
     void changePassword(Long id, String oldPassword, String newPassword);
 }
