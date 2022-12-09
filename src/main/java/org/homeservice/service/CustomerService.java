@@ -20,6 +20,8 @@ public interface CustomerService extends BaseService<Customer,Long> {
 
     Rate saveRate(Long customerId, Double score, Long orderId);
 
+    void changePassword(Long id, String oldPassword, String newPassword);
+
     boolean isExistedUsername(String username);
 
     boolean isExistedEmail(String email);

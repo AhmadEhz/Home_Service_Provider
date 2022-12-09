@@ -93,12 +93,12 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
             throw new NotFoundException("SubService not found.");
         boolean containsThisService = false;
         for (ServiceSpecialist sp : optionalSpecialist.get().getServices()) {
-            if(sp.getService().equals(optionalSubService.get().getService())) {
+            if (sp.getService().equals(optionalSubService.get().getService())) {
                 containsThisService = true;
                 break;
             }
         }
-        if(!containsThisService)
+        if (!containsThisService)
             throw new IllegalArgumentException
                     ("Specialist is not in this service. you must first add it to this service.");
 
@@ -154,6 +154,18 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
     @Override
     public List<Specialist> loadNewSpecialists() {
         return specialistService.loadNewSpecialists();
+    }
+
+    @Override
+    public void changePassword(Long id, String oldPassword, String newPassword) {
+        Optional<Admin> optionalAdmin = loadById(id);
+        if (optionalAdmin.isEmpty())
+            throw new NotFoundException("Admin not found.");
+        if (optionalAdmin.get().getPassword().equals(oldPassword))
+            throw new CustomIllegalArgumentException("Password is not match");
+
+        optionalAdmin.get().setPassword(newPassword);
+        executeUpdate(() -> repository.update(optionalAdmin.get()));
     }
 
     public static AdminService getAdminService() {

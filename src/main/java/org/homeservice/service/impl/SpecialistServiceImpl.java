@@ -2,12 +2,8 @@ package org.homeservice.service.impl;
 
 import lombok.NonNull;
 import org.homeservice.entity.*;
-import org.homeservice.repository.BidRepository;
-import org.homeservice.repository.OrderRepository;
-import org.homeservice.repository.SpecialistRepository;
-import org.homeservice.repository.impl.BidRepositoryImpl;
-import org.homeservice.repository.impl.OrderRepositoryImpl;
-import org.homeservice.repository.impl.SpecialistRepositoryImpl;
+import org.homeservice.repository.*;
+import org.homeservice.repository.impl.*;
 import org.homeservice.service.*;
 import org.homeservice.service.base.BaseServiceImpl;
 import org.homeservice.util.exception.*;
@@ -22,15 +18,11 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
     private static SpecialistService service;
     private final BidRepository bidRepository;
     private final OrderRepository orderRepository;
-    private final ServiceService serviceService;
-    private final SubServiceService subServiceService;
 
     private SpecialistServiceImpl() {
         super(SpecialistRepositoryImpl.getRepository());
         bidRepository = BidRepositoryImpl.getRepository();
         orderRepository = OrderRepositoryImpl.getRepository();
-        serviceService = ServiceServiceImpl.getService();
-        subServiceService = SubServiceServiceImpl.getService();
     }
 
     @Override
@@ -100,6 +92,18 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
     @Override
     public boolean isExistEmail(String email) {
         return repository.findByEmail(email).isPresent();
+    }
+
+    @Override
+    public void changePassword(Long id, String oldPassword, String newPassword) {
+        Optional<Specialist> optionalSpecialist = loadById(id);
+        if (optionalSpecialist.isEmpty())
+            throw new NotFoundException("Specialist not found.");
+        if (optionalSpecialist.get().getPassword().equals(oldPassword))
+            throw new CustomIllegalArgumentException("Password is not match");
+
+        optionalSpecialist.get().setPassword(newPassword);
+        executeUpdate(() -> repository.update(optionalSpecialist.get()));
     }
 
     public static SpecialistService getService() {

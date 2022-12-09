@@ -27,4 +27,6 @@ public interface AdminService extends BaseService<Admin,Long> {
     void verifySpecialist(Long specialistId);
 
     List<Specialist> loadNewSpecialists();
+
+    void changePassword(Long id, String oldPassword, String newPassword);
 }

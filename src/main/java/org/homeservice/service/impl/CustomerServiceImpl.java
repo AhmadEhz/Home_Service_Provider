@@ -29,7 +29,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
     @Override
     public Customer save(String firstName, String lastName, String username, String email, String password) {
         Customer customer = new Customer(firstName, lastName, username, password, email);
-        if(isExistedUsername(username))
+        if (isExistedUsername(username))
             throw new CustomIllegalArgumentException("Username is exist.");
         if (isExistedEmail(email))
             throw new CustomIllegalArgumentException("Email is exist.");
@@ -68,6 +68,18 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
     @Override
     public Rate saveRate(Long customerId, Double score, Long orderId) {
         return saveRate(customerId, score, null, orderId);
+    }
+
+    @Override
+    public void changePassword(Long id, String oldPassword, String newPassword) {
+        Optional<Customer> optionalCustomer = loadById(id);
+        if (optionalCustomer.isEmpty())
+            throw new NotFoundException("Customer not found.");
+        if (optionalCustomer.get().getPassword().equals(oldPassword))
+            throw new CustomIllegalArgumentException("Password is not match");
+
+        optionalCustomer.get().setPassword(newPassword);
+        executeUpdate(() -> repository.update(optionalCustomer.get()));
     }
 
     @Override
