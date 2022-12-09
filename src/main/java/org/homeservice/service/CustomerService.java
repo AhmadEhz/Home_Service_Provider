@@ -6,10 +6,10 @@ import org.homeservice.service.base.BaseService;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface CustomerService extends BaseService<Customer,Long> {
+public interface CustomerService extends BaseService<Customer, Long> {
     Customer save(String firstName, String lastName, String username, String email, String password);
 
-    Order saveOrder(String description, Double offerPrice, LocalDateTime workingTime, String address);
+    Order saveOrder(String description, Double offerPrice, LocalDateTime workingTime, String address, Long subServiceId);
 
     List<Specialist> findAllVerifiedSpecialist();
 

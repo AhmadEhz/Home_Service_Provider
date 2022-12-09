@@ -44,8 +44,15 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
     }
 
     @Override
-    public Order saveOrder(String description, Double offerPrice, LocalDateTime workingTime, String address) {
-        Order order = new Order(offerPrice, description, workingTime, address);
+    public Order saveOrder(String description, Double offerPrice, LocalDateTime workingTime,
+                           String address, Long subServiceId) {
+        Optional<SubService> optionalSubService = subServiceService.loadById(subServiceId);
+        if (optionalSubService.isEmpty())
+            throw new NotFoundException("SubService not found.");
+        if (offerPrice < optionalSubService.get().getBasePrice())
+            throw new CustomIllegalArgumentException("Your offer is lower than base price of this SubService");
+
+        Order order = new Order(offerPrice, description, workingTime, address,optionalSubService.get());
         checkEntity(order);
         executeUpdate(() -> orderRepository.save(order));
         return order;
@@ -57,7 +64,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
     }
 
     @Override
-    public List<Service> loadAllServices(){
+    public List<Service> loadAllServices() {
         return serviceService.loadAll();
     }
 
