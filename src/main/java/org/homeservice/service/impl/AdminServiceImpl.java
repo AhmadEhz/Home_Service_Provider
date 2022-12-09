@@ -57,20 +57,26 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
     public SubService saveSubService(String name, String description, Double basePrice, Long serviceId) {
         Optional<Service> optionalService = serviceService.loadById(serviceId);
         if (optionalService.isEmpty())
-            throw new CustomIllegalArgumentException("Service not found.");
+            throw new NotFoundException("Service not found.");
         SubService subService = new SubService(name, description, basePrice, optionalService.get());
         checkEntity(subService);
         executeUpdate(() -> subServiceRepository.save(subService));
         return subService;
     }
+
+    @Override
+    public SubService saveSubService(String name, String description, Long serviceId) {
+        return saveSubService(name, description, null, serviceId);
+    }
+
     @Override
     public void addSpecialistToService(Long specialistId, Long serviceId) {
         Optional<Specialist> optionalSpecialist = specialistService.loadById(specialistId);
         Optional<Service> optionalService = serviceService.loadById(serviceId);
         if (optionalSpecialist.isEmpty())
-            throw new CustomIllegalArgumentException();
+            throw new NotFoundException("Specialist not found.");
         if (optionalService.isEmpty())
-            throw new CustomIllegalArgumentException();
+            throw new CustomIllegalArgumentException("Service not found.");
 
         optionalSpecialist.get().addService(optionalService.get());
         executeUpdate(() -> specialistRepository.update(optionalSpecialist.get()));
@@ -82,9 +88,19 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
         Optional<SubService> optionalSubService = subServiceService.loadById(subServiceId);
 
         if (optionalSpecialist.isEmpty())
-            throw new NotFoundException();
+            throw new NotFoundException("Specialist not found.");
         if (optionalSubService.isEmpty())
-            throw new NotFoundException();
+            throw new NotFoundException("SubService not found.");
+        boolean containsThisService = false;
+        for (ServiceSpecialist sp : optionalSpecialist.get().getServices()) {
+            if(sp.getService().equals(optionalSubService.get().getService())) {
+                containsThisService = true;
+                break;
+            }
+        }
+        if(!containsThisService)
+            throw new IllegalArgumentException
+                    ("Specialist is not in this service. you must first add it to this service.");
 
         checkSpecialistStatus(optionalSpecialist.get());
         optionalSpecialist.get().addSubService(optionalSubService.get());
@@ -96,9 +112,9 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
         Optional<Specialist> optionalSpecialist = specialistService.loadById(specialistId);
         Optional<Service> optionalService = serviceService.loadById(serviceId);
         if (optionalSpecialist.isEmpty())
-            throw new CustomIllegalArgumentException();
+            throw new NotFoundException("Specialist not found.");
         if (optionalService.isEmpty())
-            throw new CustomIllegalArgumentException();
+            throw new NotFoundException("Service not found.");
 
         checkSpecialistStatus(optionalSpecialist.get());
         optionalSpecialist.get().removeService(optionalService.get());
@@ -109,13 +125,13 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
     @Override
     public void removeSpecialistFromSubService(Long specialistId, Long subServiceId) {
         Optional<Specialist> optionalSpecialist = specialistService.loadById(specialistId);
-        Optional<SubService> optionalService = subServiceService.loadById(subServiceId);
+        Optional<SubService> optionalSubService = subServiceService.loadById(subServiceId);
         if (optionalSpecialist.isEmpty())
-            throw new CustomIllegalArgumentException();
-        if (optionalService.isEmpty())
-            throw new CustomIllegalArgumentException();
+            throw new NotFoundException("Specialist not found.");
+        if (optionalSubService.isEmpty())
+            throw new NotFoundException("SubService not found");
 
-        optionalSpecialist.get().removeSubService(optionalService.get());
+        optionalSpecialist.get().removeSubService(optionalSubService.get());
         executeUpdate(() -> specialistRepository.update(optionalSpecialist.get()));
     }
 

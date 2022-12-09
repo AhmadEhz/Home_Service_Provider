@@ -5,6 +5,7 @@ import org.homeservice.repository.*;
 import org.homeservice.repository.impl.*;
 import org.homeservice.service.*;
 import org.homeservice.service.base.BaseServiceImpl;
+import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
 
 import java.time.LocalDateTime;
@@ -26,6 +27,19 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
     }
 
     @Override
+    public Customer save(String firstName, String lastName, String username, String email, String password) {
+        Customer customer = new Customer(firstName, lastName, username, password, email);
+        if(isExistedUsername(username))
+            throw new CustomIllegalArgumentException("Username is exist.");
+        if (isExistedEmail(email))
+            throw new CustomIllegalArgumentException("Email is exist.");
+
+        checkEntity(customer);
+        executeUpdate(() -> repository.save(customer));
+        return customer;
+    }
+
+    @Override
     public Order saveOrder(String description, Double offerPrice, LocalDateTime workingTime, String address) {
         Order order = new Order(offerPrice, description, workingTime, address);
         checkEntity(order);
@@ -39,15 +53,31 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
     }
 
     @Override
-    public void saveRate(Long customerId, Double score, String comment, Long orderId) {
+    public Rate saveRate(Long customerId, Double score, String comment, Long orderId) {
         Optional<Order> optionalOrder = orderRepository.findById(orderId);
         if (optionalOrder.isEmpty())
             throw new NotFoundException("Order not found.");
-        if(!optionalOrder.get().getCustomer().getId().equals(customerId))
-          throw new IllegalArgumentException("This customer is not owner of this order");
+        if (!optionalOrder.get().getCustomer().getId().equals(customerId))
+            throw new IllegalArgumentException("This customer is not owner of this order");
         Rate rate = new Rate(score, comment, optionalOrder.get());
         checkEntity(rate);
         executeUpdate(() -> rateRepository.save(rate));
+        return rate;
+    }
+
+    @Override
+    public Rate saveRate(Long customerId, Double score, Long orderId) {
+        return saveRate(customerId, score, null, orderId);
+    }
+
+    @Override
+    public boolean isExistedUsername(String username) {
+        return repository.findByUsername(username).isPresent();
+    }
+
+    @Override
+    public boolean isExistedEmail(String email) {
+        return repository.findByEmail(email).isPresent();
     }
 
     public static CustomerService getService() {

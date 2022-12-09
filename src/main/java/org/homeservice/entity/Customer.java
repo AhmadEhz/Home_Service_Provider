@@ -37,6 +37,14 @@ public class Customer extends Person {
         orders = new HashSet<>();
     }
 
+    public Customer() {
+    }
+
+    public Customer(String firstName, String lastName, String username, String password, String email) {
+        super(firstName, lastName, username, password);
+        this.email = email;
+    }
+
     public String getEmail() {
         return email;
     }

@@ -14,6 +14,8 @@ public interface AdminService extends BaseService<Admin,Long> {
 
     SubService saveSubService(String name, String description, Double basePrice, Long serviceId);
 
+    SubService saveSubService(String name, String description, Long serviceId);
+
     void addSpecialistToService(Long specialistId, Long serviceId);
 
     void addSpecialistToSubService(Long specialistId, Long subServiceId);
