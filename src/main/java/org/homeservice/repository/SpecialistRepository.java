@@ -5,6 +5,7 @@ import org.homeservice.entity.SpecialistStatus;
 import org.homeservice.repository.base.BaseRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface SpecialistRepository extends BaseRepository<Specialist, Long> {
 
@@ -13,4 +14,8 @@ public interface SpecialistRepository extends BaseRepository<Specialist, Long> {
     int changeStatus(Long specialistId, SpecialistStatus status);
 
     int updateScore(Long id);
+
+    Optional<Specialist> findByUsername(String username);
+
+    Optional<Specialist> findByEmail(String email);
 }

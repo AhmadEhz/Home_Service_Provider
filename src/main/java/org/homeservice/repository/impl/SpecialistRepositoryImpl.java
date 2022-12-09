@@ -5,8 +5,10 @@ import org.homeservice.entity.SpecialistStatus;
 import org.homeservice.repository.SpecialistRepository;
 import org.homeservice.repository.base.BaseRepositoryImpl;
 import org.homeservice.util.HibernateUtil;
+import org.homeservice.util.QueryUtil;
 
 import java.util.List;
+import java.util.Optional;
 
 public class SpecialistRepositoryImpl extends BaseRepositoryImpl<Specialist, Long> implements SpecialistRepository {
     private static SpecialistRepository repository;
@@ -18,7 +20,7 @@ public class SpecialistRepositoryImpl extends BaseRepositoryImpl<Specialist, Lon
     public List<Specialist> findAll(SpecialistStatus status) {
         String query = "select s from Specialist as s where s.status=:status";
         return HibernateUtil.getCurrentEntityManager().createQuery(query, Specialist.class)
-                .setParameter("status",status).getResultList();
+                .setParameter("status", status).getResultList();
     }
 
     @Override
@@ -36,6 +38,22 @@ public class SpecialistRepositoryImpl extends BaseRepositoryImpl<Specialist, Lon
                 where id = :id""";
         return HibernateUtil.getCurrentEntityManager()
                 .createQuery(query).setParameter("id", id).executeUpdate();
+    }
+
+    @Override
+    public Optional<Specialist> findByUsername(String username) {
+        String query = "select s from Specialist as s where s.username = :username";
+        return Optional.ofNullable(
+                QueryUtil.getSingleResult(HibernateUtil.getCurrentEntityManager()
+                        .createQuery(query, Specialist.class).setParameter("username", username)));
+    }
+
+    @Override
+    public Optional<Specialist> findByEmail(String email) {
+        String query = "select s from Specialist as s where s.email = :email";
+        return Optional.ofNullable(
+                QueryUtil.getSingleResult(HibernateUtil.getCurrentEntityManager()
+                        .createQuery(query, Specialist.class).setParameter("username", email)));
     }
 
     @Override

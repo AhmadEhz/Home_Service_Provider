@@ -1,6 +1,8 @@
 package org.homeservice.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -12,12 +14,12 @@ import java.util.Set;
 @Entity
 public class Specialist extends Person {
 
+    @Email
+    @Column(nullable = false)
+    @NotNull
+    private String email;
     @Enumerated(value = EnumType.STRING)
     private SpecialistStatus status;
-
-    @CreationTimestamp
-    //todo: convert createdAt to created_at in db.
-    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "specialist")
     private Set<ServiceSpecialist> services;
@@ -37,12 +39,40 @@ public class Specialist extends Person {
     @OneToOne
     private Credit credit;
 
+    private byte[] avatar;
+
     @Transient
     private List<Rate> rates;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    {
+        services = new HashSet<>();
+        bids = new HashSet<>();
+        orders = new HashSet<>();
+    }
+
+    public Specialist() {
+    }
+
+    public Specialist(String firstName, String lastName, String username, String password, String email, byte[] avatar) {
+        super(firstName, lastName, username, password);
+        this.email = email;
+        this.avatar = avatar;
+    }
 
     @PrePersist
     private void perPersist() {
         status = SpecialistStatus.NEW;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public SpecialistStatus getStatus() {
@@ -123,6 +153,14 @@ public class Specialist extends Person {
 
     public void setCredit(Credit credit) {
         this.credit = credit;
+    }
+
+    public byte[] getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(byte[] avatar) {
+        this.avatar = avatar;
     }
 
     public List<Rate> getRates() {

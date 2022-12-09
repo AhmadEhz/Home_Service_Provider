@@ -34,6 +34,22 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
     }
 
     @Override
+    public Specialist save(String firstName, String lastName, String username,
+                           String email, String password, @NonNull byte[] avatar) {
+        if (avatar.length > 300 * 1024) //avatar size > 300KB
+            throw new CustomIllegalArgumentException("Image size is bigger than 300KB.");
+
+        if (isExistEmail(email))
+            throw new CustomIllegalArgumentException("Email is exist.");
+        if (isExistUsername(username))
+            throw new CustomIllegalArgumentException("Username is exist");
+
+        Specialist specialist = new Specialist(firstName, lastName, username, password, email, avatar);
+        save(specialist);
+        return specialist;
+    }
+
+    @Override
     public List<Specialist> loadNewSpecialists() {
         return repository.findAll(SpecialistStatus.NEW);
     }
@@ -65,15 +81,25 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
         if (optionalSpecialist.isEmpty())
             throw new NotFoundException("Specialist not found");
 
-        if(optionalOrder.isEmpty())
+        if (optionalOrder.isEmpty())
             throw new NotFoundException("Order not found");
 
         if (optionalSpecialist.get().getStatus() != SpecialistStatus.ACCEPTED)
             throw new NotVerifiedException("Specialist not verified");
 
-        Bid bid = new Bid(offerPrice, timeSpent, optionalSpecialist.get(),optionalOrder.get());
+        Bid bid = new Bid(offerPrice, timeSpent, optionalSpecialist.get(), optionalOrder.get());
         checkEntity(bid);
         bidRepository.save(bid);
+    }
+
+    @Override
+    public boolean isExistUsername(String username) {
+        return repository.findByUsername(username).isPresent();
+    }
+
+    @Override
+    public boolean isExistEmail(String email) {
+        return repository.findByEmail(email).isPresent();
     }
 
     public static SpecialistService getService() {
