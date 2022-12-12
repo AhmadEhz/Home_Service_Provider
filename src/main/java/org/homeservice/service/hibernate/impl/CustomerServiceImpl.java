@@ -1,17 +1,10 @@
 package org.homeservice.service.hibernate.impl;
 
 import org.homeservice.entity.*;
-import org.homeservice.repository.hibernate.CustomerRepository;
-import org.homeservice.repository.hibernate.OrderRepository;
-import org.homeservice.repository.hibernate.RateRepository;
-import org.homeservice.repository.hibernate.impl.CustomerRepositoryImpl;
-import org.homeservice.repository.hibernate.impl.OrderRepositoryImpl;
-import org.homeservice.repository.hibernate.impl.RateRepositoryImpl;
+import org.homeservice.repository.hibernate.*;
+import org.homeservice.repository.hibernate.impl.*;
 import org.homeservice.service.hibernate.base.BaseServiceImpl;
-import org.homeservice.service.hibernate.CustomerService;
-import org.homeservice.service.hibernate.ServiceService;
-import org.homeservice.service.hibernate.SpecialistService;
-import org.homeservice.service.hibernate.SubServiceService;
+import org.homeservice.service.hibernate.*;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
 
