@@ -24,7 +24,7 @@ public class Specialist extends Person {
     @ColumnDefault("0")
     private Double score;
 
-    @OneToMany
+    @OneToMany(mappedBy = "specialist")
     private Set<SubServiceSpecialist> subServices;
 
     @OneToMany(mappedBy = "specialist")

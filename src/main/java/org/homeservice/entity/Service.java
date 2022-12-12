@@ -13,7 +13,7 @@ public class Service {
     @Column(unique = true)
     private String name;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "service",cascade = CascadeType.PERSIST)
     private Set<SubService> subServices;
 
     {
