@@ -16,7 +16,7 @@ public class HibernateUtil {
     }
 
     static {
-        ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("default");
+        ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("unit");
         VALIDATOR_FACTORY = Validation.buildDefaultValidatorFactory();
     }
 
