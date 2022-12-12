@@ -16,12 +16,8 @@ public class Service {
     @OneToMany(cascade = CascadeType.PERSIST)
     private Set<SubService> subServices;
 
-    @OneToMany(mappedBy = "service")
-    private Set<ServiceSpecialist> specialists;
-
     {
         subServices = new HashSet<>();
-        specialists = new HashSet<>();
     }
 
     public Service() {
@@ -61,13 +57,5 @@ public class Service {
 
     public void addSubService(SubService subService) {
         subServices.add(subService);
-    }
-
-    public Set<ServiceSpecialist> getSpecialists() {
-        return specialists;
-    }
-
-    public void setSpecialists(Set<ServiceSpecialist> specialists) {
-        this.specialists = specialists;
     }
 }

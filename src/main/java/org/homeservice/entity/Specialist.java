@@ -21,9 +21,6 @@ public class Specialist extends Person {
     @Enumerated(value = EnumType.STRING)
     private SpecialistStatus status;
 
-    @OneToMany(mappedBy = "specialist")
-    private Set<ServiceSpecialist> services;
-
     @ColumnDefault("0")
     private Double score;
 
@@ -48,7 +45,6 @@ public class Specialist extends Person {
     private LocalDateTime createdAt;
 
     {
-        services = new HashSet<>();
         bids = new HashSet<>();
         orders = new HashSet<>();
     }
@@ -89,22 +85,6 @@ public class Specialist extends Person {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public Set<ServiceSpecialist> getServices() {
-        return services;
-    }
-
-    public void setServices(Set<ServiceSpecialist> services) {
-        this.services = services;
-    }
-
-    public void addService(Service service) {
-        services.add(new ServiceSpecialist(this, service));
-    }
-
-    public void removeService(Service service) {
-        services.remove(new ServiceSpecialist(this, service));
     }
 
     public Double getScore() {
