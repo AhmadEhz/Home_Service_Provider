@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-@Scope("singleton")
 public interface OrderRepository extends JpaRepository<Order,Long> {
     List<Order> findAllByCustomer_Id(Long customerId);
 
