@@ -36,6 +36,12 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
         checkUpdate(update);
     }
 
+    @Override
+    public void updateScore(Long id) {
+        int update = repository.updateScore(id);
+        checkUpdate(update);
+    }
+
     private void checkUpdate(int update) {
         if (update < 1)
             throw new NotFoundException("Specialist not found.");
