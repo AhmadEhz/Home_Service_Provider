@@ -3,6 +3,8 @@ package org.homeservice.util;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 
+import java.util.function.Supplier;
+
 public class QueryUtil {
     private QueryUtil() {
     }
@@ -15,5 +17,10 @@ public class QueryUtil {
         } catch (NoResultException e) {
             return null;
         }
+    }
+
+    public static <X extends Throwable> void checkUpdate(int update, Supplier<? extends X> exception) throws X {
+        if (update < 1)
+            throw exception.get();
     }
 }
