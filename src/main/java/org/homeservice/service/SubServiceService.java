@@ -8,5 +8,9 @@ import java.util.List;
 
 @Service
 public interface SubServiceService extends BaseService<SubService, Long> {
-    List<SubService> findAllBySpecialist(Long specialistId);
+    List<SubService> loadAllBySpecialist(Long specialistId);
+
+    void editDescription(String newDescription, Long id);
+
+    void editBasePrice(double basePrice, Long id);
 }
