@@ -6,6 +6,7 @@ import org.homeservice.entity.SpecialistStatus;
 import org.homeservice.repository.SpecialistRepository;
 import org.homeservice.service.SpecialistService;
 import org.homeservice.service.base.BaseServiceImpl;
+import org.homeservice.util.exception.NonUniqueException;
 import org.homeservice.util.exception.NotFoundException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,15 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
         implements SpecialistService {
     public SpecialistServiceImpl(SpecialistRepository repository) {
         super(repository);
+    }
+
+    @Override
+    public void save(Specialist specialist) {
+        if(isExistUsername(specialist.getUsername()))
+            throw new NonUniqueException("Username is not unique.");
+        if (isExistEmail(specialist.getEmail()))
+            throw new NonUniqueException("Email is not unique.");
+        super.save(specialist);
     }
 
     @Override
