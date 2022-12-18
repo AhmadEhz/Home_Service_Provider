@@ -8,11 +8,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SpecialistRepository extends JpaRepository<Specialist, Long> {
 
-    List<Specialist> findSpecialistByStatus(SpecialistStatus status);
+    List<Specialist> findSpecialistsByStatus(SpecialistStatus status);
+
+    Optional<Specialist> findSpecialistByUsername(String username);
+
+    Optional<Specialist> findSpecialistByEmail(String email);
 
     @Modifying
     @Query("update Specialist set status = :status where id = :id")

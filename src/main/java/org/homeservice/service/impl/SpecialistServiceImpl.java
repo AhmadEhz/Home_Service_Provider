@@ -22,12 +22,12 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
 
     @Override
     public List<Specialist> loadAllVerified() {
-        return repository.findSpecialistByStatus(SpecialistStatus.ACCEPTED);
+        return repository.findSpecialistsByStatus(SpecialistStatus.ACCEPTED);
     }
 
     @Override
     public List<Specialist> loadAllNew() {
-        return repository.findSpecialistByStatus(SpecialistStatus.NEW);
+        return repository.findSpecialistsByStatus(SpecialistStatus.NEW);
     }
 
     @Override
@@ -46,6 +46,16 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
     public void updateScoreByRateId(Long rateId) {
         int update = repository.updateScoreByRateId(rateId);
         checkUpdate(update);
+    }
+
+    @Override
+    public boolean isExistUsername(String username) {
+        return repository.findSpecialistByUsername(username).isPresent();
+    }
+
+    @Override
+    public boolean isExistEmail(String email) {
+        return repository.findSpecialistByEmail(email).isPresent();
     }
 
     private void checkUpdate(int update) {

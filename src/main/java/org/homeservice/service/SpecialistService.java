@@ -19,4 +19,8 @@ public interface SpecialistService extends BaseService<Specialist, Long> {
     void updateScore(Long id);
 
     void updateScoreByRateId(Long rateId);
+
+    boolean isExistUsername(String username);
+
+    boolean isExistEmail(String email);
 }
