@@ -10,10 +10,11 @@ public class Service {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "service",cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "service", cascade = CascadeType.PERSIST)
     private Set<SubService> subServices;
 
     {

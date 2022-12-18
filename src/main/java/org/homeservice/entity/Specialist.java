@@ -2,6 +2,7 @@ package org.homeservice.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
@@ -36,13 +37,14 @@ public class Specialist extends Person {
     @OneToOne
     private Credit credit;
 
+    @Max(307200) // 300KB
     private byte[] avatar;
-
-    @Transient
-    private List<Rate> rates;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+    @Transient
+    private List<Rate> rates;
 
     {
         bids = new HashSet<>();

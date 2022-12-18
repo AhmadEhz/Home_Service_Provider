@@ -3,6 +3,7 @@ package org.homeservice.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import org.hibernate.validator.constraints.Length;
 
 @MappedSuperclass
 public abstract class Person {
@@ -18,20 +19,20 @@ public abstract class Person {
     @NotNull
     private String lastName;
 
-    @Column
+    @Column(nullable = false)
     @NotNull
-    @Pattern(regexp = "^{5,128}$",
-            message = "Username must be between 8 and 128 characters")
+    @Length(min = 5, message = "Username should not be less than 5 characters.")
+    @Length(max = 128, message = "Username should not be more than 128 characters.")
     @Pattern(regexp = "^[A-Za-z0-9_.]$",
             message = "The username should only contains letters, numbers, '_' and '.'")
     private String username;
 
-    @Column
+    @Column(nullable = false)
     @NotNull
-    @Pattern(regexp = "^{8,256}$",
-            message = "The password must be between 8 and characters")
-    @Pattern(regexp = "^[A-Za-z0-9._$%^&*#!@\\-/\\\\]$",
-            message = "The password should only contain letters and numbers, '._$%^&*#!@\\' and '/'")
+    @Length(min = 8, message = "Password should not be less than 8 characters.")
+    @Length(max = 255, message = "Password should not be more than 255 characters.")
+    @Pattern(regexp = "^[A-Za-z0-9 ._$%^&*#!@\\-/\\\\]+$",
+            message = "The password should only contain letters, numbers, '._$%^&*#!@\\/' and space")
     private String password;
 
     protected Person() {
