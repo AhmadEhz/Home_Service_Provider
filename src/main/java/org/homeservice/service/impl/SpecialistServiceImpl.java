@@ -3,7 +3,6 @@ package org.homeservice.service.impl;
 import lombok.NonNull;
 import org.homeservice.entity.Specialist;
 import org.homeservice.entity.SpecialistStatus;
-import org.homeservice.entity.SubService;
 import org.homeservice.repository.SpecialistRepository;
 import org.homeservice.service.SpecialistService;
 import org.homeservice.service.SubServiceService;
@@ -13,6 +12,7 @@ import org.homeservice.util.exception.NonUniqueException;
 import org.homeservice.util.exception.NotFoundException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -47,33 +47,39 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
     }
 
     @Override
+    @Transactional
     public void changeStatus(Long id, @NonNull SpecialistStatus status) {
         int update = repository.updateStatus(id, status);
         checkUpdate(update);
     }
 
     @Override
+    @Transactional
     public void updateScore(Long id) {
         int update = repository.updateScore(id);
         checkUpdate(update);
     }
 
     @Override
+    @Transactional
     public void updateScoreByRateId(Long rateId) {
         int update = repository.updateScoreByRateId(rateId);
         checkUpdate(update);
     }
 
     @Override
+    @Transactional
     public void addToSubService(Long id, Long subServiceId) {
-        SubService subService = subServiceService.findById(subServiceId)
+        subServiceService.findById(subServiceId)
                 .orElseThrow(() -> new NotFoundException("SubService not found."));
         Specialist specialist = findById(id).orElseThrow(() -> new NotFoundException("Specialist not found."));
         checkStatus(specialist.getStatus());
-        repository.addToSubService(id, subServiceId);
+        int update = repository.addToSubService(id, subServiceId);
+        checkUpdate(update);
     }
 
     @Override
+    @Transactional
     public void changePassword(String username, String oldPassword, String newPassword) {
         Specialist specialist = repository.findSpecialistByUsername(username)
                 .orElseThrow(() -> new NotFoundException("Specialist not found."));
@@ -93,7 +99,7 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
         return repository.findSpecialistByEmail(email).isPresent();
     }
 
-    private void checkUpdate(int update) {
+    private void checkUpdate(int update) throws NotFoundException {
         if (update < 1)
             throw new NotFoundException("Specialist not found.");
     }
