@@ -6,4 +6,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface CustomerService extends BaseService<Customer, Long> {
+    void changePassword(String username, String oldPassword, String newPassword);
+
+    boolean isExistedUsername(String username);
+
+    boolean isExistedEmail(String email);
 }
