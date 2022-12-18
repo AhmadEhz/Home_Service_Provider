@@ -21,7 +21,14 @@ public interface SpecialistRepository extends JpaRepository<Specialist, Long> {
     @Modifying
     @Query("""
             update Specialist set score =
-            (select avg(r.score) from Rate as r where r.id = :id)
+            (select avg(r.score) from Rate as r where r.order.specialist.id = :id)
             where id = :id""")
     int updateScore(Long id);
+
+    @Modifying
+    @Query("""
+            update Specialist set score =
+            (select avg(r.score) from Rate as r where r.id = :rateId)
+            where id = (select r.order.specialist.id from Rate as r where r.id = :rateId)""")
+    int updateScoreByRateId(Long rateId);
 }

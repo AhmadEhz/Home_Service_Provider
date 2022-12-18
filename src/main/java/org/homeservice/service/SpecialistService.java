@@ -17,4 +17,6 @@ public interface SpecialistService extends BaseService<Specialist, Long> {
     void changeStatus(Long id, @NonNull SpecialistStatus status);
 
     void updateScore(Long id);
+
+    void updateScoreByRateId(Long rateId);
 }
