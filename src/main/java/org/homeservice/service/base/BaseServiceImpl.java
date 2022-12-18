@@ -1,5 +1,7 @@
 package org.homeservice.service.base;
 
+import jakarta.validation.Valid;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +17,7 @@ public class BaseServiceImpl<T, ID, R extends JpaRepository<T, ID>> implements B
 
     @Override
     @Transactional
-    public void save(T t) {
+    public void save(@Valid T t) {
         repository.save(t);
     }
 
@@ -31,7 +33,7 @@ public class BaseServiceImpl<T, ID, R extends JpaRepository<T, ID>> implements B
 
     @Override
     @Transactional
-    public void update(T t) {
+    public void update(@Valid T t) {
         repository.save(t);
     }
 
@@ -39,5 +41,8 @@ public class BaseServiceImpl<T, ID, R extends JpaRepository<T, ID>> implements B
     @Transactional
     public void delete(T t) {
         repository.delete(t);
+    }
+
+    protected <E> void checkEntity(E e) {
     }
 }

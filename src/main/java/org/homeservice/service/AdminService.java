@@ -5,5 +5,5 @@ import org.homeservice.service.base.BaseService;
 import org.springframework.stereotype.Service;
 
 @Service
-public interface AdminService extends BaseService<Admin,Long> {
+public interface AdminService extends BaseService<Admin, Long> {
 }

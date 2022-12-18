@@ -7,6 +7,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public interface SubServiceService extends BaseService<SubService,Long> {
+public interface SubServiceService extends BaseService<SubService, Long> {
     List<SubService> findAllBySpecialist(Long specialistId);
 }
