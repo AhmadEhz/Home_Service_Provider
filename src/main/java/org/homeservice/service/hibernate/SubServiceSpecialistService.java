@@ -7,5 +7,5 @@ import org.homeservice.service.hibernate.base.BaseService;
 public interface SubServiceSpecialistService extends BaseService<SubServiceSpecialist, SubServiceSpecialistId> {
     void save(Long specialistId, Long subServiceId);
 
-    void delete(Long specialistId, Long subServiceId);
+    void remove(Long specialistId, Long subServiceId);
 }

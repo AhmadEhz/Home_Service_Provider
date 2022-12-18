@@ -26,9 +26,6 @@ public class Specialist extends Person {
     private Double score;
 
     @OneToMany(mappedBy = "specialist")
-    private Set<SubServiceSpecialist> subServices;
-
-    @OneToMany(mappedBy = "specialist")
     private Set<Bid> bids;
 
     @OneToMany(mappedBy = "specialist")
@@ -52,6 +49,10 @@ public class Specialist extends Person {
     }
 
     public Specialist() {
+    }
+
+    public Specialist(Long id) {
+        setId(id);
     }
 
     public Specialist(String firstName, String lastName, String username, String password, String email, byte[] avatar) {
@@ -95,22 +96,6 @@ public class Specialist extends Person {
 
     public void setScore(Double score) {
         this.score = score;
-    }
-
-    public Set<SubServiceSpecialist> getSubServices() {
-        return subServices;
-    }
-
-    public void setSubServices(Set<SubServiceSpecialist> subServices) {
-        this.subServices = subServices;
-    }
-
-    public void addSubService(SubService subService) {
-        subServices.add(new SubServiceSpecialist(this, subService));
-    }
-
-    public void removeSubService(SubService subService) {
-        subServices.remove(new SubServiceSpecialist(this, subService));
     }
 
     public Set<Bid> getBids() {

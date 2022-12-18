@@ -26,10 +26,11 @@ public class SubService {
     @NotNull(message = "Service must be set")
     private Service service;
 
-    @OneToMany(mappedBy = "subService")
-    private Set<SubServiceSpecialist> specialists;
-
     public SubService() {
+    }
+
+    public SubService(Long id) {
+        this.id = id;
     }
 
     public SubService(String name, String description, double basePrice, Service service) {
@@ -77,13 +78,5 @@ public class SubService {
 
     public void setService(Service service) {
         this.service = service;
-    }
-
-    public Set<SubServiceSpecialist> getSpecialists() {
-        return specialists;
-    }
-
-    public void setSpecialists(Set<SubServiceSpecialist> specialists) {
-        this.specialists = specialists;
     }
 }

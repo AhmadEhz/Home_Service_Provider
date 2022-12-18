@@ -20,6 +20,7 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
     private final ServiceService serviceService;
     private final SubServiceService subServiceService;
     private final SpecialistService specialistService;
+    private final SubServiceSpecialistService subServiceSpecialistService;
 
     private AdminServiceImpl() {
         super(AdminRepositoryImpl.getRepository());
@@ -29,6 +30,7 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
         specialistService = SpecialistServiceImpl.getService();
         serviceService = ServiceServiceImpl.getService();
         subServiceService = SubServiceServiceImpl.getService();
+        subServiceSpecialistService = SubServiceSpecialistServiceImpl.getService();
     }
 
     @Override
@@ -92,8 +94,7 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
             throw new NotFoundException("SubService not found.");
 
         checkSpecialistStatus(optionalSpecialist.get());
-        optionalSpecialist.get().addSubService(optionalSubService.get());
-        executeUpdate(() -> specialistRepository.update(optionalSpecialist.get()));
+        subServiceSpecialistService.save(optionalSpecialist.get().getId(), optionalSubService.get().getId());
     }
 
     @Override
@@ -104,9 +105,7 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
             throw new NotFoundException("Specialist not found.");
         if (optionalSubService.isEmpty())
             throw new NotFoundException("SubService not found");
-
-        optionalSpecialist.get().removeSubService(optionalSubService.get());
-        executeUpdate(() -> specialistRepository.update(optionalSpecialist.get()));
+        subServiceSpecialistService.remove(optionalSpecialist.get().getId(), optionalSubService.get().getId());
     }
 
     @Override
