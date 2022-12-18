@@ -1,12 +1,10 @@
 package org.homeservice.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.IdClass;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import org.homeservice.entity.id.SubServiceSpecialistId;
 
 @Entity
+@Table(name = "subservice_specialist")
 @IdClass(SubServiceSpecialistId.class)
 public class SubServiceSpecialist {
     @Id

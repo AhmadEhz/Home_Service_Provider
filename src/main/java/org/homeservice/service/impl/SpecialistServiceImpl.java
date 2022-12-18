@@ -3,8 +3,10 @@ package org.homeservice.service.impl;
 import lombok.NonNull;
 import org.homeservice.entity.Specialist;
 import org.homeservice.entity.SpecialistStatus;
+import org.homeservice.entity.SubService;
 import org.homeservice.repository.SpecialistRepository;
 import org.homeservice.service.SpecialistService;
+import org.homeservice.service.SubServiceService;
 import org.homeservice.service.base.BaseServiceImpl;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NonUniqueException;
@@ -18,13 +20,16 @@ import java.util.List;
 @Scope("singleton")
 public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, SpecialistRepository>
         implements SpecialistService {
-    public SpecialistServiceImpl(SpecialistRepository repository) {
+    SubServiceService subServiceService;
+
+    public SpecialistServiceImpl(SpecialistRepository repository, SubServiceService subServiceService) {
         super(repository);
+        this.subServiceService = subServiceService;
     }
 
     @Override
     public void save(Specialist specialist) {
-        if(isExistUsername(specialist.getUsername()))
+        if (isExistUsername(specialist.getUsername()))
             throw new NonUniqueException("Username is not unique.");
         if (isExistEmail(specialist.getEmail()))
             throw new NonUniqueException("Email is not unique.");
@@ -60,6 +65,15 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
     }
 
     @Override
+    public void addToSubService(Long id, Long subServiceId) {
+        SubService subService = subServiceService.findById(subServiceId)
+                .orElseThrow(() -> new NotFoundException("SubService not found."));
+        Specialist specialist = findById(id).orElseThrow(() -> new NotFoundException("Specialist not found."));
+        checkStatus(specialist.getStatus());
+        repository.addToSubService(id, subServiceId);
+    }
+
+    @Override
     public void changePassword(String username, String oldPassword, String newPassword) {
         Specialist specialist = repository.findSpecialistByUsername(username)
                 .orElseThrow(() -> new NotFoundException("Specialist not found."));
@@ -82,5 +96,12 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
     private void checkUpdate(int update) {
         if (update < 1)
             throw new NotFoundException("Specialist not found.");
+    }
+
+    private void checkStatus(SpecialistStatus status) throws CustomIllegalArgumentException {
+        if (status == SpecialistStatus.NEW)
+            throw new CustomIllegalArgumentException("Specialist not yet confirmed");
+        if (status == SpecialistStatus.SUSPENDED)
+            throw new CustomIllegalArgumentException("Specialist suspended");
     }
 }

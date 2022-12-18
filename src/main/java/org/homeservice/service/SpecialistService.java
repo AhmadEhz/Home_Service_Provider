@@ -20,6 +20,8 @@ public interface SpecialistService extends BaseService<Specialist, Long> {
 
     void updateScoreByRateId(Long rateId);
 
+    void addToSubService(Long id, Long subServiceId);
+
     void changePassword(String username, String oldPassword, String newPassword);
 
     boolean isExistUsername(String username);

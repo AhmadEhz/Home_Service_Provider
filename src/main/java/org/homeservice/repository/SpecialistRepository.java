@@ -36,4 +36,10 @@ public interface SpecialistRepository extends JpaRepository<Specialist, Long> {
             (select avg(r.score) from Rate as r where r.id = :rateId)
             where id = (select r.order.specialist.id from Rate as r where r.id = :rateId)""")
     int updateScoreByRateId(Long rateId);
+
+    @Modifying
+    @Query(value = """
+            insert into subService_specialist (specialist_id, subservice_id)
+            values (:specialistId, :subServiceId)""", nativeQuery = true)
+    int addToSubService(Long specialistId, Long subServiceId);
 }
