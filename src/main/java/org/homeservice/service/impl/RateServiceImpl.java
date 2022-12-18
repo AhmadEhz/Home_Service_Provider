@@ -5,7 +5,11 @@ import org.homeservice.repository.RateRepository;
 import org.homeservice.service.RateService;
 import org.homeservice.service.SpecialistService;
 import org.homeservice.service.base.BaseServiceImpl;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
+@Service
+@Scope("singleton")
 public class RateServiceImpl extends BaseServiceImpl<Rate, Long, RateRepository> implements RateService {
 
     SpecialistService specialistService;
