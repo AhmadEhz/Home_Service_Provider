@@ -6,6 +6,7 @@ import org.homeservice.entity.SpecialistStatus;
 import org.homeservice.repository.SpecialistRepository;
 import org.homeservice.service.SpecialistService;
 import org.homeservice.service.base.BaseServiceImpl;
+import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NonUniqueException;
 import org.homeservice.util.exception.NotFoundException;
 import org.springframework.context.annotation.Scope;
@@ -56,6 +57,16 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
     public void updateScoreByRateId(Long rateId) {
         int update = repository.updateScoreByRateId(rateId);
         checkUpdate(update);
+    }
+
+    @Override
+    public void changePassword(String username, String oldPassword, String newPassword) {
+        Specialist specialist = repository.findSpecialistByUsername(username)
+                .orElseThrow(() -> new NotFoundException("Specialist not found."));
+        if (!specialist.getPassword().equals(oldPassword))
+            throw new CustomIllegalArgumentException("Old password is not incorrect.");
+        specialist.setPassword(newPassword);
+        super.update(specialist);
     }
 
     @Override
