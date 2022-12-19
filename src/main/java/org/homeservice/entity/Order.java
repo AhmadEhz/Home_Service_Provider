@@ -70,7 +70,7 @@ public class Order {
 
     @PrePersist
     private void prePersist() {
-        status = OrderStatus.STARTED;
+        status = OrderStatus.WAITING_FOR_BID;
     }
 
     public Order() {
