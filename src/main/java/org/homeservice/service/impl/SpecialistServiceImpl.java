@@ -70,28 +70,6 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
 
     @Override
     @Transactional
-    public void addToSubService(Long id, Long subServiceId) {
-        subServiceService.findById(subServiceId)
-                .orElseThrow(() -> new NotFoundException("SubService not found."));
-        Specialist specialist = findById(id).orElseThrow(() -> new NotFoundException("Specialist not found."));
-        checkStatus(specialist.getStatus());
-        int update = repository.addToSubService(id, subServiceId);
-        QueryUtil.checkUpdate(update, () ->
-                new CustomIllegalArgumentException("This Specialist is part of this SubService before."));
-    }
-
-    @Override
-    @Transactional
-    public void removeFromSubService(Long id, Long subServiceId) {
-        subServiceService.findById(subServiceId).orElseThrow(() -> new NotFoundException("SubService not found."));
-        findById(id).orElseThrow(() -> new NotFoundException("Specialist not found."));
-        int update = repository.removeFromSubService(id, subServiceId);
-        QueryUtil.checkUpdate(update, () ->
-                new CustomIllegalArgumentException("This Specialist was not part of this SubService."));
-    }
-
-    @Override
-    @Transactional
     public void changePassword(String username, String oldPassword, String newPassword) {
         Specialist specialist = repository.findSpecialistByUsername(username)
                 .orElseThrow(() -> new NotFoundException("Specialist not found."));
