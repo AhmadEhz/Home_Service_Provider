@@ -13,7 +13,10 @@ import org.homeservice.util.QueryUtil;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
 import org.springframework.context.annotation.Scope;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Scope("singleton")
@@ -39,7 +42,7 @@ public class BidServiceImpl extends BaseServiceImpl<Bid, Long, BidRepository> im
 
     @Override
     public void save(@NonNull Bid bid) {
-        if (bid.getOrder() == null || bid.getOrder().getId()==null)
+        if (bid.getOrder() == null || bid.getOrder().getId() == null)
             throw new NullPointerException("Order or orderId is null.");
         if (bid.getSpecialist() == null || bid.getSpecialist().getId() == null)
             throw new NullPointerException("Specialist or specialistId is null.");
@@ -52,5 +55,15 @@ public class BidServiceImpl extends BaseServiceImpl<Bid, Long, BidRepository> im
 
         super.save(bid);
         orderService.changeStatusToChooseSpecialist(bid.getOrder().getId());
+    }
+
+    @Override
+    public List<Bid> loadAllByOrderSortedByPrice(Long orderId) {
+        return repository.findAllByOrder_Id(orderId, Sort.by(Sort.Direction.ASC, "offerPrice"));
+    }
+
+    @Override
+    public List<Bid> loadAllByOrderSortedBySpecialistScore(Long orderId) {
+        return repository.findAllByOrder_Id(orderId, Sort.by(Sort.Direction.DESC, "specialist.score"));
     }
 }
