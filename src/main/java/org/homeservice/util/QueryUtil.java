@@ -2,6 +2,8 @@ package org.homeservice.util;
 
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
+import org.homeservice.entity.OrderStatus;
+import org.homeservice.util.exception.CustomIllegalArgumentException;
 
 import java.util.function.Supplier;
 
@@ -22,5 +24,10 @@ public class QueryUtil {
     public static <X extends Throwable> void checkUpdate(int update, Supplier<? extends X> exception) throws X {
         if (update < 1)
             throw exception.get();
+    }
+
+    public static boolean checkOrderStatusIfWaitingForBids(OrderStatus status) {
+        return !(status == OrderStatus.STARTED || status == OrderStatus.FINISHED || status == OrderStatus.PAID
+                 || status == OrderStatus.WAITING_FOR_COMING_SPECIALIST);
     }
 }

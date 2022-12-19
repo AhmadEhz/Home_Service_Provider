@@ -9,6 +9,7 @@ import org.homeservice.service.BidService;
 import org.homeservice.service.OrderService;
 import org.homeservice.service.SpecialistService;
 import org.homeservice.service.base.BaseServiceImpl;
+import org.homeservice.util.QueryUtil;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
 import org.springframework.context.annotation.Scope;
@@ -38,15 +39,18 @@ public class BidServiceImpl extends BaseServiceImpl<Bid, Long, BidRepository> im
 
     @Override
     public void save(@NonNull Bid bid) {
-        if (bid.getOrder() == null)
-            throw new NullPointerException("Order is null.");
-        if (bid.getSpecialist() == null)
-            throw new NullPointerException("Specialist is null.");
+        if (bid.getOrder() == null || bid.getOrder().getId()==null)
+            throw new NullPointerException("Order or orderId is null.");
+        if (bid.getSpecialist() == null || bid.getSpecialist().getId() == null)
+            throw new NullPointerException("Specialist or specialistId is null.");
 
         if (bid.getOfferPrice() < bid.getOrder().getSubService().getBasePrice())
             throw new CustomIllegalArgumentException
                     ("Offer price should not be less than base price of the BaseService.");
+        if (!QueryUtil.checkOrderStatusIfWaitingForBids(bid.getOrder().getStatus()))
+            throw new CustomIllegalArgumentException("This order did not accepted new bid.");
 
         super.save(bid);
+        orderService.changeStatusToChooseSpecialist(bid.getOrder().getId());
     }
 }
