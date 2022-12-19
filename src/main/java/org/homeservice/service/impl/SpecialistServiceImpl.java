@@ -46,6 +46,16 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
     }
 
     @Override
+    public void verifySpecialist(Long id) {
+        changeStatus(id, SpecialistStatus.ACCEPTED);
+    }
+
+    @Override
+    public void suspendSpecialist(Long id) {
+        changeStatus(id, SpecialistStatus.SUSPENDED);
+    }
+
+    @Override
     @Transactional
     public void changeStatus(Long id, @NonNull SpecialistStatus status) {
         int update = repository.updateStatus(id, status);
@@ -92,6 +102,7 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
         Specialist specialist = findById(id).orElseThrow(() -> new NotFoundException("Specialist not found."));
         checkStatusVerified(specialist.getStatus());
     }
+
     private void checkStatusVerified(SpecialistStatus status) throws CustomIllegalArgumentException {
         if (status == SpecialistStatus.NEW)
             throw new CustomIllegalArgumentException("Specialist not yet confirmed");

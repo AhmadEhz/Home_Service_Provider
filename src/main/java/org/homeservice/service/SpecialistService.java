@@ -14,6 +14,10 @@ public interface SpecialistService extends BaseService<Specialist, Long> {
 
     List<Specialist> loadAllNew();
 
+    void verifySpecialist(Long id);
+
+    void suspendSpecialist(Long id);
+
     void changeStatus(Long id, @NonNull SpecialistStatus status);
 
     void updateScore(Long id);
