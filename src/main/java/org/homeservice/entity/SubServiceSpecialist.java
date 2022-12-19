@@ -18,6 +18,11 @@ public class SubServiceSpecialist {
     public SubServiceSpecialist() {
     }
 
+    public SubServiceSpecialist(Long specialistId, Long subServiceId) {
+        this.specialist = new Specialist(specialistId);
+        this.subService = new SubService(subServiceId);
+    }
+
     public SubServiceSpecialist(Specialist specialist, SubService subService) {
         this.subService = subService;
         this.specialist = specialist;

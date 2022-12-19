@@ -12,4 +12,6 @@ public interface SubServiceSpecialistService extends BaseService<SubServiceSpeci
     Optional<SubServiceSpecialist> findById(Long specialistId, Long subServiceId);
 
     boolean isExist(Long specialistId, Long subServiceId);
+
+    void save(Long specialistId, Long subServiceId);
 }
