@@ -25,22 +25,24 @@ public class SubServiceServiceImpl extends BaseServiceImpl<SubService, Long, Sub
     }
 
     @Override
+    public List<SubService> loadAllByService(Long serviceId) {
+        return repository.findSubServicesByService_Id(serviceId);
+    }
+
+    @Override
     public void editDescription(String newDescription, Long id) {
-        SubService subService = loadById(id);
+        SubService subService = repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("SubService not found."));
         subService.setDescription(newDescription);
         update(subService);
     }
 
     @Override
     public void editBasePrice(double basePrice, Long id) {
-        SubService subService = loadById(id);
+        SubService subService = repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("SubService not found."));
         subService.setBasePrice(basePrice);
         update(subService);
-    }
-
-    private SubService loadById(Long id) throws NotFoundException {
-        return repository.findById(id)
-                .orElseThrow(() -> new NotFoundException("SubService not found."));
     }
 
 }

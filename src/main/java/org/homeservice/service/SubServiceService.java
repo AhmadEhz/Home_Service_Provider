@@ -10,6 +10,8 @@ import java.util.List;
 public interface SubServiceService extends BaseService<SubService, Long> {
     List<SubService> loadAllBySpecialist(Long specialistId);
 
+    List<SubService> loadAllByService(Long serviceId);
+
     void editDescription(String newDescription, Long id);
 
     void editBasePrice(double basePrice, Long id);
