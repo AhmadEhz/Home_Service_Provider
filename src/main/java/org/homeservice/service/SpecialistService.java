@@ -25,4 +25,6 @@ public interface SpecialistService extends BaseService<Specialist, Long> {
     boolean isExistUsername(String username);
 
     boolean isExistEmail(String email);
+
+    void checkStatusVerified(Long id);
 }

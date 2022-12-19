@@ -8,9 +8,7 @@ import org.homeservice.service.SpecialistService;
 import org.homeservice.service.SubServiceService;
 import org.homeservice.service.base.BaseServiceImpl;
 import org.homeservice.util.QueryUtil;
-import org.homeservice.util.exception.CustomIllegalArgumentException;
-import org.homeservice.util.exception.NonUniqueException;
-import org.homeservice.util.exception.NotFoundException;
+import org.homeservice.util.exception.*;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,7 +87,12 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
         return repository.findSpecialistByEmail(email).isPresent();
     }
 
-    private void checkStatus(SpecialistStatus status) throws CustomIllegalArgumentException {
+    @Override
+    public void checkStatusVerified(Long id) {
+        Specialist specialist = findById(id).orElseThrow(() -> new NotFoundException("Specialist not found."));
+        checkStatusVerified(specialist.getStatus());
+    }
+    private void checkStatusVerified(SpecialistStatus status) throws CustomIllegalArgumentException {
         if (status == SpecialistStatus.NEW)
             throw new CustomIllegalArgumentException("Specialist not yet confirmed");
         if (status == SpecialistStatus.SUSPENDED)
