@@ -40,6 +40,12 @@ public interface SpecialistRepository extends JpaRepository<Specialist, Long> {
     @Modifying
     @Query(value = """
             insert into subService_specialist (specialist_id, subservice_id)
-            values (:specialistId, :subServiceId)""", nativeQuery = true)
-    int addToSubService(Long specialistId, Long subServiceId);
+            values (:id, :subServiceId)""", nativeQuery = true)
+    int addToSubService(Long id, Long subServiceId);
+
+    @Modifying
+    @Query("""
+            delete from SubServiceSpecialist
+            where Specialist.id = :id and subService.id = :subServiceId""")
+    int removeFromSubService(Long id, Long subServiceId);
 }

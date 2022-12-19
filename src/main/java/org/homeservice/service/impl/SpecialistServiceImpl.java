@@ -7,6 +7,7 @@ import org.homeservice.repository.SpecialistRepository;
 import org.homeservice.service.SpecialistService;
 import org.homeservice.service.SubServiceService;
 import org.homeservice.service.base.BaseServiceImpl;
+import org.homeservice.util.QueryUtil;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NonUniqueException;
 import org.homeservice.util.exception.NotFoundException;
@@ -50,21 +51,21 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
     @Transactional
     public void changeStatus(Long id, @NonNull SpecialistStatus status) {
         int update = repository.updateStatus(id, status);
-        checkUpdate(update);
+        QueryUtil.checkUpdate(update, () -> new NotFoundException("Specialist not found."));
     }
 
     @Override
     @Transactional
     public void updateScore(Long id) {
         int update = repository.updateScore(id);
-        checkUpdate(update);
+        QueryUtil.checkUpdate(update, () -> new NotFoundException("Specialist not found."));
     }
 
     @Override
     @Transactional
     public void updateScoreByRateId(Long rateId) {
         int update = repository.updateScoreByRateId(rateId);
-        checkUpdate(update);
+        QueryUtil.checkUpdate(update, () -> new NotFoundException("Specialist not found."));
     }
 
     @Override
@@ -75,7 +76,18 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
         Specialist specialist = findById(id).orElseThrow(() -> new NotFoundException("Specialist not found."));
         checkStatus(specialist.getStatus());
         int update = repository.addToSubService(id, subServiceId);
-        checkUpdate(update);
+        QueryUtil.checkUpdate(update, () ->
+                new CustomIllegalArgumentException("This Specialist is part of this SubService before."));
+    }
+
+    @Override
+    @Transactional
+    public void removeFromSubService(Long id, Long subServiceId) {
+        subServiceService.findById(subServiceId).orElseThrow(() -> new NotFoundException("SubService not found."));
+        findById(id).orElseThrow(() -> new NotFoundException("Specialist not found."));
+        int update = repository.removeFromSubService(id, subServiceId);
+        QueryUtil.checkUpdate(update, () ->
+                new CustomIllegalArgumentException("This Specialist was not part of this SubService."));
     }
 
     @Override
@@ -97,11 +109,6 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
     @Override
     public boolean isExistEmail(String email) {
         return repository.findSpecialistByEmail(email).isPresent();
-    }
-
-    private void checkUpdate(int update) throws NotFoundException {
-        if (update < 1)
-            throw new NotFoundException("Specialist not found.");
     }
 
     private void checkStatus(SpecialistStatus status) throws CustomIllegalArgumentException {

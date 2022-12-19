@@ -22,6 +22,8 @@ public interface SpecialistService extends BaseService<Specialist, Long> {
 
     void addToSubService(Long id, Long subServiceId);
 
+    void removeFromSubService(Long id, Long subServiceId);
+
     void changePassword(String username, String oldPassword, String newPassword);
 
     boolean isExistUsername(String username);
