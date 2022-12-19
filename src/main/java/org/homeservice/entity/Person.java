@@ -23,7 +23,7 @@ public abstract class Person {
     @NotNull
     @Length(min = 5, message = "Username should not be less than 5 characters.")
     @Length(max = 128, message = "Username should not be more than 128 characters.")
-    @Pattern(regexp = "^[A-Za-z0-9_.]$",
+    @Pattern(regexp = "^[A-Za-z0-9_.]+$",
             message = "The username should only contains letters, numbers, '_' and '.'")
     private String username;
 

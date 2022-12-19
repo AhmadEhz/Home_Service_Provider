@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -34,7 +35,8 @@ public class Specialist extends Person {
     @OneToOne
     private Credit credit;
 
-    @Max(307200) // 300KB
+//    @Max(307200)
+//    @Length(max = 307200)// 300KB
     private byte[] avatar;
 
     @CreationTimestamp
