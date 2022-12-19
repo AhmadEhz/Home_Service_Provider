@@ -6,8 +6,10 @@ import org.homeservice.repository.SubServiceSpecialistRepository;
 import org.homeservice.service.SubServiceSpecialistService;
 import org.homeservice.service.base.BaseServiceImpl;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
+import org.homeservice.util.exception.NotFoundException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -30,8 +32,16 @@ public class SubServiceSpecialistServiceImpl extends BaseServiceImpl<SubServiceS
 
     @Override
     public void save(Long specialistId, Long subServiceId) {
-        if(isExist(specialistId,subServiceId))
+        if (isExist(specialistId, subServiceId))
             throw new CustomIllegalArgumentException("This Specialist is part of SubService before.");
-        super.save(new SubServiceSpecialist(specialistId,subServiceId));
+        super.save(new SubServiceSpecialist(specialistId, subServiceId));
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long specialistId, Long subServiceId) {
+        if (!isExist(specialistId, subServiceId))
+            throw new NotFoundException("This Specialist is not part of SubService.");
+        repository.remove(specialistId, subServiceId);
     }
 }

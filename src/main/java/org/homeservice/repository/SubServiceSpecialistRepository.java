@@ -19,12 +19,6 @@ public interface SubServiceSpecialistRepository extends JpaRepository<SubService
     @Modifying
     @Query("""
             delete from SubServiceSpecialist
-            where Specialist.id = :id and subService.id = :subServiceId""")
-    int removeFromSubService(Long id, Long subServiceId);
-
-    @Modifying
-    @Query(value = """
-            insert into subService_specialist (specialist_id, subservice_id)
-            values (:id, :subServiceId)""", nativeQuery = true)
-    int addToSubService(Long id, Long subServiceId);
+            where Specialist.id = :specialistId and subService.id = :subServiceId""")
+    int remove(Long specialistId, Long subServiceId);
 }
