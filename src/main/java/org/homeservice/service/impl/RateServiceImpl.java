@@ -7,6 +7,7 @@ import org.homeservice.service.SpecialistService;
 import org.homeservice.service.base.BaseServiceImpl;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Scope("singleton")
@@ -20,6 +21,7 @@ public class RateServiceImpl extends BaseServiceImpl<Rate, Long, RateRepository>
     }
 
     @Override
+    @Transactional
     public void save(Rate rate) {
         super.save(rate);
         specialistService.updateScoreByRateId(rate.getId());
