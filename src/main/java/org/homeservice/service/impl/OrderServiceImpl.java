@@ -50,7 +50,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
 
         if (!order.getCustomer().equals(customer))
             throw new CustomIllegalArgumentException("This Order is not for this Customer");
-        if (!QueryUtil.checkOrderStatusIfWaitingForBids(order.getStatus()))
+        if (!order.checkStatusIfWaitingForBids())
             throw new CustomIllegalArgumentException("This order accepted a bid before this.");
 
         order.setFinalPrice(bid.getOfferPrice());
@@ -62,7 +62,11 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
     @Override
     @Transactional
     public void changeStatusToChooseSpecialist(Long id) {
-        int update = repository.changeStatus(id, OrderStatus.WAITING_FOR_CHOOSE_SPECIALIST);
-        QueryUtil.checkUpdate(update, () -> new NotFoundException("Order not found."));
+        Order order = findById(id).orElseThrow(() -> new NotFoundException("Order not found."));
+        if (!order.checkStatusIfWaitingForBids()) {
+            throw new CustomIllegalArgumentException
+                    ("Can't change order status to \"Waiting for Specialist\". Customer accepted a bid.");
+        }
+        repository.changeStatus(id, OrderStatus.WAITING_FOR_CHOOSE_SPECIALIST);
     }
 }

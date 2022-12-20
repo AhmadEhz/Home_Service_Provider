@@ -50,7 +50,7 @@ public class BidServiceImpl extends BaseServiceImpl<Bid, Long, BidRepository> im
         if (bid.getOfferPrice() < bid.getOrder().getSubService().getBasePrice())
             throw new CustomIllegalArgumentException
                     ("Offer price should not be less than base price of the BaseService.");
-        if (!QueryUtil.checkOrderStatusIfWaitingForBids(bid.getOrder().getStatus()))
+        if (!bid.getOrder().checkStatusIfWaitingForBids())
             throw new CustomIllegalArgumentException("This order did not accepted new bid.");
 
         super.save(bid);

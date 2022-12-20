@@ -25,9 +25,4 @@ public class QueryUtil {
         if (update < 1)
             throw exception.get();
     }
-
-    public static boolean checkOrderStatusIfWaitingForBids(OrderStatus status) {
-        return !(status == OrderStatus.STARTED || status == OrderStatus.FINISHED || status == OrderStatus.PAID
-                 || status == OrderStatus.WAITING_FOR_COMING_SPECIALIST);
-    }
 }

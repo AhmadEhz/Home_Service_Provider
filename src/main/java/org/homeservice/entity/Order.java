@@ -205,4 +205,8 @@ public class Order {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+    public boolean checkStatusIfWaitingForBids() {
+        return status != OrderStatus.STARTED && status != OrderStatus.FINISHED && status != OrderStatus.PAID
+               && status != OrderStatus.WAITING_FOR_COMING_SPECIALIST;
+    }
 }
