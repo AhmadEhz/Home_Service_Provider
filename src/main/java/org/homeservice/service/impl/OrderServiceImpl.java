@@ -9,9 +9,9 @@ import org.homeservice.service.BidService;
 import org.homeservice.service.CustomerService;
 import org.homeservice.service.OrderService;
 import org.homeservice.service.base.BaseServiceImpl;
-import org.homeservice.util.QueryUtil;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,12 +22,10 @@ import java.util.List;
 @Scope("singleton")
 public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderRepository> implements OrderService {
 
-    private final BidService bidService;
     private final CustomerService customerService;
 
-    public OrderServiceImpl(OrderRepository repository, BidService bidService, CustomerService customerService) {
+    public OrderServiceImpl(OrderRepository repository, CustomerService customerService) {
         super(repository);
-        this.bidService = bidService;
         this.customerService = customerService;
     }
 
@@ -43,6 +41,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
 
     @Override
     public void selectBidForOffer(Long bidId, Long customerId) {
+        BidService bidService = new AnnotationConfigApplicationContext().getBean(BidService.class);
         Bid bid = bidService.findById(bidId).orElseThrow(() -> new NotFoundException("Bid not found."));
         Customer customer = customerService.findById(customerId).orElseThrow(
                 () -> new NotFoundException("Customer not found."));
