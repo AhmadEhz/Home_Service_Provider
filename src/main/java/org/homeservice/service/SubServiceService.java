@@ -8,6 +8,8 @@ import java.util.List;
 
 @Service
 public interface SubServiceService extends BaseService<SubService, Long> {
+    void save(SubService subService, String serviceName);
+
     List<SubService> loadAllBySpecialist(Long specialistId);
 
     List<SubService> loadAllByService(Long serviceId);
@@ -15,4 +17,6 @@ public interface SubServiceService extends BaseService<SubService, Long> {
     void editDescription(String newDescription, Long id);
 
     void editBasePrice(double basePrice, Long id);
+
+    boolean isExistedByNameAndServiceId(String subServiceName, Long serviceId);
 }

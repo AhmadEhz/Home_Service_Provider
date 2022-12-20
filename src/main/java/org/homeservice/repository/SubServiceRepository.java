@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SubServiceRepository extends JpaRepository<SubService, Long> {
@@ -19,4 +20,6 @@ public interface SubServiceRepository extends JpaRepository<SubService, Long> {
     List<SubService> findAllBySpecialist(Long specialistId);
 
     List<SubService> findSubServicesByService_Id(Long serviceId);
+
+    Optional<SubService> findSubServiceByNameAndService_Id(String subServiceName, Long serviceId);
 }
