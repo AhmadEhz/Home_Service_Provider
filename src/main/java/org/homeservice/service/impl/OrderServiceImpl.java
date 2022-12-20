@@ -1,11 +1,16 @@
 package org.homeservice.service.impl;
 
+import org.homeservice.entity.Bid;
+import org.homeservice.entity.Customer;
 import org.homeservice.entity.Order;
 import org.homeservice.entity.OrderStatus;
 import org.homeservice.repository.OrderRepository;
+import org.homeservice.service.BidService;
+import org.homeservice.service.CustomerService;
 import org.homeservice.service.OrderService;
 import org.homeservice.service.base.BaseServiceImpl;
 import org.homeservice.util.QueryUtil;
+import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -17,8 +22,13 @@ import java.util.List;
 @Scope("singleton")
 public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderRepository> implements OrderService {
 
-    public OrderServiceImpl(OrderRepository repository) {
+    private final BidService bidService;
+    private final CustomerService customerService;
+
+    public OrderServiceImpl(OrderRepository repository, BidService bidService, CustomerService customerService) {
         super(repository);
+        this.bidService = bidService;
+        this.customerService = customerService;
     }
 
     @Override
@@ -29,6 +39,24 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
     @Override
     public List<Order> findAllBySpecialist(Long specialistId) {
         return repository.findAllBySpecialist_Id(specialistId);
+    }
+
+    @Override
+    public void selectBidForOffer(Long bidId, Long customerId) {
+        Bid bid = bidService.findById(bidId).orElseThrow(() -> new NotFoundException("Bid not found."));
+        Customer customer = customerService.findById(customerId).orElseThrow(
+                () -> new NotFoundException("Customer not found."));
+        Order order = bid.getOrder();
+
+        if (!order.getCustomer().equals(customer))
+            throw new CustomIllegalArgumentException("This Order is not for this Customer");
+        if (!QueryUtil.checkOrderStatusIfWaitingForBids(order.getStatus()))
+            throw new CustomIllegalArgumentException("This order accepted a bid before this.");
+
+        order.setFinalPrice(bid.getOfferPrice());
+        order.setSpecialist(bid.getSpecialist());
+        order.setStatus(OrderStatus.WAITING_FOR_COMING_SPECIALIST);
+        update(order);
     }
 
     @Override

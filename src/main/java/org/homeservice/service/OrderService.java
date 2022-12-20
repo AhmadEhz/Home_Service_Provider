@@ -15,5 +15,7 @@ public interface OrderService extends BaseService<Order, Long> {
 
     List<Order> findAllBySpecialist(Long specialistId);
 
+    void selectBidForOffer(Long bidId, Long customerId);
+
     void changeStatusToChooseSpecialist(Long id);
 }
