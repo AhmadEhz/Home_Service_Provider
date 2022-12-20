@@ -1,6 +1,5 @@
 package org.homeservice.service.impl;
 
-import lombok.NonNull;
 import org.homeservice.entity.Bid;
 import org.homeservice.entity.Order;
 import org.homeservice.entity.Specialist;
@@ -9,7 +8,6 @@ import org.homeservice.service.BidService;
 import org.homeservice.service.OrderService;
 import org.homeservice.service.SpecialistService;
 import org.homeservice.service.base.BaseServiceImpl;
-import org.homeservice.util.QueryUtil;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
 import org.springframework.context.annotation.Scope;
@@ -41,16 +39,18 @@ public class BidServiceImpl extends BaseServiceImpl<Bid, Long, BidRepository> im
     }
 
     @Override
-    public void save(@NonNull Bid bid) {
+    public void save(Bid bid) {
         if (bid.getOrder() == null || bid.getOrder().getId() == null)
             throw new NullPointerException("Order or orderId is null.");
         if (bid.getSpecialist() == null || bid.getSpecialist().getId() == null)
             throw new NullPointerException("Specialist or specialistId is null.");
 
+        if(!bid.getSpecialist().isVerified())
+            throw new CustomIllegalArgumentException("Specialist is not verified yet or suspended.");
         if (bid.getOfferPrice() < bid.getOrder().getSubService().getBasePrice())
             throw new CustomIllegalArgumentException
                     ("Offer price should not be less than base price of the BaseService.");
-        if (!bid.getOrder().checkStatusIfWaitingForBids())
+        if (!bid.getOrder().checkStatusIfWaitingForBids()) //Check order not accepted a bid.
             throw new CustomIllegalArgumentException("This order did not accepted new bid.");
 
         super.save(bid);

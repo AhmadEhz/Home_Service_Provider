@@ -2,11 +2,9 @@ package org.homeservice.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -138,5 +136,8 @@ public class Specialist extends Person {
 
     public void setRates(List<Rate> rates) {
         this.rates = rates;
+    }
+    public boolean isVerified() {
+        return status == SpecialistStatus.ACCEPTED;
     }
 }
