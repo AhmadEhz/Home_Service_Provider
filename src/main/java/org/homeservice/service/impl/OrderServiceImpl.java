@@ -6,7 +6,8 @@ import org.homeservice.service.*;
 import org.homeservice.service.base.BaseServiceImpl;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,13 +17,16 @@ import java.util.List;
 
 @Service
 @Scope("singleton")
+@ComponentScan(basePackages = "org.homeservice.service.*")
 public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderRepository> implements OrderService {
 
+    private final ApplicationContext applicationContext;
     private final CustomerService customerService;
     private BidService bidService;
 
-    public OrderServiceImpl(OrderRepository repository, CustomerService customerService) {
+    public OrderServiceImpl(OrderRepository repository, ApplicationContext applicationContext, CustomerService customerService) {
         super(repository);
+        this.applicationContext = applicationContext;
         this.customerService = customerService;
     }
 
@@ -86,7 +90,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
             throw new CustomIllegalArgumentException("This Order not yet accepted a Bid.");
 
         bid = getBidService().loadByCustomerAndSpecialist(customerId, order.getSpecialist().getId())
-                        .orElseThrow(() -> new NotFoundException("The Bid for this Order not found."));
+                .orElseThrow(() -> new NotFoundException("The Bid for this Order not found."));
         if (LocalDateTime.now().isBefore(bid.getStartWorking()))
             throw new CustomIllegalArgumentException("Starting the work should be after Bid start time");
 
@@ -100,7 +104,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
 
     private BidService getBidService() {
         if (bidService == null)
-            bidService = new AnnotationConfigApplicationContext().getBean(BidService.class);
+            bidService = applicationContext.getBean(BidService.class);
         return bidService;
     }
 }
