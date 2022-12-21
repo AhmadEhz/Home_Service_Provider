@@ -6,6 +6,7 @@ import org.homeservice.entity.SpecialistStatus;
 import org.homeservice.service.base.BaseService;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.List;
 
 @Service
@@ -18,13 +19,15 @@ public interface SpecialistService extends BaseService<Specialist, Long> {
 
     void suspendSpecialist(Long id);
 
-    void changeStatus(Long id, @NonNull SpecialistStatus status);
+    void changeStatus(Long id, SpecialistStatus status);
 
     void updateScore(Long id);
 
     void updateScoreByRateId(Long rateId);
 
     void changePassword(String username, String oldPassword, String newPassword);
+
+    void addImage(Long id, File file);
 
     boolean isExistUsername(String username);
 

@@ -6,6 +6,9 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -33,7 +36,7 @@ public class Specialist extends Person {
     @OneToOne
     private Credit credit;
 
-//    @Max(307200)
+    //    @Max(307200)
 //    @Length(max = 307200)// 300KB
     private byte[] avatar;
 
@@ -55,10 +58,9 @@ public class Specialist extends Person {
         setId(id);
     }
 
-    public Specialist(String firstName, String lastName, String username, String password, String email, byte[] avatar) {
+    public Specialist(String firstName, String lastName, String username, String password, String email) {
         super(firstName, lastName, username, password);
         this.email = email;
-        this.avatar = avatar;
     }
 
     @PrePersist
@@ -130,6 +132,15 @@ public class Specialist extends Person {
         this.avatar = avatar;
     }
 
+    public boolean setAvatar(File file) {
+        try (FileInputStream fileInputStream = new FileInputStream(file)) {
+            avatar = fileInputStream.readAllBytes();
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
     public List<Rate> getRates() {
         return rates;
     }
@@ -137,6 +148,7 @@ public class Specialist extends Person {
     public void setRates(List<Rate> rates) {
         this.rates = rates;
     }
+
     public boolean isVerified() {
         return status == SpecialistStatus.ACCEPTED;
     }

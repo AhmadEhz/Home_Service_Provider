@@ -1,6 +1,5 @@
 package org.homeservice.service.impl;
 
-import lombok.NonNull;
 import org.homeservice.entity.Specialist;
 import org.homeservice.entity.SpecialistStatus;
 import org.homeservice.repository.SpecialistRepository;
@@ -8,11 +7,13 @@ import org.homeservice.service.SpecialistService;
 import org.homeservice.service.SubServiceService;
 import org.homeservice.service.base.BaseServiceImpl;
 import org.homeservice.util.QueryUtil;
+import org.homeservice.util.Values;
 import org.homeservice.util.exception.*;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.util.List;
 
 @Service
@@ -57,7 +58,7 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
 
     @Override
     @Transactional
-    public void changeStatus(Long id, @NonNull SpecialistStatus status) {
+    public void changeStatus(Long id, SpecialistStatus status) {
         int update = repository.updateStatus(id, status);
         QueryUtil.checkUpdate(update, () -> new NotFoundException("Specialist not found."));
     }
@@ -85,6 +86,20 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
             throw new CustomIllegalArgumentException("Old password is not incorrect.");
         specialist.setPassword(newPassword);
         super.update(specialist);
+    }
+    @Override
+    public void addImage(Long id, File file) {
+        Specialist specialist = findById(id).orElseThrow(() -> new NotFoundException("Specialist not found."));
+        if (file.length() > Values.MAX_AVATAR_SIZE)
+            throw new CustomIllegalArgumentException
+                    ("Size of avatar should not be greater than " + (Values.MAX_AVATAR_SIZE / 1024) + " KB");
+        if (!file.getName().toLowerCase().endsWith(Values.AVATAR_FORMAT))
+            throw new CustomIllegalArgumentException("Image format must be " + Values.AVATAR_FORMAT);
+
+        if (!specialist.setAvatar(file))
+            throw new CustomIllegalArgumentException("File is corrupted");
+
+        update(specialist);
     }
 
     @Override
