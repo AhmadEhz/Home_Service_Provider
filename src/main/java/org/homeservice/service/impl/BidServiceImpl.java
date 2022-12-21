@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Scope("singleton")
@@ -45,7 +46,7 @@ public class BidServiceImpl extends BaseServiceImpl<Bid, Long, BidRepository> im
         if (bid.getSpecialist() == null || bid.getSpecialist().getId() == null)
             throw new NullPointerException("Specialist or specialistId is null.");
 
-        if(!bid.getSpecialist().isVerified())
+        if (!bid.getSpecialist().isVerified())
             throw new CustomIllegalArgumentException("Specialist is not verified yet or suspended.");
         if (bid.getOfferPrice() < bid.getOrder().getSubService().getBasePrice())
             throw new CustomIllegalArgumentException
@@ -54,7 +55,7 @@ public class BidServiceImpl extends BaseServiceImpl<Bid, Long, BidRepository> im
             throw new CustomIllegalArgumentException("This order did not accepted new bid.");
 
         super.save(bid);
-        orderService.changeStatusToChooseSpecialist(bid.getOrder().getId());
+        orderService.changeStatusToChooseSpecialist(bid.getOrder().getId(), bid.getOrder().getCustomer().getId());
     }
 
     @Override
@@ -65,5 +66,10 @@ public class BidServiceImpl extends BaseServiceImpl<Bid, Long, BidRepository> im
     @Override
     public List<Bid> loadAllByOrderSortedBySpecialistScore(Long orderId) {
         return repository.findAllByOrder_Id(orderId, Sort.by(Sort.Direction.DESC, "specialist.score"));
+    }
+
+    @Override
+    public Optional<Bid> loadByCustomerAndSpecialist(Long customerId, Long specialistId) {
+        return repository.findByCustomerAndSpecialist(customerId, specialistId);
     }
 }

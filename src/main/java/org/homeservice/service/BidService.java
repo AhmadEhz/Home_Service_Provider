@@ -5,6 +5,7 @@ import org.homeservice.service.base.BaseService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public interface BidService extends BaseService<Bid, Long> {
@@ -13,4 +14,6 @@ public interface BidService extends BaseService<Bid, Long> {
     List<Bid> loadAllByOrderSortedByPrice(Long orderId);
 
     List<Bid> loadAllByOrderSortedBySpecialistScore(Long orderId);
+
+    Optional<Bid> loadByCustomerAndSpecialist(Long customerId, Long specialistId);
 }

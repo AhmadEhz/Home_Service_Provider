@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
@@ -18,4 +19,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Modifying
     @Query("update Order as o set o.status = :status where o.id = :id")
     int changeStatus(Long id, OrderStatus status);
+
+    //If specialist is not null, It means Customer accepted a bid for this Order.
+    @Query ("select o from Order as o where o.specialist is not null")
+    Optional<Order> findIfAcceptedABid(Long id);
 }
