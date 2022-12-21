@@ -173,7 +173,7 @@ public class Specialist extends Person {
         if (!super.equals(o)) return false;
         Specialist that = (Specialist) o;
         return Objects.equals(email, that.email) && status == that.status && Objects.equals(score, that.score)
-               && Objects.equals(credit, that.credit) && Objects.equals(createdAt, that.createdAt);
+               && Objects.equals(credit, that.credit);
     }
 
     @Override
