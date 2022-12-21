@@ -10,9 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class Specialist extends Person {
@@ -151,5 +149,35 @@ public class Specialist extends Person {
 
     public boolean isVerified() {
         return status == SpecialistStatus.ACCEPTED;
+    }
+
+    @Override
+    public String toString() {
+        return "Specialist{" +
+               "email='" + email + '\'' +
+               ", status=" + status +
+               ", score=" + score +
+               ", bids=" + bids +
+               ", orders=" + orders +
+               ", credit=" + credit +
+               ", avatar=" + Arrays.toString(avatar) +
+               ", createdAt=" + createdAt +
+               ", rates=" + rates +
+               "} " + super.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Specialist that = (Specialist) o;
+        return Objects.equals(email, that.email) && status == that.status && Objects.equals(score, that.score)
+               && Objects.equals(credit, that.credit) && Objects.equals(createdAt, that.createdAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), email, status, score, credit, createdAt);
     }
 }

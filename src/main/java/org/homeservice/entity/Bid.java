@@ -7,9 +7,9 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
-@ToString
 public class Bid {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -121,5 +121,33 @@ public class Bid {
 
     public void setOrder(Order order) {
         this.order = order;
+    }
+
+    @Override
+    public String toString() {
+        return "Bid{" +
+               "id=" + id +
+               ", offerPrice=" + offerPrice +
+               ", startWorking=" + startWorking +
+               ", endWorking=" + endWorking +
+               ", timeSpent=" + timeSpent +
+               ", specialist=" + specialist +
+               ", order=" + order +
+               ", createdAt=" + createdAt +
+               '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Bid bid = (Bid) o;
+        return Objects.equals(id, bid.id) && Objects.equals(offerPrice, bid.offerPrice)
+               && Objects.equals(specialist, bid.specialist) && Objects.equals(order, bid.order);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, offerPrice, specialist, order);
     }
 }

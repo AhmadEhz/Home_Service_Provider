@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -205,8 +206,48 @@ public class Order {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
     public boolean checkStatusIfWaitingForBids() {
         return status != OrderStatus.STARTED && status != OrderStatus.FINISHED && status != OrderStatus.PAID
                && status != OrderStatus.WAITING_FOR_COMING_SPECIALIST;
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+               "id=" + id +
+               ", customerOfferPrice=" + customerOfferPrice +
+               ", description='" + description + '\'' +
+               ", workingTime=" + workingTime +
+               ", address='" + address + '\'' +
+               ", finalPrice=" + finalPrice +
+               ", startWorkingTime=" + startWorkingTime +
+               ", endWorkingTime=" + endWorkingTime +
+               ", status=" + status +
+               ", customer=" + customer +
+               ", subService=" + subService +
+               ", specialist=" + specialist +
+               ", rate=" + rate +
+               ", createdAt=" + createdAt +
+               '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Order order = (Order) o;
+        return Objects.equals(id, order.id) && Objects.equals(customerOfferPrice, order.customerOfferPrice)
+               && Objects.equals(description, order.description) && Objects.equals(workingTime, order.workingTime)
+               && Objects.equals(address, order.address) && Objects.equals(finalPrice, order.finalPrice)
+               && Objects.equals(startWorkingTime, order.startWorkingTime)
+               && Objects.equals(endWorkingTime, order.endWorkingTime) && status == order.status
+               && Objects.equals(customer, order.customer) && Objects.equals(subService, order.subService)
+               && Objects.equals(specialist, order.specialist) && Objects.equals(createdAt, order.createdAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, customerOfferPrice, description, workingTime, address, finalPrice, startWorkingTime, endWorkingTime, status, customer, subService, specialist, rate, createdAt);
     }
 }

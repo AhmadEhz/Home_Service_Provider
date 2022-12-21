@@ -3,6 +3,8 @@ package org.homeservice.entity;
 import jakarta.persistence.*;
 import org.homeservice.entity.id.SubServiceSpecialistId;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "subservice_specialist")
 @IdClass(SubServiceSpecialistId.class)
@@ -42,5 +44,26 @@ public class SubServiceSpecialist {
 
     public void setSpecialist(Specialist specialist) {
         this.specialist = specialist;
+    }
+
+    @Override
+    public String toString() {
+        return "SubServiceSpecialist{" +
+               "subService=" + subService +
+               ", specialist=" + specialist +
+               '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SubServiceSpecialist that = (SubServiceSpecialist) o;
+        return Objects.equals(subService, that.subService) && Objects.equals(specialist, that.specialist);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(subService, specialist);
     }
 }
