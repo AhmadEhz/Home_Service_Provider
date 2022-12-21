@@ -6,6 +6,7 @@ import org.homeservice.entity.SpecialistStatus;
 import org.homeservice.service.hibernate.base.HibernateBaseService;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface HibernateSpecialistService extends HibernateBaseService<Specialist,Long> {
@@ -20,7 +21,8 @@ public interface HibernateSpecialistService extends HibernateBaseService<Special
 
     void updateScore(Long id);
 
-    void setBid(Long specialistId, @NonNull Double offerPrice, @NonNull Duration timeSpent,Long orderId);
+    void setBid(Long specialistId, @NonNull Double offerPrice
+            , LocalDateTime startWorking, LocalDateTime endWorking, Long orderId);
 
     boolean isExistUsername(String username);
 

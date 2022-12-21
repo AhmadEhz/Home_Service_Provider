@@ -19,7 +19,16 @@ public class Bid {
     @NotNull
     private Double offerPrice;
 
-    public Duration timeSpent;
+    @Column(nullable = false)
+    @NotNull
+    private LocalDateTime startWorking;
+
+    @Column(nullable = false)
+    @NotNull
+    private LocalDateTime endWorking;
+
+    @Transient
+    private Duration timeSpent;
 
 
     @ManyToOne
@@ -42,11 +51,12 @@ public class Bid {
     public Bid() {
     }
 
-    public Bid(Double offerPrice, Duration timeSpent, Specialist specialist, Order order) {
+    public Bid(Double offerPrice, Specialist specialist, Order order, LocalDateTime startWorking, LocalDateTime endWorking) {
         this.offerPrice = offerPrice;
-        this.timeSpent = timeSpent;
         this.specialist = specialist;
         this.order = order;
+        this.startWorking = startWorking;
+        this.endWorking = endWorking;
     }
 
     public Long getId() {
@@ -63,6 +73,22 @@ public class Bid {
 
     public void setOfferPrice(Double offerPrice) {
         this.offerPrice = offerPrice;
+    }
+
+    public LocalDateTime getStartWorking() {
+        return startWorking;
+    }
+
+    public void setStartWorking(LocalDateTime startWorking) {
+        this.startWorking = startWorking;
+    }
+
+    public LocalDateTime getEndWorking() {
+        return endWorking;
+    }
+
+    public void setEndWorking(LocalDateTime endWorking) {
+        this.endWorking = endWorking;
     }
 
     public Duration getTimeSpent() {

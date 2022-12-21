@@ -11,6 +11,7 @@ import org.homeservice.service.hibernate.HibernateSpecialistService;
 import org.homeservice.util.exception.*;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -38,7 +39,8 @@ public class HibernateSpecialistServiceImpl extends HibernateBaseServiceImpl<Spe
         if (isExistUsername(username))
             throw new CustomIllegalArgumentException("Username is exist");
 
-        Specialist specialist = new Specialist(firstName, lastName, username, password, email, avatar);
+        Specialist specialist = new Specialist(firstName, lastName, username, password, email);
+        specialist.setAvatar(avatar);
         save(specialist);
         return specialist;
     }
@@ -69,7 +71,8 @@ public class HibernateSpecialistServiceImpl extends HibernateBaseServiceImpl<Spe
     }
 
     @Override
-    public void setBid(Long specialistId, @NonNull Double offerPrice, @NonNull Duration timeSpent, Long orderId) {
+    public void setBid(Long specialistId, @NonNull Double offerPrice
+            , LocalDateTime startWorking, LocalDateTime endWorking, Long orderId) {
         Optional<Specialist> optionalSpecialist = loadById(specialistId);
         Optional<Order> optionalOrder = orderRepository.findById(orderId);
         if (optionalSpecialist.isEmpty())
@@ -81,7 +84,7 @@ public class HibernateSpecialistServiceImpl extends HibernateBaseServiceImpl<Spe
         if(offerPrice < optionalOrder.get().getSubService().getBasePrice())
             throw new CustomIllegalArgumentException("Your bid is lower than base price of this SubService.");
 
-        Bid bid = new Bid(offerPrice, timeSpent, optionalSpecialist.get(), optionalOrder.get());
+        Bid bid = new Bid(offerPrice, optionalSpecialist.get(), optionalOrder.get(),startWorking,endWorking);
         checkEntity(bid);
         bidRepository.save(bid);
     }
