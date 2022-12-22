@@ -52,7 +52,8 @@ public class HibernateCustomerServiceImpl extends HibernateBaseServiceImpl<Custo
         if (offerPrice < optionalSubService.get().getBasePrice())
             throw new CustomIllegalArgumentException("Your offer is lower than base price of this SubService");
 
-        Order order = new Order(offerPrice, description, workingTime, address,optionalSubService.get());
+        Order order = new Order(offerPrice, description, workingTime, address);
+        order.setSubService(optionalSubService.get());
         checkEntity(order);
         executeUpdate(() -> orderRepository.save(order));
         return order;
