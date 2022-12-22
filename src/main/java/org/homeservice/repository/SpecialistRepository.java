@@ -20,14 +20,14 @@ public interface SpecialistRepository extends JpaRepository<Specialist, Long> {
     Optional<Specialist> findSpecialistByEmail(String email);
 
     @Modifying
-    @Query("update Specialist set status = :status where id = :id")
+    @Query("update Specialist as s set s.status = :status where s.id = :id")
     int updateStatus(Long id, SpecialistStatus status);
 
     @Modifying
     @Query("""
-            update Specialist set score =
+            update Specialist as s set s.score =
             (select avg(r.score) from Rate as r where r.order.specialist.id = :id)
-            where id = :id""")
+            where s.id = :id""")
     int updateScore(Long id);
 
     @Modifying

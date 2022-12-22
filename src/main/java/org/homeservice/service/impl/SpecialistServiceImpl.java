@@ -47,11 +47,13 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
     }
 
     @Override
+    @Transactional
     public void verifySpecialist(Long id) {
         changeStatus(id, SpecialistStatus.ACCEPTED);
     }
 
     @Override
+    @Transactional
     public void suspendSpecialist(Long id) {
         changeStatus(id, SpecialistStatus.SUSPENDED);
     }
@@ -87,6 +89,7 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
         specialist.setPassword(newPassword);
         super.update(specialist);
     }
+
     @Override
     public void addImage(Long id, File file) {
         Specialist specialist = findById(id).orElseThrow(() -> new NotFoundException("Specialist not found."));
