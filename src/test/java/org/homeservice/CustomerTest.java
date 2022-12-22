@@ -10,7 +10,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestComponent;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
@@ -35,7 +34,7 @@ public class CustomerTest {
             "customer3UName","customer1Pass","customer3@Mail.com");
     static org.homeservice.entity.Order order1 = new org.homeservice.entity.Order
             (200D,"order1Description", LocalDateTime.of(2022,12,25,12,30),
-                    "Tehran",new SubService());
+                    "Tehran");
 
     @Test
     @Order(1)
@@ -60,7 +59,7 @@ public class CustomerTest {
 
     @Test
     @Order(3)
-    void incorrectPassword() {
+    void checkPassword() {
         String incorrectPassword = customer1.getPassword() + "in";
         assertThrows(CustomIllegalArgumentException.class, () -> services.customerService
                 .changePassword(customer1.getUsername(),incorrectPassword,"newPassword"));
@@ -69,7 +68,8 @@ public class CustomerTest {
     //Following test fails if run this class.
     @Test
     @Order(4)
-    void setOrder() {
-
+    void addOrder() {
+        services.orderService.save(order1,CustomerTest.customer1.getId(),AdminTest.subService1.getId());
+        assertEquals(order1,services.orderService.findById(order1.getId()).get());
     }
 }
