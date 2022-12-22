@@ -3,6 +3,7 @@ package org.homeservice.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -78,5 +79,31 @@ public class SubService {
 
     public void setService(Service service) {
         this.service = service;
+    }
+
+    @Override
+    public String toString() {
+        return "SubService{" +
+               "id=" + id +
+               ", name='" + name + '\'' +
+               ", description='" + description + '\'' +
+               ", basePrice=" + basePrice +
+               ", service=" + service +
+               '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SubService that = (SubService) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name)
+               && Objects.equals(description, that.description) && Objects.equals(basePrice, that.basePrice)
+               && Objects.equals(service, that.service);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description, basePrice, service);
     }
 }

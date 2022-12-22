@@ -79,12 +79,11 @@ public class Order {
 
 
     public Order(Double customerOfferPrice, String description, LocalDateTime workingTime,
-                 String address, SubService subService) {
+                 String address) {
         this.customerOfferPrice = customerOfferPrice;
         this.description = description;
         this.workingTime = workingTime;
         this.address = address;
-        this.subService = subService;
     }
 
     public Long getId() {
