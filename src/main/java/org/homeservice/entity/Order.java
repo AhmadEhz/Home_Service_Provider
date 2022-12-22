@@ -237,12 +237,10 @@ public class Order {
         if (o == null || getClass() != o.getClass()) return false;
         Order order = (Order) o;
         return Objects.equals(id, order.id) && Objects.equals(customerOfferPrice, order.customerOfferPrice)
-               && Objects.equals(description, order.description) && Objects.equals(workingTime, order.workingTime)
+               && Objects.equals(description, order.description)
                && Objects.equals(address, order.address) && Objects.equals(finalPrice, order.finalPrice)
-               && Objects.equals(startWorkingTime, order.startWorkingTime)
-               && Objects.equals(endWorkingTime, order.endWorkingTime) && status == order.status
-               && Objects.equals(customer, order.customer) && Objects.equals(subService, order.subService)
-               && Objects.equals(specialist, order.specialist) && Objects.equals(createdAt, order.createdAt);
+               && status == order.status && Objects.equals(customer, order.customer)
+               && Objects.equals(subService, order.subService) && Objects.equals(specialist, order.specialist);
     }
 
     @Override
