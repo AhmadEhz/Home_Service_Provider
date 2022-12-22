@@ -12,6 +12,8 @@ import java.util.Optional;
 @Service
 public interface OrderService extends BaseService<Order, Long> {
 
+    void save(Order order, Long customerId, Long subServiceId);
+
     List<Order> findAllByCustomer(Long customerId);
 
     List<Order> findAllBySpecialist(Long specialistId);

@@ -22,12 +22,40 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
 
     private final ApplicationContext applicationContext;
     private final CustomerService customerService;
+    private final SubServiceService subServiceService;
     private BidService bidService;
 
-    public OrderServiceImpl(OrderRepository repository, ApplicationContext applicationContext, CustomerService customerService) {
+    public OrderServiceImpl(ApplicationContext applicationContext, OrderRepository repository,
+                            CustomerService customerService, SubServiceService subServiceService) {
         super(repository);
         this.applicationContext = applicationContext;
         this.customerService = customerService;
+        this.subServiceService = subServiceService;
+    }
+
+    @Override
+    public void save(Order order, Long customerId, Long subServiceId) {
+        Customer customer = customerService.findById(customerId).orElseThrow(
+                () -> new NotFoundException("Customer not found."));
+        SubService subService = subServiceService.findById(subServiceId).orElseThrow(
+                () -> new NotFoundException("SubService not found."));
+
+        order.setCustomer(customer);
+        order.setSubService(subService);
+        save(order);
+    }
+
+    @Override
+    public void save(Order order) {
+        if (order.getSubService() == null)
+            throw new NullPointerException("SubService is null.");
+        if (order.getCustomer() == null)
+            throw new NullPointerException("Customer is null");
+
+        if (order.getCustomerOfferPrice() < order.getSubService().getBasePrice())
+            throw new CustomIllegalArgumentException("Offer price should not be less than SubService base price.");
+
+        super.save(order);
     }
 
     @Override
