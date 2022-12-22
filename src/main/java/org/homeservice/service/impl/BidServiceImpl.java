@@ -10,6 +10,7 @@ import org.homeservice.service.SpecialistService;
 import org.homeservice.service.base.BaseServiceImpl;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
+import org.homeservice.util.exception.NotVerifiedException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -47,7 +48,7 @@ public class BidServiceImpl extends BaseServiceImpl<Bid, Long, BidRepository> im
             throw new NullPointerException("Specialist or specialistId is null.");
 
         if (!bid.getSpecialist().isVerified())
-            throw new CustomIllegalArgumentException("Specialist is not verified yet or suspended.");
+            throw new NotVerifiedException("Specialist is not verified yet or suspended.");
         if (bid.getOfferPrice() < bid.getOrder().getSubService().getBasePrice())
             throw new CustomIllegalArgumentException
                     ("Offer price should not be less than base price of the BaseService.");
@@ -71,5 +72,10 @@ public class BidServiceImpl extends BaseServiceImpl<Bid, Long, BidRepository> im
     @Override
     public Optional<Bid> loadByCustomerAndSpecialist(Long customerId, Long specialistId) {
         return repository.findByCustomerAndSpecialist(customerId, specialistId);
+    }
+
+    @Override
+    public Optional<Bid> loadByOrderId(Long orderId) {
+        return repository.findByOrderId(orderId);
     }
 }
