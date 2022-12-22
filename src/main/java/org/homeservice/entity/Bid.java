@@ -59,6 +59,12 @@ public class Bid {
         this.endWorking = endWorking;
     }
 
+    public Bid(Double offerPrice, LocalDateTime startWorking, LocalDateTime endWorking) {
+        this.offerPrice = offerPrice;
+        this.startWorking = startWorking;
+        this.endWorking = endWorking;
+    }
+
     public Long getId() {
         return id;
     }
