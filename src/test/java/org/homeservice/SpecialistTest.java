@@ -7,15 +7,24 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestComponent;
+import org.springframework.stereotype.Component;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @SpringBootTest
+@TestComponent
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class SpecialistTest {
-    @Autowired
+
     Services services;
+
+    @Autowired
+    public SpecialistTest(Services services) {
+        this.services = services;
+    }
+
     static Specialist specialist1 = new Specialist
             ("SP1FName", "SP1LName", "SP1UName", "SPE1Pass", "SP1@Mail.com");
     static Specialist specialist2 = new Specialist
