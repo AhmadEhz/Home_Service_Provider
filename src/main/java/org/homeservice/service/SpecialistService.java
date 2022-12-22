@@ -11,6 +11,8 @@ import java.util.List;
 
 @Service
 public interface SpecialistService extends BaseService<Specialist, Long> {
+    void addAvatar(Long id, File avatar);
+
     List<Specialist> loadAllVerified();
 
     List<Specialist> loadAllNew();

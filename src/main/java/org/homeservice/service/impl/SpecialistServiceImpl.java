@@ -37,6 +37,19 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
     }
 
     @Override
+    public void addAvatar(Long id, File avatar) {
+        Specialist specialist = findById(id).orElseThrow(() -> new NotFoundException("Specialist not found."));
+        if (avatar.length() > Values.MAX_AVATAR_SIZE) //avatar size > 300KB
+            throw new CustomIllegalArgumentException("Image size is bigger than " + (Values.MAX_AVATAR_SIZE/1024) + " KB");
+
+        if(!avatar.getName().toLowerCase().endsWith(Values.AVATAR_FORMAT))
+            throw new CustomIllegalArgumentException("Image format must be "+ Values.AVATAR_FORMAT);
+
+        specialist.setAvatar(avatar);
+        update(specialist);
+    }
+
+    @Override
     public List<Specialist> loadAllVerified() {
         return repository.findSpecialistsByStatus(SpecialistStatus.ACCEPTED);
     }

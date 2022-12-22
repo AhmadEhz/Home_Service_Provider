@@ -105,9 +105,9 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
     @Transactional
     public void changeStatusToStarted(Long id, Long customerId) {
         Order order = findById(id).orElseThrow(() -> new NotFoundException("Order not found."));
-        Bid bid;
         Customer customer = customerService.findById(customerId).orElseThrow
                 (() -> new NotFoundException("Customer not found."));
+        Bid bid;
 
         if (!order.getCustomer().equals(customer))
             throw new CustomIllegalArgumentException("This Order is not for this Customer.");
@@ -121,8 +121,9 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
                 .orElseThrow(() -> new NotFoundException("The Bid for this Order not found."));
         if (LocalDateTime.now().isBefore(bid.getStartWorking()))
             throw new CustomIllegalArgumentException("Starting the work should be after Bid start time");
-
-        repository.changeStatus(id, OrderStatus.STARTED);
+        order.setStatus(OrderStatus.STARTED);
+        order.setStartWorkingTime(LocalDateTime.now());
+        super.update(order);
     }
 
     @Override
