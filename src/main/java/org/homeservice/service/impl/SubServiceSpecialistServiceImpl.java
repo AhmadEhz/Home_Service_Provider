@@ -1,13 +1,17 @@
 package org.homeservice.service.impl;
 
+import org.homeservice.entity.Specialist;
+import org.homeservice.entity.SubService;
 import org.homeservice.entity.SubServiceSpecialist;
 import org.homeservice.entity.id.SubServiceSpecialistId;
 import org.homeservice.repository.SubServiceSpecialistRepository;
 import org.homeservice.service.SpecialistService;
+import org.homeservice.service.SubServiceService;
 import org.homeservice.service.SubServiceSpecialistService;
 import org.homeservice.service.base.BaseServiceImpl;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
+import org.homeservice.util.exception.NotVerifiedException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,10 +22,13 @@ import java.util.Optional;
 @Scope("singleton")
 public class SubServiceSpecialistServiceImpl extends BaseServiceImpl<SubServiceSpecialist, SubServiceSpecialistId, SubServiceSpecialistRepository> implements SubServiceSpecialistService {
     private final SpecialistService specialistService;
+    private final SubServiceService subServiceService;
+
     protected SubServiceSpecialistServiceImpl(SubServiceSpecialistRepository repository,
-                                              SpecialistService specialistService) {
+                                              SpecialistService specialistService, SubServiceService subServiceService) {
         super(repository);
         this.specialistService = specialistService;
+        this.subServiceService = subServiceService;
     }
 
     @Override
@@ -36,17 +43,29 @@ public class SubServiceSpecialistServiceImpl extends BaseServiceImpl<SubServiceS
 
     @Override
     public void save(Long specialistId, Long subServiceId) {
-        if (isExist(specialistId, subServiceId))
+        save(new SubServiceSpecialist(specialistId, subServiceId));
+    }
+
+    @Override
+    public void save(SubServiceSpecialist subServiceSpecialist) {
+        SubService subService = subServiceService.findById(subServiceSpecialist.getSpecialist().getId()).orElseThrow(
+                () -> new NotFoundException("SubService not found."));
+        Specialist specialist = specialistService.findById(subServiceSpecialist.getSpecialist().getId()).orElseThrow(
+                () -> new NotFoundException("Specialist not found."));
+        if (isExist(subService.getId(), specialist.getId()))
             throw new CustomIllegalArgumentException("This Specialist is part of SubService before.");
-        specialistService.checkStatusVerified(specialistId);
-        super.save(new SubServiceSpecialist(specialistId, subServiceId));
+        if (!specialist.isVerified())
+            throw new NotVerifiedException("Specialist not verified or suspended.");
+
+        //No need to set SubService and Specialist to SubServiceSpecialist. both id was set to it before.
+        super.save(subServiceSpecialist);
     }
 
     @Override
     @Transactional
     public void delete(Long specialistId, Long subServiceId) {
         if (!isExist(specialistId, subServiceId))
-            throw new NotFoundException("This Specialist is not part of SubService.");
+            throw new CustomIllegalArgumentException("This Specialist is not part of SubService.");
         repository.remove(specialistId, subServiceId);
     }
 }
