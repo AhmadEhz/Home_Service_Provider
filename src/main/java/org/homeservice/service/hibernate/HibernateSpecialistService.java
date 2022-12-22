@@ -5,13 +5,15 @@ import org.homeservice.entity.Specialist;
 import org.homeservice.entity.SpecialistStatus;
 import org.homeservice.service.hibernate.base.HibernateBaseService;
 
+import java.io.File;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public interface HibernateSpecialistService extends HibernateBaseService<Specialist,Long> {
+
     Specialist save(String firstName, String lastName, String username,
-                    String email, String password, @NonNull byte[] avatar);
+                    String email, String password, File avatar);
 
     List<Specialist> loadNewSpecialists();
 

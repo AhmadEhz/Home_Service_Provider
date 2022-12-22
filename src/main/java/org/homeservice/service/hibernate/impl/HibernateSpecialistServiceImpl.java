@@ -8,9 +8,10 @@ import org.homeservice.repository.hibernate.HibernateSpecialistRepository;
 import org.homeservice.repository.hibernate.impl.*;
 import org.homeservice.service.hibernate.base.HibernateBaseServiceImpl;
 import org.homeservice.service.hibernate.HibernateSpecialistService;
+import org.homeservice.util.Values;
 import org.homeservice.util.exception.*;
 
-import java.time.Duration;
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -30,10 +31,12 @@ public class HibernateSpecialistServiceImpl extends HibernateBaseServiceImpl<Spe
 
     @Override
     public Specialist save(String firstName, String lastName, String username,
-                           String email, String password, @NonNull byte[] avatar) {
-        if (avatar.length > 300 * 1024) //avatar size > 300KB
-            throw new CustomIllegalArgumentException("Image size is bigger than 300KB.");
+                           String email, String password, File avatar) {
+        if (avatar.length() > Values.MAX_AVATAR_SIZE) //avatar size > 300KB
+            throw new CustomIllegalArgumentException("Image size is bigger than " + (Values.MAX_AVATAR_SIZE/1024) + " KB");
 
+        if(!avatar.getName().toLowerCase().endsWith(Values.AVATAR_FORMAT))
+            throw new CustomIllegalArgumentException("Image format must be "+ Values.AVATAR_FORMAT);
         if (isExistEmail(email))
             throw new CustomIllegalArgumentException("Email is exist.");
         if (isExistUsername(username))
