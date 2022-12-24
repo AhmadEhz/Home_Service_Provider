@@ -7,6 +7,8 @@ import java.util.Optional;
 
 @org.springframework.stereotype.Service
 public interface ServiceService extends BaseService<Service, Long> {
+    void save(String name);
+
     Optional<Service> findByName(String name);
 
     boolean isExistedName(String name);

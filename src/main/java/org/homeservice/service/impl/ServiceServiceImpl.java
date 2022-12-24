@@ -6,6 +6,7 @@ import org.homeservice.service.ServiceService;
 import org.homeservice.service.base.BaseServiceImpl;
 import org.homeservice.util.exception.NonUniqueException;
 import org.springframework.context.annotation.Scope;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -21,6 +22,12 @@ public class ServiceServiceImpl extends BaseServiceImpl<Service, Long, ServiceRe
         if (isExistedName(service.getName()))
             throw new NonUniqueException("Service name is exist.");
         super.save(service);
+    }
+
+    @Override
+    @Transactional
+    public void save(String name) {
+        save(new Service(name));
     }
 
     @Override
