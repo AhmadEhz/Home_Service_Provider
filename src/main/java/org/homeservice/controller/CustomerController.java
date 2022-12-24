@@ -7,7 +7,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class CustomerController {
-    private CustomerService customerService;
-    private OrderService orderService;
-    private RateService rateService;
+    private final CustomerService customerService;
+    private final OrderService orderService;
+    private final RateService rateService;
+
+    public CustomerController(CustomerService customerService, OrderService orderService, RateService rateService) {
+        this.customerService = customerService;
+        this.orderService = orderService;
+        this.rateService = rateService;
+    }
 }
