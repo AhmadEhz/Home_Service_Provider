@@ -3,6 +3,7 @@ package org.homeservice.repository;
 import org.homeservice.entity.Specialist;
 import org.homeservice.entity.SpecialistStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface SpecialistRepository extends JpaRepository<Specialist, Long> {
+public interface SpecialistRepository extends JpaRepository<Specialist, Long>, JpaSpecificationExecutor<Specialist> {
 
     List<Specialist> findSpecialistsByStatus(SpecialistStatus status);
 

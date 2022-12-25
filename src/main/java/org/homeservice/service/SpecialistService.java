@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public interface SpecialistService extends BaseService<Specialist, Long> {
@@ -16,6 +17,8 @@ public interface SpecialistService extends BaseService<Specialist, Long> {
     List<Specialist> loadAllVerified();
 
     List<Specialist> loadAllNew();
+
+    List<Specialist> loadAllByFilter(Map<String, String> filters);
 
     void verifySpecialist(Long id);
 

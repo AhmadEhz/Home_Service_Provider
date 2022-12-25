@@ -10,12 +10,14 @@ import org.homeservice.util.QueryUtil;
 import org.homeservice.util.Values;
 import org.homeservice.util.exception.*;
 import org.springframework.context.annotation.Scope;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Scope("singleton")
@@ -78,6 +80,11 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
     }
 
     @Override
+    public List<Specialist> loadAllByFilter(Map<String, String> filters) {
+        return repository.findAll(setSpecification(filters));
+    }
+
+    @Override
     @Transactional
     public void verifySpecialist(Long id) {
         changeStatus(id, SpecialistStatus.ACCEPTED);
@@ -136,6 +143,14 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
     public void checkStatusVerified(Long id) {
         Specialist specialist = findById(id).orElseThrow(() -> new NotFoundException("Specialist not found."));
         checkStatusVerified(specialist.getStatus());
+    }
+
+    private Specification<Specialist> setSpecification(Map<String, String> filters) {
+        Specification<Specialist> specification = Specification.where(null);
+        for (Map.Entry<String, String> entry : filters.entrySet()) {
+            specification = (root, cr, cb) -> cb.equal(root.get(entry.getKey()), entry.getValue());
+        }
+        return specification;
     }
 
     private void checkStatusVerified(SpecialistStatus status) throws CustomIllegalArgumentException {
