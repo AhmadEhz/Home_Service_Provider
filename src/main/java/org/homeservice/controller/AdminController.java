@@ -46,7 +46,7 @@ public class AdminController {
     }
 
     @PutMapping("/specialist/verify")
-    void verifySpecialist(@RequestBody Long specialistId) {
+    void verifySpecialist(@RequestParam Long specialistId) {
         specialistService.verifySpecialist(specialistId);
     }
 
@@ -65,7 +65,7 @@ public class AdminController {
         subServiceSpecialistService.save(map.get("specialistId"), map.get("subServiceId"));
     }
 
-    @PutMapping("specialist/remove-from-subSerivce")
+    @PutMapping("specialist/remove-from-subService")
     void removeSpecialistFromSubService(@RequestBody Map<String, Long> map) {
         subServiceSpecialistService.delete(map.get("specialistId"), map.get("subServiceId"));
     }
