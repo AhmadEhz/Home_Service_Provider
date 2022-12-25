@@ -24,13 +24,18 @@ public class Rate {
     @NotNull
     private Order order;
 
+    public Rate() {
+    }
+
+    public Rate(double score, String comment) {
+        this.score = score;
+        this.comment = comment;
+    }
+
     public Rate(double score, String comment, Order order) {
         this.score = score;
         this.comment = comment;
         this.order = order;
-    }
-
-    public Rate() {
     }
 
     public Long getId() {
