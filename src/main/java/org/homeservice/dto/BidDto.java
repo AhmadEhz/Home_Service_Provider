@@ -25,6 +25,16 @@ public class BidDto {
     public BidDto() {
     }
 
+    public BidDto(Bid bid) {
+        offerPrice = bid.getOfferPrice();
+        startWorking = bid.getStartWorking();
+        endWorking = bid.getEndWorking();
+        if (bid.getOrder() != null)
+            orderId = bid.getOrder().getId();
+        if(bid.getSpecialist()!=null)
+            specialistId = bid.getSpecialist().getId();
+    }
+
     public Bid getBid() {
         Bid bid = new Bid();
         bid.setOfferPrice(offerPrice);
