@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
+@Table(name = "subservice")
 public class SubService {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -21,7 +21,7 @@ public abstract class Person {
     @NotNull
     private String lastName;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     @NotNull
     @Length(min = 5, message = "Username should not be less than 5 characters.")
     @Length(max = 128, message = "Username should not be more than 128 characters.")

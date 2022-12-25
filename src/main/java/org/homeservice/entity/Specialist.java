@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -135,6 +136,16 @@ public class Specialist extends Person {
             avatar = fileInputStream.readAllBytes();
             return true;
         } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public boolean setAvatar(MultipartFile file) {
+        try {
+            avatar = file.getBytes();
+            return true;
+        }
+        catch (IOException e) {
             return false;
         }
     }
