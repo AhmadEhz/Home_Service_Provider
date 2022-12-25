@@ -1,17 +1,17 @@
 package org.homeservice.service;
 
-import lombok.NonNull;
 import org.homeservice.entity.Specialist;
 import org.homeservice.entity.SpecialistStatus;
 import org.homeservice.service.base.BaseService;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.List;
 
 @Service
 public interface SpecialistService extends BaseService<Specialist, Long> {
-    void addAvatar(Long id, File avatar);
+    void addAvatar(Long id, MultipartFile avatar);
 
     List<Specialist> loadAllVerified();
 
@@ -29,7 +29,7 @@ public interface SpecialistService extends BaseService<Specialist, Long> {
 
     void changePassword(String username, String oldPassword, String newPassword);
 
-    void addImage(Long id, File file);
+    void addAvatar(Long id, File file);
 
     boolean isExistUsername(String username);
 

@@ -12,6 +12,7 @@ import org.homeservice.util.exception.*;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.List;
@@ -37,15 +38,32 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
     }
 
     @Override
+    public void addAvatar(Long id, MultipartFile avatar) {
+        Specialist specialist = findById(id).orElseThrow(() -> new NotFoundException("Specialist not found."));
+        if (avatar.getSize() > Values.MAX_AVATAR_SIZE) //avatar size > 300KB
+            throw new CustomIllegalArgumentException
+                    ("Image size is bigger than " + (Values.MAX_AVATAR_SIZE / 1024) + " KB");
+
+        if (!avatar.getOriginalFilename().toLowerCase().endsWith(Values.AVATAR_FORMAT))
+            throw new CustomIllegalArgumentException("Image format must be " + Values.AVATAR_FORMAT);
+
+        if (!specialist.setAvatar(avatar))
+            throw new CustomIllegalArgumentException("File is corrupted");
+        update(specialist);
+    }
+
+    @Override
     public void addAvatar(Long id, File avatar) {
         Specialist specialist = findById(id).orElseThrow(() -> new NotFoundException("Specialist not found."));
-        if (avatar.length() > Values.MAX_AVATAR_SIZE) //avatar size > 300KB
-            throw new CustomIllegalArgumentException("Image size is bigger than " + (Values.MAX_AVATAR_SIZE/1024) + " KB");
+        if (avatar.length() > Values.MAX_AVATAR_SIZE)
+            throw new CustomIllegalArgumentException
+                    ("Image size is bigger than " + (Values.MAX_AVATAR_SIZE / 1024) + " KB");
+        if (!avatar.getName().toLowerCase().endsWith(Values.AVATAR_FORMAT))
+            throw new CustomIllegalArgumentException("Image format must be " + Values.AVATAR_FORMAT);
 
-        if(!avatar.getName().toLowerCase().endsWith(Values.AVATAR_FORMAT))
-            throw new CustomIllegalArgumentException("Image format must be "+ Values.AVATAR_FORMAT);
+        if (!specialist.setAvatar(avatar))
+            throw new CustomIllegalArgumentException("File is corrupted");
 
-        specialist.setAvatar(avatar);
         update(specialist);
     }
 
@@ -103,20 +121,6 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
         super.update(specialist);
     }
 
-    @Override
-    public void addImage(Long id, File file) {
-        Specialist specialist = findById(id).orElseThrow(() -> new NotFoundException("Specialist not found."));
-        if (file.length() > Values.MAX_AVATAR_SIZE)
-            throw new CustomIllegalArgumentException
-                    ("Size of avatar should not be greater than " + (Values.MAX_AVATAR_SIZE / 1024) + " KB");
-        if (!file.getName().toLowerCase().endsWith(Values.AVATAR_FORMAT))
-            throw new CustomIllegalArgumentException("Image format must be " + Values.AVATAR_FORMAT);
-
-        if (!specialist.setAvatar(file))
-            throw new CustomIllegalArgumentException("File is corrupted");
-
-        update(specialist);
-    }
 
     @Override
     public boolean isExistUsername(String username) {
