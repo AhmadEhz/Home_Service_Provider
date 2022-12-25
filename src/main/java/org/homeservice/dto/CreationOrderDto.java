@@ -2,14 +2,13 @@ package org.homeservice.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.homeservice.entity.Customer;
 import org.homeservice.entity.Order;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class OrderDto {
+public class CreationOrderDto {
     private Double offerPrice;
     private String description;
     private LocalDateTime workingTime;
