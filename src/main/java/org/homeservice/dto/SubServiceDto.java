@@ -7,16 +7,16 @@ import org.homeservice.entity.SubService;
 
 @Getter
 @Setter
-public class SubServiceDTO {
+public class SubServiceDto {
     private String name;
     private String description;
     private Double basePrice;
     private String serviceName;
 
-    public SubServiceDTO() {
+    public SubServiceDto() {
     }
 
-    public SubServiceDTO(String name, String description, Double basePrice, String serviceName) {
+    public SubServiceDto(String name, String description, Double basePrice, String serviceName) {
         this.name = name;
         this.description = description;
         this.basePrice = basePrice;
