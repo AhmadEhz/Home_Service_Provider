@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class BidDto {
+public class CreationBidDto {
     private Double offerPrice;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
@@ -22,10 +22,10 @@ public class BidDto {
 
     private Long specialistId;
 
-    public BidDto() {
+    public CreationBidDto() {
     }
 
-    public BidDto(Bid bid) {
+    public CreationBidDto(Bid bid) {
         offerPrice = bid.getOfferPrice();
         startWorking = bid.getStartWorking();
         endWorking = bid.getEndWorking();
