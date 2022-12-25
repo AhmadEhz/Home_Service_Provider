@@ -1,7 +1,7 @@
 package org.homeservice.controller;
 
 import org.homeservice.entity.Admin;
-import org.homeservice.dto.SubServiceDTO;
+import org.homeservice.dto.SubServiceDto;
 import org.homeservice.service.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,7 +41,7 @@ public class AdminController {
     }
 
     @PostMapping("/subservice/save")
-    void saveSubService(@RequestBody SubServiceDTO subServiceDTO) {
+    void saveSubService(@RequestBody SubServiceDto subServiceDTO) {
         subServiceService.save(subServiceDTO.getSubService(), subServiceDTO.getServiceName());
     }
 

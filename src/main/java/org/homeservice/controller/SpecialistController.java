@@ -1,6 +1,6 @@
 package org.homeservice.controller;
 
-import org.homeservice.dto.BidDTO;
+import org.homeservice.dto.BidDto;
 import org.homeservice.entity.Specialist;
 import org.homeservice.service.BidService;
 import org.homeservice.service.SpecialistService;
@@ -36,7 +36,7 @@ public class SpecialistController {
     }
 
     @PutMapping ("/set-bid")
-    void saveBid(@RequestBody BidDTO bidDTO) {
+    void saveBid(@RequestBody BidDto bidDTO) {
         bidService.save(bidDTO.getBid(), bidDTO.getOrderId(), bidDTO.getSpecialistId());
     }
 }
