@@ -39,4 +39,6 @@ public interface SpecialistService extends BaseService<Specialist, Long> {
     boolean isExistEmail(String email);
 
     void checkStatusVerified(Long id);
+
+    void deleteByAdmin(Specialist specialist);
 }

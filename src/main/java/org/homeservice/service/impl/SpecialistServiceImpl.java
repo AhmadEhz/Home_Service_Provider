@@ -10,7 +10,6 @@ import org.homeservice.util.QueryUtil;
 import org.homeservice.util.Values;
 import org.homeservice.util.exception.*;
 import org.springframework.context.annotation.Scope;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -64,7 +63,6 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
 
         if (!specialist.setAvatar(avatar))
             throw new CustomIllegalArgumentException("File is corrupted");
-
         update(specialist);
     }
 
@@ -142,6 +140,33 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
     public void checkStatusVerified(Long id) {
         Specialist specialist = findById(id).orElseThrow(() -> new NotFoundException("Specialist not found."));
         checkStatusVerified(specialist.getStatus());
+    }
+
+    @Override
+    public void delete(Specialist specialist) {
+        Specialist loadSpecialist = findById(specialist.getId()).orElseThrow(() ->
+                new NotFoundException("Specialist not found."));
+        if (!checkBeforeDelete(specialist, loadSpecialist, false))
+            throw new CustomIllegalArgumentException("Specialist properties is incorrect.");
+        super.delete(specialist);
+    }
+
+    @Override
+    public void deleteByAdmin(Specialist specialist) {
+        Specialist loadSpecialist = findById(specialist.getId()).orElseThrow(() ->
+                new NotFoundException("Specialist not found."));
+        if (!checkBeforeDelete(specialist, loadSpecialist, true))
+            throw new CustomIllegalArgumentException("Specialist properties is incorrect.");
+        super.delete(specialist);
+    }
+
+    private boolean checkBeforeDelete(Specialist specialist, Specialist loadSpecialist, boolean deleteByAdmin) {
+        if (specialist.getFirstName().equals(loadSpecialist.getFirstName()) &&
+            specialist.getLastName().equals(loadSpecialist.getLastName()) &&
+            specialist.getEmail().equals(loadSpecialist.getEmail()) &&
+            specialist.getUsername().equals(loadSpecialist.getUsername()))
+            return specialist.getPassword().equals(loadSpecialist.getPassword()) || deleteByAdmin;
+        return false;
     }
 
     private void checkStatusVerified(SpecialistStatus status) throws CustomIllegalArgumentException {
