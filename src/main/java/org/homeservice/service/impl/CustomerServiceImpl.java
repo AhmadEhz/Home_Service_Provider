@@ -36,4 +36,31 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
     public boolean isExistedEmail(String email) {
         return repository.findCustomerByEmail(email).isPresent();
     }
+
+    @Override
+    public void delete(Customer customer) {
+        Customer loadCustomer = findById(customer.getId()).orElseThrow(() ->
+                new NotFoundException("Customer not found."));
+        if (checkBeforeDelete(customer, loadCustomer, false))
+            throw new CustomIllegalArgumentException("Customer email or username or password is incorrect.");
+
+        super.delete(customer);
+    }
+
+    @Override
+    public void deleteByAdmin(Customer customer) {
+        Customer loadCustomer = findById(customer.getId()).orElseThrow(() ->
+                new NotFoundException("Customer not found."));
+        if (checkBeforeDelete(customer, loadCustomer, true))
+            throw new CustomIllegalArgumentException("Customer email or username is incorrect.");
+
+        super.delete(loadCustomer);
+    }
+
+    private boolean checkBeforeDelete(Customer customer, Customer loadCustomer, boolean deleteByAdmin) {
+        if (customer.getUsername().equals(loadCustomer.getUsername()) &&
+            customer.getEmail().equals(loadCustomer.getEmail()))
+            return customer.getPassword().equals(loadCustomer.getPassword()) || deleteByAdmin;
+        return false;
+    }
 }
