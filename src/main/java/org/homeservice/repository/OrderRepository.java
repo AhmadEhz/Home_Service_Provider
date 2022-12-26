@@ -21,6 +21,14 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     int changeStatus(Long id, OrderStatus status);
 
     //If specialist is not null, It means Customer accepted a bid for this Order.
-    @Query ("select o from Order as o where o.specialist is not null")
+    @Query("select o from Order as o where o.specialist is not null")
     Optional<Order> findIfAcceptedABid(Long id);
+
+    @Query("""
+            select o from Order as o join SubServiceSpecialist as ssp on o.subService = ssp.subService
+            where ssp.specialist.id = :specialistId""")
+    List<Order> findBySpecialistSubServices(Long specialistId);
+
+    @Query("select o from Order as o where o.specialist.id = :specialistId and o.status in :statuses")
+    List<Order> findAllBySpecialistAndStatus(Long specialistId, OrderStatus[] statuses);
 }

@@ -67,6 +67,17 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
     }
 
     @Override
+    public List<Order> loadAllBySpecialistSubServices(Long specialistId) {
+        return repository.findBySpecialistSubServices(specialistId);
+    }
+
+    @Override
+    public List<Order> loadAllByWaitingStatusAndSpecialist(Long specialistId) {
+        return repository.findAllBySpecialistAndStatus(specialistId,
+                new OrderStatus[]{OrderStatus.WAITING_FOR_CHOOSE_SPECIALIST, OrderStatus.WAITING_FOR_BID});
+    }
+
+    @Override
     public void selectBid(Long bidId, Long customerId) {
         Bid bid = getBidService().findById(bidId).orElseThrow(() -> new NotFoundException("Bid not found."));
         Customer customer = customerService.findById(customerId).orElseThrow(
