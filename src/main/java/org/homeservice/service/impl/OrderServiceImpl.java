@@ -7,7 +7,6 @@ import org.homeservice.service.base.BaseServiceImpl;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +16,6 @@ import java.util.List;
 
 @Service
 @Scope("singleton")
-@ComponentScan(basePackages = "org.homeservice.service.*")
 public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderRepository> implements OrderService {
 
     private final ApplicationContext applicationContext;
@@ -69,7 +67,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
     }
 
     @Override
-    public void selectBidForOffer(Long bidId, Long customerId) {
+    public void selectBid(Long bidId, Long customerId) {
         Bid bid = getBidService().findById(bidId).orElseThrow(() -> new NotFoundException("Bid not found."));
         Customer customer = customerService.findById(customerId).orElseThrow(
                 () -> new NotFoundException("Customer not found."));
