@@ -1,6 +1,6 @@
 package org.homeservice.controller;
 
-import org.homeservice.dto.CreationBidDto;
+import org.homeservice.dto.BidDto;
 import org.homeservice.dto.CreationOrderDto;
 import org.homeservice.dto.RateDto;
 import org.homeservice.entity.Bid;
@@ -51,18 +51,23 @@ public class CustomerController {
         rateService.save(rateDto.getRate(), rateDto.getOrderId(), rateDto.getCustomerId());
     }
 
-    @GetMapping("show-bids")
-    List<CreationBidDto> showBids(@RequestParam Long orderId, @RequestParam String sort) {
+    @GetMapping("/show-bids")
+    List<BidDto> showBids(@RequestParam Long orderId, @RequestParam String sort) {
         List<Bid> bids = null;
         if (sort.equalsIgnoreCase("price"))
             bids = bidService.loadAllByOrderSortedByPrice(orderId);
-        if(sort.equalsIgnoreCase("specialist"))
+        if (sort.equalsIgnoreCase("specialist"))
             bids = bidService.loadAllByOrderSortedBySpecialistScore(orderId);
-        if(bids.isEmpty()) return null;
-        List<CreationBidDto> creationBidDtoList = new ArrayList<>(bids.size());
+        if (bids == null) return null;
+        List<BidDto> bidDtoList = new ArrayList<>(bids.size());
         for (Bid b : bids) {
-            creationBidDtoList.add(new CreationBidDto(b));
+            bidDtoList.add(new BidDto(b));
         }
-        return creationBidDtoList;
+        return bidDtoList;
+    }
+
+    @PutMapping("/start-order")
+    void changeOrderStatusToStarted(@RequestParam Long orderId, @RequestParam Long customerId) {
+        orderService.changeStatusToStarted(orderId, customerId);
     }
 }
