@@ -5,6 +5,8 @@ import lombok.Setter;
 import org.homeservice.entity.Bid;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -27,4 +29,13 @@ public class BidDto {
         if (bid.getSpecialist() != null)
             specialistDto = new SpecialistDto(bid.getSpecialist());
     }
+
+    public static List<BidDto> convertToBidDto(List<Bid> bids) {
+        List<BidDto> bidDtoList = new ArrayList<>(bids.size());
+        for (Bid b : bids) {
+            bidDtoList.add(new BidDto(b));
+        }
+        return bidDtoList;
+    }
+
 }

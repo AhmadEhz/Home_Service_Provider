@@ -11,7 +11,6 @@ import org.homeservice.service.OrderService;
 import org.homeservice.service.RateService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -58,12 +57,8 @@ public class CustomerController {
             bids = bidService.loadAllByOrderSortedByPrice(orderId);
         if (sort.equalsIgnoreCase("specialist"))
             bids = bidService.loadAllByOrderSortedBySpecialistScore(orderId);
-        if (bids == null) return null;
-        List<BidDto> bidDtoList = new ArrayList<>(bids.size());
-        for (Bid b : bids) {
-            bidDtoList.add(new BidDto(b));
-        }
-        return bidDtoList;
+        return bids != null ? BidDto.convertToBidDto(bids) : null;
+
     }
 
     @PutMapping("/start-order")
