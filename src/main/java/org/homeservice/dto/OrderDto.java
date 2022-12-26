@@ -48,4 +48,11 @@ public class OrderDto {
         for (Bid b : bids)
             bidDtoList.add(new BidDto(b));
     }
+
+    public static List<OrderDto> convertToDto(List<Order> orders) {
+        List<OrderDto> orderDtoList = new ArrayList<>(orders.size());
+        for (Order o : orders)
+            orderDtoList.add(new OrderDto(o));
+        return orderDtoList;
+    }
 }

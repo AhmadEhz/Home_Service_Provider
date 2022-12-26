@@ -12,6 +12,8 @@ import java.util.List;
 public class SpecialistDto {
     private String firstName;
     private String lastName;
+    private String email;
+    private String username;
     private Double score;
     private byte[] avatar;
 
@@ -21,8 +23,14 @@ public class SpecialistDto {
     public SpecialistDto(Specialist specialist) {
         firstName = specialist.getFirstName();
         lastName = specialist.getLastName();
+        email = specialist.getEmail();
+        username = specialist.getUsername();
         score = specialist.getScore();
         avatar = specialist.getAvatar();
+    }
+
+    public Specialist getSpecialist() {
+        return new Specialist(firstName, lastName, username, null, email, avatar);
     }
 
     public static List<SpecialistDto> convertToDto(List<Specialist> specialists) {
