@@ -3,6 +3,7 @@ package org.homeservice.controller;
 import org.homeservice.dto.SpecialistDto;
 import org.homeservice.dto.SubServiceDto;
 import org.homeservice.entity.Admin;
+import org.homeservice.entity.Customer;
 import org.homeservice.entity.Specialist;
 import org.homeservice.service.*;
 import org.homeservice.util.exception.NotFoundException;
@@ -19,14 +20,17 @@ public class AdminController {
     private final ServiceService serviceService;
     private final SubServiceService subServiceService;
     private final SubServiceSpecialistService subServiceSpecialistService;
+    private final CustomerService customerService;
 
     public AdminController(AdminService adminService, SpecialistService specialistService,
-                           ServiceService serviceService, SubServiceService subServiceService, SubServiceSpecialistService subServiceSpecialistService) {
+                           ServiceService serviceService, SubServiceService subServiceService,
+                           SubServiceSpecialistService subServiceSpecialistService, CustomerService customerService) {
         this.adminService = adminService;
         this.specialistService = specialistService;
         this.serviceService = serviceService;
         this.subServiceService = subServiceService;
         this.subServiceSpecialistService = subServiceSpecialistService;
+        this.customerService = customerService;
     }
 
     @PostMapping("/save")
@@ -85,5 +89,15 @@ public class AdminController {
     List<SpecialistDto> loadSpecialists(@RequestParam Map<String, String> filters) {
         List<Specialist> specialists = specialistService.loadAllByFilter(filters);
         return SpecialistDto.convertToDto(specialists);
+    }
+
+    @DeleteMapping("/specialist/delete")
+    void deleteSpecialist(@RequestBody SpecialistDto specialistDto) {
+        specialistService.deleteByAdmin(specialistDto.getSpecialist());
+    }
+
+    @DeleteMapping("/customer/delete")
+    void deleteCustomer(@RequestBody Customer customer) {
+        customerService.delete(customer);
     }
 }
