@@ -1,7 +1,7 @@
 package org.homeservice.controller;
 
 import org.homeservice.dto.BidDto;
-import org.homeservice.dto.CreationOrderDto;
+import org.homeservice.dto.OrderCreationDto;
 import org.homeservice.dto.RateDto;
 import org.homeservice.entity.Bid;
 import org.homeservice.entity.Customer;
@@ -41,8 +41,8 @@ public class CustomerController {
     }
 
     @PostMapping("set-order")
-    void setOrder(@RequestBody CreationOrderDto creationOrderDto) {
-        orderService.save(creationOrderDto.getOrder(), creationOrderDto.getCustomerId(), creationOrderDto.getSubServiceId());
+    void setOrder(@RequestBody OrderCreationDto orderCreationDto) {
+        orderService.save(orderCreationDto.getOrder(), orderCreationDto.getCustomerId(), orderCreationDto.getSubServiceId());
     }
 
     @PostMapping("set-rate")

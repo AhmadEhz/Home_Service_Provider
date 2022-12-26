@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class CreationOrderDto {
+public class OrderCreationDto {
     private Double offerPrice;
     private String description;
     private LocalDateTime workingTime;
