@@ -1,13 +1,13 @@
 package org.homeservice.controller;
 
 import org.homeservice.dto.SpecialistDto;
-import org.homeservice.entity.Admin;
 import org.homeservice.dto.SubServiceDto;
+import org.homeservice.entity.Admin;
 import org.homeservice.entity.Specialist;
 import org.homeservice.service.*;
+import org.homeservice.util.exception.NotFoundException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -74,13 +74,16 @@ public class AdminController {
         subServiceSpecialistService.delete(map.get("specialistId"), map.get("subServiceId"));
     }
 
+    @GetMapping("/specialist/show")
+    SpecialistDto loadSpecialist(@RequestParam Long specialistId) {
+        Specialist specialist = specialistService.findById(specialistId)
+                .orElseThrow(() -> new NotFoundException("Specialist not found."));
+        return new SpecialistDto(specialist);
+    }
+
     @GetMapping("/specialist/showAll")
-    List<SpecialistDto> loadSpecialists(@RequestParam Map<String, String> map) {
-        List<Specialist> specialists = specialistService.loadAllByFilter(map);
-        List<SpecialistDto> specialistDtoList = new ArrayList<>();
-        for (Specialist s : specialists) {
-            specialistDtoList.add(new SpecialistDto(s));
-        }
-        return specialistDtoList;
+    List<SpecialistDto> loadSpecialists(@RequestParam Map<String, String> filters) {
+        List<Specialist> specialists = specialistService.loadAllByFilter(filters);
+        return SpecialistDto.convertToDto(specialists);
     }
 }

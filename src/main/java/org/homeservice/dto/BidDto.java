@@ -30,7 +30,7 @@ public class BidDto {
             specialistDto = new SpecialistDto(bid.getSpecialist());
     }
 
-    public static List<BidDto> convertToBidDto(List<Bid> bids) {
+    public static List<BidDto> convertToDto(List<Bid> bids) {
         List<BidDto> bidDtoList = new ArrayList<>(bids.size());
         for (Bid b : bids) {
             bidDtoList.add(new BidDto(b));

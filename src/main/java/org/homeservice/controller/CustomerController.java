@@ -53,7 +53,7 @@ public class CustomerController {
     @GetMapping("/show-bids")
     List<BidDto> showBids(@RequestParam Long orderId, @RequestParam String sort) {
         List<Bid> bids = bidService.loadAllByOrder(orderId, sort);
-        return BidDto.convertToBidDto(bids);
+        return BidDto.convertToDto(bids);
     }
 
     @PutMapping("/start-order")
