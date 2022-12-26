@@ -62,6 +62,18 @@ public class Specialist extends Person {
         this.email = email;
     }
 
+    public Specialist(String firstName, String lastName, Double score, byte[] avatar) {
+        super(firstName,lastName);
+        this.score = score;
+        this.avatar = avatar;
+    }
+
+    public Specialist(String firstName, String lastName, String username, String password, String email, byte[] avatar) {
+        super(firstName, lastName, username, password);
+        this.email = email;
+        this.avatar = avatar;
+    }
+
     @PrePersist
     private void perPersist() {
         status = SpecialistStatus.NEW;
