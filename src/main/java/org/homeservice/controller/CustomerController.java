@@ -42,7 +42,8 @@ public class CustomerController {
 
     @PostMapping("set-order")
     void setOrder(@RequestBody OrderCreationDto orderCreationDto) {
-        orderService.save(orderCreationDto.getOrder(), orderCreationDto.getCustomerId(), orderCreationDto.getSubServiceId());
+        orderService.save(orderCreationDto.getOrder(), orderCreationDto.getCustomerId(),
+                orderCreationDto.getSubServiceId());
     }
 
     @PostMapping("set-rate")

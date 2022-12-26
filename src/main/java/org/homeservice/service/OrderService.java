@@ -11,9 +11,9 @@ public interface OrderService extends BaseService<Order, Long> {
 
     void save(Order order, Long customerId, Long subServiceId);
 
-    List<Order> findAllByCustomer(Long customerId);
+    List<Order> loadAllByCustomer(Long customerId);
 
-    List<Order> findAllBySpecialist(Long specialistId);
+    List<Order> loadAllBySpecialist(Long specialistId);
 
     List<Order> loadAllBySpecialistSubServices(Long specialistId);
 

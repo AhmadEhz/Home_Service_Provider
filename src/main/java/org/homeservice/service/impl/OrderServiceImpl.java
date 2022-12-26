@@ -57,12 +57,12 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
     }
 
     @Override
-    public List<Order> findAllByCustomer(Long customerId) {
+    public List<Order> loadAllByCustomer(Long customerId) {
         return repository.findAllByCustomer_Id(customerId);
     }
 
     @Override
-    public List<Order> findAllBySpecialist(Long specialistId) {
+    public List<Order> loadAllBySpecialist(Long specialistId) {
         return repository.findAllBySpecialist_Id(specialistId);
     }
 

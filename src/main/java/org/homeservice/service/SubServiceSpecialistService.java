@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Service
 public interface SubServiceSpecialistService extends BaseService<SubServiceSpecialist, SubServiceSpecialistId> {
-    Optional<SubServiceSpecialist> findById(Long specialistId, Long subServiceId);
+    Optional<SubServiceSpecialist> loadById(Long specialistId, Long subServiceId);
 
     boolean isExist(Long specialistId, Long subServiceId);
 

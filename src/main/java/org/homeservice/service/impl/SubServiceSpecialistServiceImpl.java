@@ -32,13 +32,13 @@ public class SubServiceSpecialistServiceImpl extends BaseServiceImpl<SubServiceS
     }
 
     @Override
-    public Optional<SubServiceSpecialist> findById(Long specialistId, Long subServiceId) {
+    public Optional<SubServiceSpecialist> loadById(Long specialistId, Long subServiceId) {
         return repository.findById(specialistId, subServiceId);
     }
 
     @Override
     public boolean isExist(Long specialistId, Long subServiceId) {
-        return findById(specialistId, subServiceId).isPresent();
+        return loadById(specialistId, subServiceId).isPresent();
     }
 
     @Override
