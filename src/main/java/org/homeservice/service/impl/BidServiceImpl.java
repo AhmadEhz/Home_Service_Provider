@@ -8,6 +8,7 @@ import org.homeservice.service.BidService;
 import org.homeservice.service.OrderService;
 import org.homeservice.service.SpecialistService;
 import org.homeservice.service.base.BaseServiceImpl;
+import org.homeservice.util.QueryUtil;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
 import org.homeservice.util.exception.NotVerifiedException;
@@ -67,6 +68,11 @@ public class BidServiceImpl extends BaseServiceImpl<Bid, Long, BidRepository> im
     @Override
     public List<Bid> loadAllByOrderSortedBySpecialistScore(Long orderId) {
         return repository.findAllByOrder_Id(orderId, Sort.by(Sort.Direction.DESC, "specialist.score"));
+    }
+
+    @Override
+    public List<Bid> loadAllByOrder(Long orderId, String sortBy) {
+        return repository.findAllByOrder_Id(orderId, QueryUtil.sortBy(sortBy));
     }
 
     @Override

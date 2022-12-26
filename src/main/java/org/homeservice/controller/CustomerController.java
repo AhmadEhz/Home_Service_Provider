@@ -52,13 +52,8 @@ public class CustomerController {
 
     @GetMapping("/show-bids")
     List<BidDto> showBids(@RequestParam Long orderId, @RequestParam String sort) {
-        List<Bid> bids = null;
-        if (sort.equalsIgnoreCase("price"))
-            bids = bidService.loadAllByOrderSortedByPrice(orderId);
-        if (sort.equalsIgnoreCase("specialist"))
-            bids = bidService.loadAllByOrderSortedBySpecialistScore(orderId);
-        return bids != null ? BidDto.convertToBidDto(bids) : null;
-
+        List<Bid> bids = bidService.loadAllByOrder(orderId, sort);
+        return BidDto.convertToBidDto(bids);
     }
 
     @PutMapping("/start-order")

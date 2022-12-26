@@ -15,6 +15,8 @@ public interface BidService extends BaseService<Bid, Long> {
 
     List<Bid> loadAllByOrderSortedBySpecialistScore(Long orderId);
 
+    List<Bid> loadAllByOrder(Long orderId, String sortBy);
+
     Optional<Bid> loadByCustomerAndSpecialist(Long customerId, Long specialistId);
 
     Optional<Bid> loadByOrderId(Long orderId);
