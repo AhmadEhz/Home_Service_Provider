@@ -2,11 +2,10 @@ package org.homeservice.util;
 
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
-import org.homeservice.entity.OrderStatus;
-import org.homeservice.entity.Specialist;
-import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.domain.Sort;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -29,12 +28,47 @@ public class QueryUtil {
             throw exception.get();
     }
 
-    public static<T> Specification<T> setSpecification(Map<String, String> filters) {
+    public static <T> Specification<T> setSpecification(Map<String, String> filters) {
         Specification<T> specification = Specification.where(null); //Just for initial specification.
         for (Map.Entry<String, String> entry : filters.entrySet())
-            specification = specification.and(Specification.where(
-                    (root, cr, cb) -> cb.equal(root.get(entry.getKey()), entry.getValue())));
+            //Check this filter is valid. (For example, user can't get to entity with password.)
+            if (Values.containsFilter(entry.getKey())) {
+                specification = specification.and(Specification.where(
+                        (root, cr, cb) -> cb.equal(root.get(Values.getFilter(entry.getKey())), entry.getValue())));
+            }
 
         return specification;
+    }
+
+    public static Sort sortBy(String sort){
+        return Values.getSort(sort);
+    }
+
+    private static class Values {
+        static final Map<String, String> filterValues;
+        static final Map<String, Sort> sortValues;
+
+        static {
+            filterValues = new HashMap<>();
+            sortValues = new HashMap<>();
+            filterValues.put("firstname", "firstName");
+            filterValues.put("lastname", "lastName");
+            filterValues.put("score", "score");
+            filterValues.put("email", "email");
+            sortValues.put("price", Sort.by(Sort.Direction.ASC, "offerPrice"));
+            sortValues.put("specialist", Sort.by(Sort.Direction.DESC, "specialist.score"));
+        }
+
+        static String getFilter(String key) {
+            return filterValues.get(key.toLowerCase());
+        }
+
+        static boolean containsFilter(String key) {
+            return filterValues.containsKey(key.toLowerCase());
+        }
+
+        static Sort getSort(String key) {
+            return sortValues.get(key.toLowerCase());
+        }
     }
 }
