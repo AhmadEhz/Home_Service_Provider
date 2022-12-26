@@ -17,7 +17,7 @@ import java.util.*;
 public class Specialist extends Person {
 
     @Email
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     @NotNull
     private String email;
     @Enumerated(value = EnumType.STRING)
