@@ -4,7 +4,10 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+import org.hibernate.annotations.ColumnDefault;
 
+import java.time.Duration;
 import java.util.Objects;
 
 @Entity
@@ -13,11 +16,13 @@ public class Rate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Positive(message = "Rate score should be positive")
-    @Max(value = 5,message = "Max of score rating is 5")
-    private double score;
+    @PositiveOrZero(message = "Rate score should be positive")
+    @Max(value = 5, message = "Max of score rating is 5")
+    private Integer score;
 
     private String comment;
+
+    private Integer latenessEndWorking;
 
     @OneToOne(mappedBy = "rate")
     @JoinColumn(nullable = false)
@@ -27,15 +32,25 @@ public class Rate {
     public Rate() {
     }
 
-    public Rate(double score, String comment) {
+    public Rate(Integer latenessEndWorking) {
+        this.latenessEndWorking = latenessEndWorking;
+    }
+
+    public Rate(Integer score, String comment) {
         this.score = score;
         this.comment = comment;
     }
 
-    public Rate(double score, String comment, Order order) {
+    public Rate(Integer score, String comment, Order order) {
         this.score = score;
         this.comment = comment;
         this.order = order;
+    }
+
+    @PrePersist
+    void prePersist() {
+        if(score == null)
+            score = 0;
     }
 
     public Long getId() {
@@ -46,11 +61,11 @@ public class Rate {
         this.id = id;
     }
 
-    public double getScore() {
+    public Integer getScore() {
         return score;
     }
 
-    public void setScore(double score) {
+    public void setScore(Integer score) {
         this.score = score;
     }
 
@@ -60,6 +75,14 @@ public class Rate {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public Integer getLatenessEndWorking() {
+        return latenessEndWorking;
+    }
+
+    public void setLatenessEndWorking(Integer latenessEndWorking) {
+        this.latenessEndWorking = latenessEndWorking;
     }
 
     public Order getOrder() {
