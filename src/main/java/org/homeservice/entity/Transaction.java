@@ -31,6 +31,22 @@ public class Transaction {
 
     private TransactionType type;
 
+    public Transaction() {
+    }
+
+    public Transaction(Credit credit, Long amount, TransactionType type) {
+        this.credit = credit;
+        this.amount = amount;
+        this.type = type;
+    }
+
+    public Transaction(Credit credit, Credit destinationCredit, Long amount, TransactionType type) {
+        this.credit = credit;
+        this.destinationCredit = destinationCredit;
+        this.amount = amount;
+        this.type = type;
+    }
+
     public Long getId() {
         return id;
     }
