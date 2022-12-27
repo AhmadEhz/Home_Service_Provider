@@ -33,9 +33,10 @@ public class RateServiceImpl extends BaseServiceImpl<Rate, Long, RateRepository>
     @Override
     @Transactional
     public void save(Rate rate) {
-        if(rate.getOrder()==null||rate.getOrder().getId()==null)
+        if (rate.getOrder() == null || rate.getOrder().getId() == null)
             throw new NullPointerException("Order or OrderId is null.");
         super.save(rate);
+        orderService.setRateId(rate.getOrder().getId(), rate.getId());
         specialistService.updateScoreByRateId(rate.getId());
     }
 
@@ -45,10 +46,11 @@ public class RateServiceImpl extends BaseServiceImpl<Rate, Long, RateRepository>
         Order order = orderService.findById(orderId).orElseThrow(() -> new NotFoundException("Order not found."));
         Customer customer = customerService.findById(customerId).orElseThrow(
                 () -> new NotFoundException("Customer not found."));
-        if(!order.getCustomer().equals(customer))
+        if (!order.getCustomer().equals(customer))
             throw new IllegalArgumentException("This Order is not for this Customer.");
 
         rate.setOrder(order);
+        rate.setLatenessEndWorking((int) order.getLatenessEndWorking().toHours());
         save(rate);
     }
 }
