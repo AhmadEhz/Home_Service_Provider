@@ -1,6 +1,7 @@
 package org.homeservice.controller;
 
 import org.homeservice.dto.BidDto;
+import org.homeservice.dto.CustomerCreationDto;
 import org.homeservice.dto.OrderCreationDto;
 import org.homeservice.dto.RateDto;
 import org.homeservice.entity.Bid;
@@ -31,8 +32,8 @@ public class CustomerController {
     }
 
     @PostMapping("/save")
-    void save(@RequestBody Customer customer) {
-        customerService.save(customer);
+    void save(@RequestBody CustomerCreationDto customerDto) {
+        customerService.save(customerDto.getCustomer());
     }
 
     @PutMapping("change-password")
@@ -40,7 +41,7 @@ public class CustomerController {
         customerService.changePassword(map.get("username"), map.get("oldPassword"), map.get("newPassword"));
     }
 
-    @PostMapping("set-order")
+    @PostMapping("/set-order")
     void setOrder(@RequestBody OrderCreationDto orderCreationDto) {
         orderService.save(orderCreationDto.getOrder(), orderCreationDto.getCustomerId(),
                 orderCreationDto.getSubServiceId());
@@ -57,8 +58,23 @@ public class CustomerController {
         return BidDto.convertToDto(bids);
     }
 
-    @PutMapping("/start-order")
+    @PutMapping("select-bid")
+    void selectBid(@RequestParam Long bidId, @RequestParam Long customerId) {
+        orderService.selectBid(bidId, customerId);
+    }
+
+    @PutMapping("/start-work")
     void changeOrderStatusToStarted(@RequestParam Long orderId, @RequestParam Long customerId) {
         orderService.changeStatusToStarted(orderId, customerId);
+    }
+
+    @PutMapping("/end-work")
+    void changeOrderStatusToFinished(@RequestParam Long orderId, @RequestParam Long customerId) {
+        orderService.changeStatusToEnded(orderId, customerId);
+    }
+
+    @PostMapping("/send-rate")
+    void saveRate(@RequestBody RateDto rateDto) {
+        rateService.save(rateDto.getRate(),rateDto.getOrderId(),rateDto.getCustomerId());
     }
 }
