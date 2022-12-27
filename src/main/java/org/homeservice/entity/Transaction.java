@@ -2,6 +2,7 @@ package org.homeservice.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -14,15 +15,22 @@ public class Transaction {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(nullable = false,unique = true)
+    @JoinColumn(nullable = false)
     @NotNull
     private Credit credit;
 
-    @ColumnDefault("0")
+    @ManyToOne
+    private Credit destinationCredit;
+
+    @Positive
+    @NotNull
+    @Column(nullable = false)
     private Double amount;
 
     @CreationTimestamp
-    private LocalDateTime localDateTime;
+    private LocalDateTime createdAt;
+
+    private TransactionType type;
 
     public Long getId() {
         return id;
@@ -48,11 +56,27 @@ public class Transaction {
         this.amount = amount;
     }
 
-    public LocalDateTime getLocalDateTime() {
-        return localDateTime;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setLocalDateTime(LocalDateTime localDateTime) {
-        this.localDateTime = localDateTime;
+    public void setCreatedAt(LocalDateTime localDateTime) {
+        this.createdAt = localDateTime;
+    }
+
+    public Credit getDestinationCredit() {
+        return destinationCredit;
+    }
+
+    public void setDestinationCredit(Credit destinationCredit) {
+        this.destinationCredit = destinationCredit;
+    }
+
+    public TransactionType getType() {
+        return type;
+    }
+
+    public void setType(TransactionType type) {
+        this.type = type;
     }
 }
