@@ -7,7 +7,7 @@ import org.homeservice.entity.Rate;
 @Getter
 @Setter
 public class RateDto {
-    private double score;
+    private Integer score;
     private String comment;
     private Long orderId;
     private Long customerId;
