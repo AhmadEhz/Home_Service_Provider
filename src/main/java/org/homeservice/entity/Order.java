@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
@@ -26,7 +27,7 @@ public class Order {
 
     @Column(nullable = false)
     @NotNull
-    private LocalDateTime workingTime;
+    private LocalDateTime workingTime; //Customer offer working time
 
     @Column(nullable = false)
     @NotNull
@@ -34,9 +35,11 @@ public class Order {
 
     private Double finalPrice;
 
-    private LocalDateTime startWorkingTime;
+    private LocalDateTime startWorking;
 
-    private LocalDateTime endWorkingTime;
+    private LocalDateTime endWorking;
+
+    private Duration latenessEndWorking;
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
@@ -134,20 +137,28 @@ public class Order {
         this.finalPrice = finalPrice;
     }
 
-    public LocalDateTime getStartWorkingTime() {
-        return startWorkingTime;
+    public LocalDateTime getStartWorking() {
+        return startWorking;
     }
 
-    public void setStartWorkingTime(LocalDateTime startWorkingTime) {
-        this.startWorkingTime = startWorkingTime;
+    public void setStartWorking(LocalDateTime startWorkingTime) {
+        this.startWorking = startWorkingTime;
     }
 
-    public LocalDateTime getEndWorkingTime() {
-        return endWorkingTime;
+    public LocalDateTime getEndWorking() {
+        return endWorking;
     }
 
-    public void setEndWorkingTime(LocalDateTime endWorkingTime) {
-        this.endWorkingTime = endWorkingTime;
+    public void setEndWorking(LocalDateTime endWorkingTime) {
+        this.endWorking = endWorkingTime;
+    }
+
+    public Duration getLatenessEndWorking() {
+        return latenessEndWorking;
+    }
+
+    public void setLatenessEndWorking(Duration latenessEndWorking) {
+        this.latenessEndWorking = latenessEndWorking;
     }
 
     public OrderStatus getStatus() {
@@ -220,8 +231,8 @@ public class Order {
                ", workingTime=" + workingTime +
                ", address='" + address + '\'' +
                ", finalPrice=" + finalPrice +
-               ", startWorkingTime=" + startWorkingTime +
-               ", endWorkingTime=" + endWorkingTime +
+               ", startWorkingTime=" + startWorking +
+               ", endWorkingTime=" + endWorking +
                ", status=" + status +
                ", customer=" + customer +
                ", subService=" + subService +
@@ -245,6 +256,7 @@ public class Order {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, customerOfferPrice, description, workingTime, address, finalPrice, startWorkingTime, endWorkingTime, status, customer, subService, specialist, rate, createdAt);
+        return Objects.hash(id, customerOfferPrice, description, workingTime, address,
+                finalPrice, startWorking, endWorking, status, customer, subService, specialist, rate, createdAt);
     }
 }
