@@ -49,6 +49,18 @@ public class Credit {
         this.amount = amount;
     }
 
+    public boolean isSufficientAmount(Integer withdrawalAmount) {
+        return amount - withdrawalAmount >= 0;
+    }
+
+    public void deposit(Integer depositAmount) {
+        amount += depositAmount;
+    }
+
+    public void withdraw(Integer withdrawalAmount) {
+        amount -= withdrawalAmount;
+    }
+
     public Set<Transaction> getTransactions() {
         return transactions;
     }
