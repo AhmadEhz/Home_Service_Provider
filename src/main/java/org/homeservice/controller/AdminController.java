@@ -1,5 +1,6 @@
 package org.homeservice.controller;
 
+import org.homeservice.dto.CustomerDto;
 import org.homeservice.dto.ServiceCreationDto;
 import org.homeservice.dto.SpecialistDto;
 import org.homeservice.dto.SubServiceDto;
@@ -59,14 +60,14 @@ public class AdminController {
         specialistService.verifySpecialist(specialistId);
     }
 
-    @PutMapping("subservice/edit-description/{id}")
-    void editSubServiceDescription(@RequestBody String description, @PathVariable Long id) {
-        subServiceService.editDescription(description, id);
+    @PutMapping("subservice/edit-description")
+    void editSubServiceDescription(@RequestBody Map.Entry<String,String> description, @RequestParam Long subServiceId) {
+        subServiceService.editDescription(description.getValue(), subServiceId);
     }
 
-    @PutMapping("subservice/edit-basePrice/{id}")
-    void editSubServiceBasePrice(@RequestBody Double basePrice, @PathVariable Long id) {
-        subServiceService.editBasePrice(basePrice, id);
+    @PutMapping("subservice/edit-basePrice")
+    void editSubServiceBasePrice(@RequestParam Long basePrice, @RequestParam Long subServiceId) {
+        subServiceService.editBasePrice(basePrice, subServiceId);
     }
 
     @PutMapping("specialist/add-to-Subservice")
@@ -86,10 +87,23 @@ public class AdminController {
         return new SpecialistDto(specialist);
     }
 
+    @GetMapping("/customer/show")
+    CustomerDto loadCustomer(@RequestParam Long customerId) {
+        Customer customer = customerService.findById(customerId)
+                .orElseThrow(() -> new NotFoundException("Customer not found."));
+        return new CustomerDto(customer);
+    }
+
     @GetMapping("/specialist/showAll")
     List<SpecialistDto> loadSpecialists(@RequestParam Map<String, String> filters) {
         List<Specialist> specialists = specialistService.loadAllByFilter(filters);
         return SpecialistDto.convertToDto(specialists);
+    }
+
+    @GetMapping("/customer/showAll")
+    List<CustomerDto> loadCustomers(@RequestParam Map<String, String> filters) {
+        List<Customer> customers = customerService.loadAllByFilter(filters);
+        return CustomerDto.convertToDto(customers);
     }
 
     @DeleteMapping("/specialist/delete")
@@ -98,7 +112,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/customer/delete")
-    void deleteCustomer(@RequestBody Customer customer) {
-        customerService.delete(customer);
+    void deleteCustomer(@RequestBody CustomerDto customerDto) {
+        customerService.delete(customerDto.getCustomer());
     }
 }
