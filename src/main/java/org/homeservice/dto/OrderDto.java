@@ -19,8 +19,8 @@ public class OrderDto {
     private LocalDateTime workingTime;
     private String address;
     private Double finalPrice;
-    private LocalDateTime startWorkingTime;
-    private LocalDateTime endWorkingTime;
+    private LocalDateTime startWorking;
+    private LocalDateTime endWorking;
     private OrderStatus status;
     private List<BidDto> bidDtoList;
     private SubServiceDto subServiceDto;
@@ -37,8 +37,8 @@ public class OrderDto {
         workingTime = order.getWorkingTime();
         address = order.getAddress();
         finalPrice = order.getFinalPrice();
-        startWorkingTime = order.getStartWorkingTime();
-        endWorkingTime = order.getEndWorkingTime();
+        startWorking = order.getStartWorking();
+        endWorking = order.getEndWorking();
         setBids(new ArrayList<>(order.getBids()));
     }
 
