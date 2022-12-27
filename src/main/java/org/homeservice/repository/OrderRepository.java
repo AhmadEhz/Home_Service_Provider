@@ -15,11 +15,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findAllByCustomer_Id(Long customerId);
 
     List<Order> findAllBySpecialist_Id(Long specialistId);
-
-    @Modifying
-    @Query("update Order as o set o.status = :status where o.id = :id")
-    int changeStatus(Long id, OrderStatus status);
-
+    
     //If specialist is not null, It means Customer accepted a bid for this Order.
     @Query("select o from Order as o where o.specialist is not null")
     Optional<Order> findIfAcceptedABid(Long id);
@@ -31,4 +27,12 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("select o from Order as o where o.specialist.id = :specialistId and o.status in :statuses")
     List<Order> findAllBySpecialistAndStatus(Long specialistId, OrderStatus[] statuses);
+
+    @Modifying
+    @Query("update Order as o set o.status = :status where o.id = :id")
+    void changeStatus(Long id, OrderStatus status);
+
+    @Modifying
+    @Query("update Order as o set o.rate.id = :rateId where o.id = :orderId")
+    void setRateId(Long orderId, Long rateId);
 }
