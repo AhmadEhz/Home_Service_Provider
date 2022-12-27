@@ -1,16 +1,68 @@
 package org.homeservice.service.impl;
 
 import org.homeservice.entity.Credit;
+import org.homeservice.entity.Transaction;
+import org.homeservice.entity.TransactionType;
 import org.homeservice.repository.CreditRepository;
 import org.homeservice.service.CreditService;
+import org.homeservice.service.TransactionService;
 import org.homeservice.service.base.BaseServiceImpl;
+import org.homeservice.util.exception.InsufficientAmountException;
+import org.homeservice.util.exception.NotFoundException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Scope("singleton")
 public class CreditServiceImpl extends BaseServiceImpl<Credit, Long, CreditRepository> implements CreditService {
-    protected CreditServiceImpl(CreditRepository repository) {
+    private final TransactionService transactionService;
+
+    protected CreditServiceImpl(CreditRepository repository, TransactionService transactionService) {
         super(repository);
+        this.transactionService = transactionService;
+    }
+
+    @Override
+    @Transactional
+    public void deposit(Long id, Long amount) {
+        checkAmount(amount);
+        Credit credit = findById(id).orElseThrow(() -> new NotFoundException("Credit not found."));
+        credit.deposit(amount);
+        update(credit);
+        transactionService.save(new Transaction(credit, amount, TransactionType.DEPOSIT));
+    }
+
+    @Override
+    @Transactional
+    public void withdraw(Long id, Long withdrawalAmount) {
+        checkAmount(withdrawalAmount);
+        Credit credit = findById(id).orElseThrow(() -> new NotFoundException("Credit not found."));
+        if (!credit.isSufficientAmount(withdrawalAmount))
+            throw new InsufficientAmountException();
+        credit.withdraw(withdrawalAmount);
+        update(credit);
+        transactionService.save(new Transaction(credit, withdrawalAmount, TransactionType.WITHDRAW));
+    }
+
+    @Override
+    @Transactional
+    public void cardToCard(Long sourceId, Long destinationId, Long amount) {
+        checkAmount(amount);
+        Credit sourceCredit = findById(sourceId).orElseThrow(() -> new NotFoundException("Source Credit not found."));
+        Credit destinationCredit = findById(destinationId).orElseThrow(
+                () -> new NotFoundException("Destination Credit not found."));
+        if (!sourceCredit.isSufficientAmount(amount))
+            throw new InsufficientAmountException();
+        sourceCredit.withdraw(amount);
+        destinationCredit.deposit(amount);
+        update(sourceCredit);
+        update(destinationCredit);
+        transactionService.save(new Transaction(sourceCredit, destinationCredit, amount, TransactionType.CARD_TO_CARD));
+    }
+
+    private void checkAmount(Long amount) throws IllegalArgumentException {
+        if (amount <= 0)
+            throw new IllegalArgumentException("Amount should not be less than zero.");
     }
 }
