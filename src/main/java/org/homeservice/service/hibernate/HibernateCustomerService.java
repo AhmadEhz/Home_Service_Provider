@@ -19,9 +19,9 @@ public interface HibernateCustomerService extends HibernateBaseService<Customer,
 
     List<SubService> loadSubServicesOfService(Long serviceId);
 
-    Rate saveRate(Long customerId, Double score, String comment, Long orderId);
+    Rate saveRate(Long customerId, Integer score, String comment, Long orderId);
 
-    Rate saveRate(Long customerId, Double score, Long orderId);
+    Rate saveRate(Long customerId, Integer score, Long orderId);
 
     void changePassword(Long id, String oldPassword, String newPassword);
 

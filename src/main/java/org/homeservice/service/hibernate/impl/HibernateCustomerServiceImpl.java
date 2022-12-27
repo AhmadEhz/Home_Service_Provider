@@ -80,7 +80,7 @@ public class HibernateCustomerServiceImpl extends HibernateBaseServiceImpl<Custo
     }
 
     @Override
-    public Rate saveRate(Long customerId, Double score, String comment, Long orderId) {
+    public Rate saveRate(Long customerId, Integer score, String comment, Long orderId) {
         Optional<Order> optionalOrder = orderRepository.findById(orderId);
         if (optionalOrder.isEmpty())
             throw new NotFoundException("Order not found.");
@@ -93,7 +93,7 @@ public class HibernateCustomerServiceImpl extends HibernateBaseServiceImpl<Custo
     }
 
     @Override
-    public Rate saveRate(Long customerId, Double score, Long orderId) {
+    public Rate saveRate(Long customerId, Integer score, Long orderId) {
         return saveRate(customerId, score, null, orderId);
     }
 
