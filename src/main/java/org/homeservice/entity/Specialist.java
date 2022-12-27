@@ -180,7 +180,6 @@ public class Specialist extends Person {
                "email='" + email + '\'' +
                ", status=" + status +
                ", score=" + score +
-               ", orders=" + orders +
                ", credit=" + credit +
                ", avatar=" + Arrays.toString(avatar) +
                ", createdAt=" + createdAt +
