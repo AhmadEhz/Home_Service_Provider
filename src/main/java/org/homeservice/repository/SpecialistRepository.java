@@ -32,9 +32,19 @@ public interface SpecialistRepository extends JpaRepository<Specialist, Long>, J
     int updateScore(Long id);
 
     @Modifying
-    @Query("""
-            update Specialist as s set s.score =
-            (select avg(r.score) from Rate as r where r.id = :rateId)
-            where s.id = (select r.order.specialist.id from Rate as r where r.id = :rateId)""")
-    int updateScoreByRateId(Long rateId);
+//    @Query(value = """
+//            update specialist set score =
+//            (select avg(r.score - r.lateness_end_working) from rate as r where r.id= :rateId)
+//            where id = (select sp.id from specialist as sp
+//            join orders as o on sp.id = o.specialist_id
+//            where o.rate_id = :rateId)""", nativeQuery = true)
+    @Query(nativeQuery = true, value = """
+            with spid as (select sp.id as sp_id, avg(r.score - r.lateness_end_working) as avg_score
+            from specialist sp join orders o on sp.id = o.specialist_id join rate r on r.id = o.rate_id
+            where sp.id = (select sp2.id from specialist as sp2 join orders o2 on sp2.id = o2.specialist_id
+            where o.rate_id = :rateId) group by sp.id)
+            
+            update specialist as s set score = spid.avg_score
+            from spid where s.id = spid.sp_id""")
+    void updateScoreByRateId(Long rateId);
 }
