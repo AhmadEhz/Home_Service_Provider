@@ -1,5 +1,7 @@
 package org.homeservice.service.impl;
 
+    import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.homeservice.entity.Specialist;
 import org.homeservice.entity.SpecialistStatus;
 import org.homeservice.repository.SpecialistRepository;
@@ -9,6 +11,7 @@ import org.homeservice.service.base.BaseServiceImpl;
 import org.homeservice.util.QueryUtil;
 import org.homeservice.util.Values;
 import org.homeservice.util.exception.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -110,8 +113,7 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
     @Override
     @Transactional
     public void updateScoreByRateId(Long rateId) {
-        int update = repository.updateScoreByRateId(rateId);
-        QueryUtil.checkUpdate(update, () -> new NotFoundException("Specialist not found."));
+        repository.updateScoreByRateId(rateId);
     }
 
     @Override
