@@ -1,9 +1,6 @@
 package org.homeservice.controller;
 
-import org.homeservice.dto.CustomerDto;
-import org.homeservice.dto.ServiceCreationDto;
-import org.homeservice.dto.SpecialistDto;
-import org.homeservice.dto.SubServiceDto;
+import org.homeservice.dto.*;
 import org.homeservice.entity.Admin;
 import org.homeservice.entity.Customer;
 import org.homeservice.entity.Specialist;
@@ -61,13 +58,13 @@ public class AdminController {
     }
 
     @PutMapping("subservice/edit-description")
-    void editSubServiceDescription(@RequestBody Map.Entry<String,String> description, @RequestParam Long subServiceId) {
-        subServiceService.editDescription(description.getValue(), subServiceId);
+    void editSubServiceDescription(@RequestBody SubServiceEditionDto subServiceDto) {
+        subServiceService.editDescription(subServiceDto.getDescription(), subServiceDto.getId());
     }
 
     @PutMapping("subservice/edit-basePrice")
-    void editSubServiceBasePrice(@RequestParam Long basePrice, @RequestParam Long subServiceId) {
-        subServiceService.editBasePrice(basePrice, subServiceId);
+    void editSubServiceBasePrice(@RequestBody SubServiceEditionDto subServiceDto) {
+        subServiceService.editBasePrice(subServiceDto.getBasePrice(), subServiceDto.getId());
     }
 
     @PutMapping("specialist/add-to-Subservice")
