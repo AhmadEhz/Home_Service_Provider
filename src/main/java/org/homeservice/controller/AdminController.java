@@ -1,5 +1,6 @@
 package org.homeservice.controller;
 
+import org.homeservice.dto.ServiceCreationDto;
 import org.homeservice.dto.SpecialistDto;
 import org.homeservice.dto.SubServiceDto;
 import org.homeservice.entity.Admin;
@@ -44,8 +45,8 @@ public class AdminController {
     }
 
     @PostMapping("/service/save")
-    void saveService(@RequestBody String serviceName) {
-        serviceService.save(serviceName);
+    void saveService(@RequestBody ServiceCreationDto serviceDto) {
+        serviceService.save(serviceDto.getService());
     }
 
     @PostMapping("/subservice/save")
