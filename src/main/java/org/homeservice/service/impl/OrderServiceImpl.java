@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
     private final ApplicationContext applicationContext;
     private final CustomerService customerService;
     private final SubServiceService subServiceService;
+    private RateService rateService;
     private BidService bidService;
 
     public OrderServiceImpl(ApplicationContext applicationContext, OrderRepository repository,
@@ -131,8 +133,35 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
         if (LocalDateTime.now().isBefore(bid.getStartWorking()))
             throw new CustomIllegalArgumentException("Starting the work should be after Bid start time");
         order.setStatus(OrderStatus.STARTED);
-        order.setStartWorkingTime(LocalDateTime.now());
+        order.setStartWorking(LocalDateTime.now());
         super.update(order);
+    }
+
+    @Override
+    @Transactional
+    public void changeStatusToEnded(Long id, Long customerId) {
+        Order order = findById(id).orElseThrow(() -> new NotFoundException("Order not found."));
+        Customer customer = customerService.findById(customerId).orElseThrow
+                (() -> new NotFoundException("Customer not found."));
+        Bid bid;
+        if (!order.getCustomer().equals(customer))
+            throw new CustomIllegalArgumentException("This Order is not for this Customer.");
+        if (order.getStatus() != OrderStatus.STARTED)
+            throw new CustomIllegalArgumentException
+                    ("The status of Order is not in \"Started\"");
+        bid = getBidService().loadByCustomerAndSpecialist(customerId, order.getSpecialist().getId())
+                .orElseThrow(() -> new NotFoundException("The Bid for this Order not found."));
+        Duration lateness = Duration.between(bid.getEndWorking(), LocalDateTime.now());
+        order.setLatenessEndWorking(lateness.getSeconds() > 0 ? lateness : Duration.ZERO);
+        order.setStatus(OrderStatus.FINISHED);
+        order.setEndWorking(LocalDateTime.now());
+        super.update(order);
+    }
+
+    @Override
+    @Transactional
+    public void setRateId(Long orderId, Long rateId) {
+        repository.setRateId(orderId,rateId);
     }
 
     @Override
@@ -144,5 +173,11 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
         if (bidService == null)
             bidService = applicationContext.getBean(BidService.class);
         return bidService;
+    }
+
+    private RateService getRateService() {
+        if (rateService == null)
+            rateService = applicationContext.getBean(RateService.class);
+        return rateService;
     }
 }
