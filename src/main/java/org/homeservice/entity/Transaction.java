@@ -3,7 +3,6 @@ package org.homeservice.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -25,7 +24,7 @@ public class Transaction {
     @Positive
     @NotNull
     @Column(nullable = false)
-    private Double amount;
+    private Long amount;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -48,11 +47,11 @@ public class Transaction {
         this.credit = credit;
     }
 
-    public Double getAmount() {
+    public Long getAmount() {
         return amount;
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(Long amount) {
         this.amount = amount;
     }
 

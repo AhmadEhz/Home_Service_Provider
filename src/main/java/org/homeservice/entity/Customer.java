@@ -43,7 +43,7 @@ public class Customer extends Person {
     }
     @PrePersist
     void prePersist() {
-        credit = new Credit(0);
+        credit = new Credit(0L);
     }
 
     public String getEmail() {

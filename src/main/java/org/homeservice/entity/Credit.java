@@ -3,7 +3,6 @@ package org.homeservice.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
-import org.hibernate.annotations.ColumnDefault;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,7 +16,7 @@ public class Credit {
     @Column(nullable = false)
     @NotNull
     @PositiveOrZero
-    private Integer amount;
+    private Long amount;
 
     @OneToMany(mappedBy = "credit")
     private Set<Transaction> transactions;
@@ -29,7 +28,7 @@ public class Credit {
     public Credit() {
     }
 
-    public Credit(Integer amount) {
+    public Credit(Long amount) {
         this.amount = amount;
     }
 
@@ -41,23 +40,23 @@ public class Credit {
         this.id = id;
     }
 
-    public Integer getAmount() {
+    public Long getAmount() {
         return amount;
     }
 
-    public void setAmount(Integer amount) {
+    public void setAmount(Long amount) {
         this.amount = amount;
     }
 
-    public boolean isSufficientAmount(Integer withdrawalAmount) {
+    public boolean isSufficientAmount(Long withdrawalAmount) {
         return amount - withdrawalAmount >= 0;
     }
 
-    public void deposit(Integer depositAmount) {
+    public void deposit(Long depositAmount) {
         amount += depositAmount;
     }
 
-    public void withdraw(Integer withdrawalAmount) {
+    public void withdraw(Long withdrawalAmount) {
         amount -= withdrawalAmount;
     }
 

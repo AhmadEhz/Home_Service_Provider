@@ -77,7 +77,7 @@ public class Specialist extends Person {
     @PrePersist
     private void perPersist() {
         status = SpecialistStatus.NEW;
-        credit = new Credit(0);
+        credit = new Credit(0L);
     }
 
     public String getEmail() {
