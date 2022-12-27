@@ -32,7 +32,7 @@ public class Specialist extends Person {
     @OneToMany(mappedBy = "specialist")
     private Set<Order> orders;
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private Credit credit;
 
     //    @Max(307200)
@@ -63,7 +63,7 @@ public class Specialist extends Person {
     }
 
     public Specialist(String firstName, String lastName, Double score, byte[] avatar) {
-        super(firstName,lastName);
+        super(firstName, lastName);
         this.score = score;
         this.avatar = avatar;
     }
@@ -77,6 +77,7 @@ public class Specialist extends Person {
     @PrePersist
     private void perPersist() {
         status = SpecialistStatus.NEW;
+        credit = new Credit(0);
     }
 
     public String getEmail() {
@@ -156,8 +157,7 @@ public class Specialist extends Person {
         try {
             avatar = file.getBytes();
             return true;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             return false;
         }
     }

@@ -22,7 +22,7 @@ public class Customer extends Person {
     @OneToMany(mappedBy = "customer")
     private Set<Order> orders;
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private Credit credit;
 
     @Transient
@@ -40,6 +40,10 @@ public class Customer extends Person {
     public Customer(String firstName, String lastName, String username, String password, String email) {
         super(firstName, lastName, username, password);
         this.email = email;
+    }
+    @PrePersist
+    void prePersist() {
+        credit = new Credit(0);
     }
 
     public String getEmail() {
