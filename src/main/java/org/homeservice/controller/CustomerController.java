@@ -5,6 +5,7 @@ import org.homeservice.entity.Bid;
 import org.homeservice.entity.Service;
 import org.homeservice.entity.SubService;
 import org.homeservice.service.*;
+import org.homeservice.util.exception.NotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,16 +41,29 @@ public class CustomerController {
         customerService.changePassword(map.get("username"), map.get("oldPassword"), map.get("newPassword"));
     }
 
-    @GetMapping("/show-services")
-    List<ServiceDto> showAllServices() {
-        List<Service> services = serviceService.findAll();
-        return ServiceDto.convertToDto(services);
+    @GetMapping("/show-service")
+    ServiceDto showService(@RequestParam Long id) {
+        Service service = serviceService.findById(id).orElseThrow(() -> new NotFoundException("Service not found."));
+        return new ServiceDto(service);
+    }
+
+    @GetMapping("/show-subService")
+    SubServiceDto showSubService(@RequestParam Long id) {
+        SubService subService = subServiceService.findById(id).orElseThrow(() ->
+                new NotFoundException("SubService not found."));
+        return new SubServiceDto(subService);
     }
 
     @GetMapping("/show-subServices")
-    List<SubServiceDto> showAllSubServices() {
-        List<SubService> subServices = subServiceService.findAll();
+    List<SubServiceDto> showSubServices(@RequestParam Long serviceId) {
+        List<SubService> subServices = subServiceService.loadAllByService(serviceId);
         return SubServiceDto.convertToDto(subServices);
+    }
+
+    @GetMapping("/show-services")
+    List<ServiceDto> showServices() {
+        List<Service> services = serviceService.findAll();
+        return ServiceDto.convertToDto(services);
     }
 
     @PostMapping("/set-order")
@@ -64,7 +78,7 @@ public class CustomerController {
     }
 
     @GetMapping("/show-bids")
-    List<BidDto> showBids(@RequestParam Long orderId, @RequestParam String sort) {
+    List<BidDto> showBids(@RequestParam Long orderId, @RequestParam(required = false) String sort) {
         List<Bid> bids = bidService.loadAllByOrder(orderId, sort);
         return BidDto.convertToDto(bids);
     }
@@ -86,6 +100,6 @@ public class CustomerController {
 
     @PostMapping("/send-rate")
     void saveRate(@RequestBody RateDto rateDto) {
-        rateService.save(rateDto.getRate(),rateDto.getOrderId(),rateDto.getCustomerId());
+        rateService.save(rateDto.getRate(), rateDto.getOrderId(), rateDto.getCustomerId());
     }
 }
