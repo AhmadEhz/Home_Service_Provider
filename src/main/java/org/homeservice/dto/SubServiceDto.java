@@ -5,6 +5,9 @@ import lombok.Setter;
 import org.homeservice.entity.Service;
 import org.homeservice.entity.SubService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 public class SubServiceDto {
@@ -16,15 +19,23 @@ public class SubServiceDto {
     public SubServiceDto() {
     }
 
-    public SubServiceDto(String name, String description, Double basePrice, String serviceName) {
-        this.name = name;
-        this.description = description;
-        this.basePrice = basePrice;
-        this.serviceName = serviceName;
+    public SubServiceDto(SubService subService) {
+        this.name = subService.getName();
+        this.description = subService.getDescription();
+        this.basePrice = subService.getBasePrice();
+        if (subService.getService() != null)
+            this.serviceName = subService.getService().getName();
     }
 
     public SubService getSubService() {
         return new SubService(name, description, basePrice, new Service(serviceName));
     }
 
+    public static List<SubServiceDto> convertToDto(List<SubService> subServices) {
+        List<SubServiceDto> subServiceDtoList = new ArrayList<>();
+        for (SubService s : subServices) {
+            subServiceDtoList.add(new SubServiceDto(s));
+        }
+        return subServiceDtoList;
+    }
 }
