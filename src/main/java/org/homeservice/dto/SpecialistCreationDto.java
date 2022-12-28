@@ -3,6 +3,7 @@ package org.homeservice.dto;
 import lombok.Getter;
 import lombok.Setter;
 import org.homeservice.entity.Specialist;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -12,9 +13,8 @@ public class SpecialistCreationDto {
     private String username;
     private String password;
     private String email;
-    private byte[] avatar;
 
     public Specialist getSpecialist() {
-        return new Specialist(firstName, lastName, username, password, email, avatar);
+        return new Specialist(firstName, lastName, username, password, email);
     }
 }
