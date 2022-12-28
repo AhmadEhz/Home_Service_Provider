@@ -1,15 +1,10 @@
 package org.homeservice.controller;
 
-import org.homeservice.dto.BidDto;
-import org.homeservice.dto.CustomerCreationDto;
-import org.homeservice.dto.OrderCreationDto;
-import org.homeservice.dto.RateDto;
+import org.homeservice.dto.*;
 import org.homeservice.entity.Bid;
-import org.homeservice.entity.Customer;
-import org.homeservice.service.BidService;
-import org.homeservice.service.CustomerService;
-import org.homeservice.service.OrderService;
-import org.homeservice.service.RateService;
+import org.homeservice.entity.Service;
+import org.homeservice.entity.SubService;
+import org.homeservice.service.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,13 +17,17 @@ public class CustomerController {
     private final OrderService orderService;
     private final RateService rateService;
     private final BidService bidService;
+    private final ServiceService serviceService;
+    private final SubServiceService subServiceService;
 
     public CustomerController(CustomerService customerService, OrderService orderService,
-                              RateService rateService, BidService bidService) {
+                              RateService rateService, BidService bidService, ServiceService serviceService, SubServiceService subServiceService) {
         this.customerService = customerService;
         this.orderService = orderService;
         this.rateService = rateService;
         this.bidService = bidService;
+        this.serviceService = serviceService;
+        this.subServiceService = subServiceService;
     }
 
     @PostMapping("/save")
@@ -41,13 +40,25 @@ public class CustomerController {
         customerService.changePassword(map.get("username"), map.get("oldPassword"), map.get("newPassword"));
     }
 
+    @GetMapping("/show-services")
+    List<ServiceDto> showAllServices() {
+        List<Service> services = serviceService.findAll();
+        return ServiceDto.convertToDto(services);
+    }
+
+    @GetMapping("/show-subServices")
+    List<SubServiceDto> showAllSubServices() {
+        List<SubService> subServices = subServiceService.findAll();
+        return SubServiceDto.convertToDto(subServices);
+    }
+
     @PostMapping("/set-order")
     void setOrder(@RequestBody OrderCreationDto orderCreationDto) {
         orderService.save(orderCreationDto.getOrder(), orderCreationDto.getCustomerId(),
                 orderCreationDto.getSubServiceId());
     }
 
-    @PostMapping("set-rate")
+    @PostMapping("/set-rate")
     void setRate(@RequestBody RateDto rateDto) {
         rateService.save(rateDto.getRate(), rateDto.getOrderId(), rateDto.getCustomerId());
     }
