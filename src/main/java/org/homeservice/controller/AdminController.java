@@ -1,9 +1,7 @@
 package org.homeservice.controller;
 
 import org.homeservice.dto.*;
-import org.homeservice.entity.Admin;
-import org.homeservice.entity.Customer;
-import org.homeservice.entity.Specialist;
+import org.homeservice.entity.*;
 import org.homeservice.service.*;
 import org.homeservice.util.exception.NotFoundException;
 import org.springframework.web.bind.annotation.*;
@@ -101,6 +99,31 @@ public class AdminController {
     List<CustomerDto> loadCustomers(@RequestParam Map<String, String> filters) {
         List<Customer> customers = customerService.loadAllByFilter(filters);
         return CustomerDto.convertToDto(customers);
+    }
+
+    @GetMapping("/show-service")
+    ServiceDto showService(@RequestParam Long id) {
+        Service service = serviceService.findById(id).orElseThrow(() -> new NotFoundException("Service not found."));
+        return new ServiceDto(service);
+    }
+
+    @GetMapping("/show-subService")
+    SubServiceDto showSubService(@RequestParam Long id) {
+        SubService subService = subServiceService.findById(id).orElseThrow(() ->
+                new NotFoundException("SubService not found."));
+        return new SubServiceDto(subService);
+    }
+
+    @GetMapping("/show-subServices")
+    List<SubServiceDto> showSubServices(@RequestParam Long serviceId) {
+        List<SubService> subServices = subServiceService.loadAllByService(serviceId);
+        return SubServiceDto.convertToDto(subServices);
+    }
+
+    @GetMapping("/show-services")
+    List<ServiceDto> showServices() {
+        List<Service> services = serviceService.findAll();
+        return ServiceDto.convertToDto(services);
     }
 
     @DeleteMapping("/specialist/delete")
