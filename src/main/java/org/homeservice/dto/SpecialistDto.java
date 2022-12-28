@@ -1,5 +1,6 @@
 package org.homeservice.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.homeservice.entity.Specialist;
@@ -15,7 +16,6 @@ public class SpecialistDto {
     private String email;
     private String username;
     private Double score;
-    private byte[] avatar;
 
     public SpecialistDto() {
     }
@@ -26,18 +26,18 @@ public class SpecialistDto {
         email = specialist.getEmail();
         username = specialist.getUsername();
         score = specialist.getScore();
-        avatar = specialist.getAvatar();
     }
 
+    @JsonIgnore
     public Specialist getSpecialist() {
-        return new Specialist(firstName, lastName, username, null, email, avatar);
+        return new Specialist(firstName, lastName, username, null, email);
     }
 
     public static List<SpecialistDto> convertToDto(List<Specialist> specialists) {
         List<SpecialistDto> specialistDtoList = new ArrayList<>();
-        for (Specialist s : specialists) {
+        for (Specialist s : specialists)
             specialistDtoList.add(new SpecialistDto(s));
-        }
+
         return specialistDtoList;
     }
 }

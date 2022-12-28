@@ -22,11 +22,11 @@ public class OrderDto {
     private LocalDateTime startWorking;
     private LocalDateTime endWorking;
     private OrderStatus status;
-    private List<BidDto> bidDtoList;
+    private List<BidDto> bids;
     private SubServiceDto subServiceDto;
 
     public OrderDto() {
-        bidDtoList = new ArrayList<>();
+        bids = new ArrayList<>();
     }
 
     public OrderDto(Order order) {
@@ -46,7 +46,7 @@ public class OrderDto {
         if (bids == null)
             return;
         for (Bid b : bids)
-            bidDtoList.add(new BidDto(b));
+            this.bids.add(new BidDto(b));
     }
 
     public static List<OrderDto> convertToDto(List<Order> orders) {

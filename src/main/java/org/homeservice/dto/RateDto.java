@@ -1,5 +1,6 @@
 package org.homeservice.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.homeservice.entity.Rate;
@@ -12,6 +13,7 @@ public class RateDto {
     private Long orderId;
     private Long customerId;
 
+    @JsonIgnore
     public Rate getRate() {
         return new Rate(score, comment);
     }

@@ -1,5 +1,6 @@
 package org.homeservice.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.homeservice.entity.Specialist;
@@ -14,6 +15,7 @@ public class SpecialistCreationDto {
     private String password;
     private String email;
 
+    @JsonIgnore
     public Specialist getSpecialist() {
         return new Specialist(firstName, lastName, username, password, email);
     }

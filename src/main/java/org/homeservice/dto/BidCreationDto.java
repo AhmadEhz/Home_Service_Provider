@@ -1,6 +1,7 @@
 package org.homeservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.homeservice.entity.Bid;
@@ -35,6 +36,7 @@ public class BidCreationDto {
             specialistId = bid.getSpecialist().getId();
     }
 
+    @JsonIgnore
     public Bid getBid() {
         Bid bid = new Bid();
         bid.setOfferPrice(offerPrice);

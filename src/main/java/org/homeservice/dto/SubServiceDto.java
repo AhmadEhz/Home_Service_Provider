@@ -1,5 +1,6 @@
 package org.homeservice.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.homeservice.entity.Service;
@@ -27,6 +28,7 @@ public class SubServiceDto {
             this.serviceName = subService.getService().getName();
     }
 
+    @JsonIgnore
     public SubService getSubService() {
         return new SubService(name, description, basePrice, new Service(serviceName));
     }

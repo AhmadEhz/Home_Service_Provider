@@ -1,5 +1,6 @@
 package org.homeservice.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.homeservice.entity.Customer;
@@ -33,6 +34,7 @@ public class CustomerDto {
         return customerDtoList;
     }
 
+    @JsonIgnore
     public Customer getCustomer() {
         return new Customer(firstName, lastName, username, null, email);
     }

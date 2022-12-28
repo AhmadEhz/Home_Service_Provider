@@ -1,6 +1,7 @@
 package org.homeservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.homeservice.entity.Order;
@@ -18,6 +19,7 @@ public class OrderCreationDto {
     private Long customerId;
     private Long subServiceId;
 
+    @JsonIgnore
     public Order getOrder() {
         return new Order(offerPrice,description,workingTime,address);
     }
