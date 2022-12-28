@@ -4,7 +4,6 @@ import org.homeservice.dto.BidCreationDto;
 import org.homeservice.dto.OrderDto;
 import org.homeservice.dto.SpecialistCreationDto;
 import org.homeservice.entity.Order;
-import org.homeservice.entity.Specialist;
 import org.homeservice.service.BidService;
 import org.homeservice.service.OrderService;
 import org.homeservice.service.SpecialistService;
@@ -49,12 +48,12 @@ public class SpecialistController {
         specialistService.changePassword(map.get("username"), map.get("oldPassword"), map.get("newPassword"));
     }
 
-    @PutMapping("/add-avatar/{id}")
-    void addAvatar(@PathVariable Long id, @RequestBody MultipartFile avatar) {
+    @PutMapping("/add-avatar/")
+    void addAvatar(@RequestParam Long id, @RequestBody MultipartFile avatar) {
         specialistService.addAvatar(id, avatar);
     }
 
-    @PutMapping ("/set-bid")
+    @PostMapping ("/set-bid")
     void saveBid(@RequestBody BidCreationDto bidCreationDTO) {
         bidService.save(bidCreationDTO.getBid(), bidCreationDTO.getOrderId(), bidCreationDTO.getSpecialistId());
     }

@@ -20,7 +20,8 @@ import java.util.Optional;
 
 @Service
 @Scope("singleton")
-public class SubServiceSpecialistServiceImpl extends BaseServiceImpl<SubServiceSpecialist, SubServiceSpecialistId, SubServiceSpecialistRepository> implements SubServiceSpecialistService {
+public class SubServiceSpecialistServiceImpl extends BaseServiceImpl<SubServiceSpecialist, SubServiceSpecialistId,
+        SubServiceSpecialistRepository> implements SubServiceSpecialistService {
     private final SpecialistService specialistService;
     private final SubServiceService subServiceService;
 

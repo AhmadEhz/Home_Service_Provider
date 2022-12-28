@@ -102,7 +102,7 @@ public class CustomerTest {
 
     void selectBidForOrder() {
         assertEquals(OrderStatus.WAITING_FOR_CHOOSE_SPECIALIST, services.loadOrder(order1.getId()).getStatus());
-        services.orderService.selectBidForOffer(SpecialistTest.bid1.getId(), SpecialistTest.bid1.getId());
+        services.orderService.selectBid(SpecialistTest.bid1.getId(), SpecialistTest.bid1.getId());
         assertTrue(services.bidService.loadByCustomerAndSpecialist
                 (customer1.getId(), SpecialistTest.specialist1.getId()).isPresent());
         assertEquals(OrderStatus.WAITING_FOR_COMING_SPECIALIST, services.loadOrder(order1.getId()).getStatus());

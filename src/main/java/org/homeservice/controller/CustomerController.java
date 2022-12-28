@@ -22,7 +22,8 @@ public class CustomerController {
     private final SubServiceService subServiceService;
 
     public CustomerController(CustomerService customerService, OrderService orderService,
-                              RateService rateService, BidService bidService, ServiceService serviceService, SubServiceService subServiceService) {
+                              RateService rateService, BidService bidService, ServiceService serviceService,
+                              SubServiceService subServiceService) {
         this.customerService = customerService;
         this.orderService = orderService;
         this.rateService = rateService;

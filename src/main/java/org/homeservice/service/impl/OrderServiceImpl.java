@@ -22,7 +22,6 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
     private final ApplicationContext applicationContext;
     private final CustomerService customerService;
     private final SubServiceService subServiceService;
-    private RateService rateService;
     private BidService bidService;
 
     public OrderServiceImpl(ApplicationContext applicationContext, OrderRepository repository,
@@ -173,11 +172,5 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
         if (bidService == null)
             bidService = applicationContext.getBean(BidService.class);
         return bidService;
-    }
-
-    private RateService getRateService() {
-        if (rateService == null)
-            rateService = applicationContext.getBean(RateService.class);
-        return rateService;
     }
 }
