@@ -4,10 +4,14 @@ import org.homeservice.entity.Customer;
 import org.homeservice.repository.CustomerRepository;
 import org.homeservice.service.CustomerService;
 import org.homeservice.service.base.BaseServiceImpl;
+import org.homeservice.util.QueryUtil;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Scope("singleton")
@@ -25,6 +29,11 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
             throw new CustomIllegalArgumentException("Old password is incorrect.");
         customer.setPassword(newPassword);
         update(customer);
+    }
+
+    @Override
+    public List<Customer> loadAllByFilter(Map<String ,String> filters){
+        return repository.findAll(QueryUtil.setSpecification(filters));
     }
 
     @Override
