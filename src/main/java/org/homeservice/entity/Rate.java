@@ -16,8 +16,10 @@ public class Rate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     @PositiveOrZero(message = "Rate score should be positive")
     @Max(value = 5, message = "Max of score rating is 5")
+    @NotNull
     private Integer score;
 
     private String comment;
@@ -49,7 +51,7 @@ public class Rate {
 
     @PrePersist
     void prePersist() {
-        if(score == null)
+        if (latenessEndWorking == null)
             score = 0;
     }
 
