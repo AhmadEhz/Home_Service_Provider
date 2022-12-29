@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -70,5 +71,26 @@ public class Credit {
 
     public void addTransaction(Transaction transaction) {
         transactions.add(transaction);
+    }
+
+    @Override
+    public String toString() {
+        return "Credit{" +
+               "id=" + id +
+               ", amount=" + amount +
+               '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Credit credit = (Credit) o;
+        return Objects.equals(id, credit.id) && Objects.equals(amount, credit.amount);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, amount);
     }
 }
