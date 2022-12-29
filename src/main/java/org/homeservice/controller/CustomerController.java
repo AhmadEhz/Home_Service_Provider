@@ -73,8 +73,8 @@ public class CustomerController {
                 orderCreationDto.getSubServiceId());
     }
 
-    @PostMapping("/set-rate")
-    void setRate(@RequestBody RateDto rateDto) {
+    @PostMapping("/send-rate")
+    void saveRate(@RequestBody RateDto rateDto) {
         rateService.save(rateDto.getRate(), rateDto.getOrderId(), rateDto.getCustomerId());
     }
 
@@ -97,10 +97,5 @@ public class CustomerController {
     @PutMapping("/end-work")
     void changeOrderStatusToFinished(@RequestParam Long orderId, @RequestParam Long customerId) {
         orderService.changeStatusToEnded(orderId, customerId);
-    }
-
-    @PostMapping("/send-rate")
-    void saveRate(@RequestBody RateDto rateDto) {
-        rateService.save(rateDto.getRate(), rateDto.getOrderId(), rateDto.getCustomerId());
     }
 }
