@@ -66,8 +66,8 @@ public class AdminController {
     }
 
     @PutMapping("specialist/add-to-Subservice")
-    void addSpecialistToSubService(@RequestBody Map<String, Long> map) {
-        subServiceSpecialistService.save(map.get("specialistId"), map.get("subServiceId"));
+    void addSpecialistToSubService(@RequestParam Long specialistId, @RequestParam Long subServiceId) {
+        subServiceSpecialistService.save(specialistId, subServiceId);
     }
 
     @PutMapping("specialist/remove-from-subService")
@@ -90,13 +90,19 @@ public class AdminController {
     }
 
     @GetMapping("/specialist/showAll")
-    List<SpecialistDto> loadSpecialists(@RequestParam Map<String, String> filters) {
+    List<SpecialistDto> showSpecialists(@RequestParam Map<String, String> filters) {
         List<Specialist> specialists = specialistService.loadAllByFilter(filters);
         return SpecialistDto.convertToDto(specialists);
     }
 
+    @GetMapping("/specialist/showAll-by-subService")
+    List<SpecialistDto> showSpecialistsBySubService(@RequestParam Long subServiceId) {
+        List<Specialist> specialists = specialistService.loadAllBySubService(subServiceId);
+        return SpecialistDto.convertToDto(specialists);
+    }
+
     @GetMapping("/customer/showAll")
-    List<CustomerDto> loadCustomers(@RequestParam Map<String, String> filters) {
+    List<CustomerDto> showCustomers(@RequestParam Map<String, String> filters) {
         List<Customer> customers = customerService.loadAllByFilter(filters);
         return CustomerDto.convertToDto(customers);
     }
