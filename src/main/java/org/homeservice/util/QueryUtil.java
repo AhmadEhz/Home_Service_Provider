@@ -2,6 +2,7 @@ package org.homeservice.util;
 
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
+import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.domain.Sort;
 
@@ -32,13 +33,14 @@ public class QueryUtil {
         if (filters == null)
             return null;
         Specification<T> specification = Specification.where(null); //Just for initial specification.
-        for (Map.Entry<String, String> entry : filters.entrySet())
+        for (Map.Entry<String, String> entry : filters.entrySet()) {
+            String[] filter = entry.getKey().split("\\.");
+            String key = Values.getFilter(filter[0]);
+            String method = filter.length == 2 ? filter[1] : "eq";
             //Check this filter is valid. (For example, user can't get to entity with password.)
-            if (Values.containsFilter(entry.getKey())) {
-                specification = specification.and(Specification.where(
-                        (root, cr, cb) -> cb.equal(root.get(Values.getFilter(entry.getKey())), entry.getValue())));
-            }
-
+            specification = specification.and(Specification.where
+                    (Values.getSpecification(key, entry.getValue(), method)));
+        }
         return specification;
     }
 
@@ -63,8 +65,37 @@ public class QueryUtil {
             sortValues.put("specialist", Sort.by(Sort.Direction.DESC, "specialist.score"));
         }
 
+        static <T> Specification<T> getSpecification(String key, String value, String method) {
+            if (key == null)
+                throw new CustomIllegalArgumentException("Filter is not found.");
+            return (root, cq, cb) -> {
+                if (key.equalsIgnoreCase("score")) {
+                    if (method.equals("gt"))
+                        return cb.gt(root.get(key), toInt(value));
+                    if (method.equals("lt"))
+                        return cb.lt(root.get(key), toInt(value));
+                    if (method.equals("eq"))
+                        return cb.equal(root.get(key), toInt(value));
+                } else {
+                    if (method.equals("like"))
+                        return cb.like(root.get(key), '%' + value + '%');
+                    if (method.equals("eq"))
+                        return cb.equal(root.get(key), value);
+                }
+                throw new CustomIllegalArgumentException("Filter is not correct or not found.");
+            };
+        }
+
         static String getFilter(String key) {
             return filterValues.get(key.toLowerCase());
+        }
+
+        static Integer toInt(String value) {
+            try {
+                return Integer.parseInt(value);
+            } catch (NumberFormatException e) {
+                throw new CustomIllegalArgumentException("Filter is not correct.");
+            }
         }
 
         static boolean containsFilter(String key) {
