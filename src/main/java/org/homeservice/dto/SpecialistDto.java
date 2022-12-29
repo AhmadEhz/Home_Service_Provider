@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.homeservice.entity.Specialist;
+import org.homeservice.entity.SpecialistStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ public class SpecialistDto {
     private String email;
     private String username;
     private Double score;
+    private SpecialistStatus status;
 
     public SpecialistDto() {
     }
@@ -26,11 +28,14 @@ public class SpecialistDto {
         email = specialist.getEmail();
         username = specialist.getUsername();
         score = specialist.getScore();
+        status = specialist.getStatus();
     }
 
     @JsonIgnore
     public Specialist getSpecialist() {
-        return new Specialist(firstName, lastName, username, null, email);
+       Specialist specialist = new Specialist(firstName, lastName, username, null, email);
+       specialist.setStatus(status);
+       return specialist;
     }
 
     public static List<SpecialistDto> convertToDto(List<Specialist> specialists) {

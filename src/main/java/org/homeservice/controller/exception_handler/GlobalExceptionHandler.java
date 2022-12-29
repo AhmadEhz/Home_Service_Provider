@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({CustomIllegalArgumentException.class, NotFoundException.class, NonUniqueException.class,
             InsufficientAmountException.class})
     public String illegalArgument(Exception ex) {
