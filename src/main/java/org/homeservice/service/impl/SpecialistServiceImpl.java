@@ -1,5 +1,6 @@
 package org.homeservice.service.impl;
 
+import jakarta.validation.Valid;
 import org.homeservice.entity.Specialist;
 import org.homeservice.entity.SpecialistStatus;
 import org.homeservice.repository.SpecialistRepository;
@@ -29,7 +30,7 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
     }
 
     @Override
-    public void save(Specialist specialist) {
+    public void save(@Valid Specialist specialist) {
         if (isExistUsername(specialist.getUsername()))
             throw new NonUniqueException("Username is not unique.");
         if (isExistEmail(specialist.getEmail()))
@@ -39,6 +40,8 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
 
     @Override
     public void addAvatar(Long id, MultipartFile avatar) {
+        if(avatar == null)
+            throw new CustomIllegalArgumentException("Avatar is empty.");
         Specialist specialist = findById(id).orElseThrow(() -> new NotFoundException("Specialist not found."));
         if (avatar.getSize() > Values.MAX_AVATAR_SIZE) //avatar size > 300KB
             throw new CustomIllegalArgumentException
@@ -79,6 +82,11 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
     @Override
     public List<Specialist> loadAllByFilter(Map<String, String> filters) {
         return repository.findAll(QueryUtil.setSpecification(filters));
+    }
+
+    @Override
+    public List<Specialist> loadAllBySubService(Long subServiceId) {
+        return repository.findAllBySubService(subServiceId);
     }
 
     @Override

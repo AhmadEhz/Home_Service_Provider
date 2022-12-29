@@ -20,6 +20,8 @@ public interface SpecialistService extends BaseService<Specialist, Long> {
 
     List<Specialist> loadAllByFilter(Map<String, String> filters);
 
+    List<Specialist> loadAllBySubService(Long subServiceId);
+
     void verifySpecialist(Long id);
 
     void suspendSpecialist(Long id);

@@ -54,4 +54,7 @@ public interface SpecialistRepository extends JpaRepository<Specialist, Long>, J
             update Specialist s set s.status = org.homeservice.entity.SpecialistStatus.SUSPENDED
             where s.id = :id and s.score < 0""")
     void suspendSpecialistIfScoreIsNegative(Long id);
+
+    @Query("select ssp.specialist from SubServiceSpecialist ssp where ssp.subService.id = :subServiceId")
+    List<Specialist> findAllBySubService(Long subServiceId);
 }
