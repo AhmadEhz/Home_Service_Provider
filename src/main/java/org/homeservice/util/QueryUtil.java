@@ -29,6 +29,8 @@ public class QueryUtil {
     }
 
     public static <T> Specification<T> setSpecification(Map<String, String> filters) {
+        if (filters == null)
+            return null;
         Specification<T> specification = Specification.where(null); //Just for initial specification.
         for (Map.Entry<String, String> entry : filters.entrySet())
             //Check this filter is valid. (For example, user can't get to entity with password.)
@@ -40,7 +42,9 @@ public class QueryUtil {
         return specification;
     }
 
-    public static Sort sortBy(String sort){
+    public static Sort sortBy(String sort) {
+        if (sort == null)
+            return null;
         return Values.getSort(sort);
     }
 
