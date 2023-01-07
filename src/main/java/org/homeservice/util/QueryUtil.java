@@ -107,6 +107,37 @@ public class QueryUtil {
             };
         }
 
+        public static Specification<Order> getOrderSpecification(Map<String, String> filters) {
+            Specification<Order> specification = Specification.where(null);
+            if (filters == null || filters.isEmpty())
+                return null;
+            for (Map.Entry<String, String> entry : filters.entrySet()) {
+                Specification<Order> spec = (root, cq, cb) -> switch (entry.getKey().toLowerCase()) {
+                    case "customerid" -> cb.equal(root.get(Order_.specialist), toDouble(entry.getValue()));
+                    case "status" -> {
+                        OrderStatus status = OrderStatus.valueOf(entry.getValue());
+                        if (status == null)
+                            throw new CustomIllegalArgumentException("Order status is not correct");
+                        yield cb.equal(root.get(Order_.status), status);
+                    }
+                    case "order" -> switch (entry.getValue().toLowerCase()) {
+                        case "time", "time.asc" -> {
+                            cq.orderBy(cb.asc(root.get(Order_.createdAt)));
+                            yield cb.and();
+                        }
+                        case "time.desc" -> {
+                            cq.orderBy(cb.desc(root.get(Order_.createdAt)));
+                            yield cb.and();
+                        }
+                        default -> throw new CustomIllegalArgumentException("Filter is not correct.");
+                    };
+                    default -> throw new CustomIllegalArgumentException("filter is not correct.");
+                };
+                specification = specification.and(spec);
+            }
+            return specification;
+        }
+
         static String getFilter(String key) {
             return filterValues.get(key.toLowerCase());
         }
