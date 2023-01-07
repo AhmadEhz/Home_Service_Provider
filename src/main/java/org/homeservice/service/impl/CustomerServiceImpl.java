@@ -32,8 +32,8 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
     }
 
     @Override
-    public List<Customer> loadAllByFilter(Map<String ,String> filters){
-        return repository.findAll(QueryUtil.setSpecification(filters));
+    public List<Customer> loadAllByFilter(Map<String, String> filters) {
+        return repository.findAll(QueryUtil.setSpecification(filters, Customer.class));
     }
 
     @Override

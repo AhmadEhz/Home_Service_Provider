@@ -81,7 +81,7 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
 
     @Override
     public List<Specialist> loadAllByFilter(Map<String, String> filters) {
-        return repository.findAll(QueryUtil.setSpecification(filters));
+        return repository.findAll(QueryUtil.setSpecification(filters, Specialist.class));
     }
 
     @Override
