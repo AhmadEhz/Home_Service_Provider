@@ -5,6 +5,7 @@ import org.homeservice.repository.CustomerRepository;
 import org.homeservice.service.CustomerService;
 import org.homeservice.service.base.BaseServiceImpl;
 import org.homeservice.util.QueryUtil;
+import org.homeservice.util.Specifications;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
 import org.springframework.context.annotation.Scope;
@@ -33,7 +34,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
 
     @Override
     public List<Customer> loadAllByFilter(Map<String, String> filters) {
-        return repository.findAll(QueryUtil.setSpecification(filters, Customer.class));
+        return repository.findAll(Specifications.getCustomer(filters));
     }
 
     @Override

@@ -8,6 +8,7 @@ import org.homeservice.service.SpecialistService;
 import org.homeservice.service.SubServiceService;
 import org.homeservice.service.base.BaseServiceImpl;
 import org.homeservice.util.QueryUtil;
+import org.homeservice.util.Specifications;
 import org.homeservice.util.Values;
 import org.homeservice.util.exception.*;
 import org.springframework.context.annotation.Scope;
@@ -40,7 +41,7 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
 
     @Override
     public void addAvatar(Long id, MultipartFile avatar) {
-        if(avatar == null)
+        if (avatar == null)
             throw new CustomIllegalArgumentException("Avatar is empty.");
         Specialist specialist = findById(id).orElseThrow(() -> new NotFoundException("Specialist not found."));
         if (avatar.getSize() > Values.MAX_AVATAR_SIZE) //avatar size > 300KB
@@ -81,7 +82,7 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
 
     @Override
     public List<Specialist> loadAllByFilter(Map<String, String> filters) {
-        return repository.findAll(QueryUtil.setSpecification(filters, Specialist.class));
+        return repository.findAll(Specifications.getSpecialist(filters));
     }
 
     @Override
