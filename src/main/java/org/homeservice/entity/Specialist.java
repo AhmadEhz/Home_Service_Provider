@@ -35,6 +35,9 @@ public class Specialist extends Person {
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private Credit credit;
 
+    @OneToMany(mappedBy = "specialist")
+    private Set<SubServiceSpecialist> subServiceSpecialist;
+
     //    @Max(307200)
 //    @Length(max = 307200)// 300KB
     private byte[] avatar;
@@ -168,6 +171,14 @@ public class Specialist extends Person {
 
     public void setRates(List<Rate> rates) {
         this.rates = rates;
+    }
+
+    public Set<SubServiceSpecialist> getSubServiceSpecialist() {
+        return subServiceSpecialist;
+    }
+
+    public void setSubServiceSpecialist(Set<SubServiceSpecialist> subServiceSpecialist) {
+        this.subServiceSpecialist = subServiceSpecialist;
     }
 
     public boolean isVerified() {
