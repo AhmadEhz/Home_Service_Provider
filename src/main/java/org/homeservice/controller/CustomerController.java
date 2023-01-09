@@ -2,6 +2,7 @@ package org.homeservice.controller;
 
 import org.homeservice.dto.*;
 import org.homeservice.entity.Bid;
+import org.homeservice.entity.Credit;
 import org.homeservice.entity.Service;
 import org.homeservice.entity.SubService;
 import org.homeservice.service.*;
@@ -10,7 +11,6 @@ import org.homeservice.util.Values;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Map;
@@ -24,11 +24,12 @@ public class CustomerController {
     private final BidService bidService;
     private final ServiceService serviceService;
     private final SubServiceService subServiceService;
+    private final CreditService creditService;
 
 
     public CustomerController(CustomerService customerService, OrderService orderService,
                               RateService rateService, BidService bidService, ServiceService serviceService,
-                              SubServiceService subServiceService) {
+                              SubServiceService subServiceService, CreditService creditService) {
         this.customerService = customerService;
         this.orderService = orderService;
         this.rateService = rateService;
@@ -36,6 +37,7 @@ public class CustomerController {
         this.serviceService = serviceService;
         this.subServiceService = subServiceService;
 
+        this.creditService = creditService;
     }
 
     @PostMapping("/save")
@@ -90,10 +92,16 @@ public class CustomerController {
         return BidDto.convertToDto(bids);
     }
 
+    @GetMapping("/credit")
+    CreditDto showCredit(@RequestParam Long customerId) {
+        Credit credit = creditService.loadByCustomer(customerId)
+                .orElseThrow(() -> new NotFoundException("Customer not found."));
+        return new CreditDto(credit);
+    }
+
     @CrossOrigin
     @PostMapping("/payment")
     String payment(@RequestBody PaymentDto payment) {
-
         CaptchaChecker captchaChecker = new CaptchaChecker(payment.getCaptcha());
         if (!captchaChecker.isValid())
             throw new CustomIllegalArgumentException("Captcha is invalid.");
