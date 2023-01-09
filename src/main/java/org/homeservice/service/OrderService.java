@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public interface OrderService extends BaseService<Order, Long> {
@@ -19,6 +20,10 @@ public interface OrderService extends BaseService<Order, Long> {
     List<Order> loadAllBySpecialistSubServices(Long specialistId);
 
     List<Order> loadAllByWaitingStatusAndSpecialist(Long specialistId);
+
+    List<Order> loadAllByFilter(Map<String, String> filters);
+
+    List<Order> loadAllWithDetails(Map<String, String> filters);
 
     void selectBid(Long bidId, Long customerId);
 

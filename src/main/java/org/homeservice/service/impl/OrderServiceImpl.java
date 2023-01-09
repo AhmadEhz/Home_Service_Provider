@@ -4,6 +4,7 @@ import org.homeservice.entity.*;
 import org.homeservice.repository.OrderRepository;
 import org.homeservice.service.*;
 import org.homeservice.service.base.BaseServiceImpl;
+import org.homeservice.util.Specifications;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
 import org.springframework.context.ApplicationContext;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Scope("singleton")
@@ -76,6 +78,16 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
     public List<Order> loadAllByWaitingStatusAndSpecialist(Long specialistId) {
         return repository.findAllBySpecialistAndStatus(specialistId,
                 new OrderStatus[]{OrderStatus.WAITING_FOR_CHOOSE_SPECIALIST, OrderStatus.WAITING_FOR_BID});
+    }
+
+    @Override
+    public List<Order> loadAllByFilter(Map<String, String> filters) {
+        return repository.findAll(Specifications.getOrder(filters));
+    }
+
+    @Override
+    public List<Order> loadAllWithDetails(Map<String, String> filters) {
+        return repository.findAllWithDetails(filters);
     }
 
     @Override
@@ -160,7 +172,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
     @Override
     @Transactional
     public void setRateId(Long orderId, Long rateId) {
-        repository.setRateId(orderId,rateId);
+        repository.setRateId(orderId, rateId);
     }
 
     @Override
