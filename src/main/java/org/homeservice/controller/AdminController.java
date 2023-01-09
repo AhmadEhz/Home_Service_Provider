@@ -18,16 +18,18 @@ public class AdminController {
     private final SubServiceService subServiceService;
     private final SubServiceSpecialistService subServiceSpecialistService;
     private final CustomerService customerService;
+    private final OrderService orderService;
 
     public AdminController(AdminService adminService, SpecialistService specialistService,
                            ServiceService serviceService, SubServiceService subServiceService,
-                           SubServiceSpecialistService subServiceSpecialistService, CustomerService customerService) {
+                           SubServiceSpecialistService subServiceSpecialistService, CustomerService customerService, OrderService orderService) {
         this.adminService = adminService;
         this.specialistService = specialistService;
         this.serviceService = serviceService;
         this.subServiceService = subServiceService;
         this.subServiceSpecialistService = subServiceSpecialistService;
         this.customerService = customerService;
+        this.orderService = orderService;
     }
 
     @PostMapping("/save")
@@ -130,6 +132,12 @@ public class AdminController {
     List<ServiceDto> showServices() {
         List<Service> services = serviceService.findAll();
         return ServiceDto.convertToDto(services);
+    }
+
+    @GetMapping("/orders")
+    List<OrderDto> showAllWithFilter(@RequestParam Map<String,String> filters) {
+        List<Order> orders = orderService.loadAllWithDetails(filters);
+        return OrderDto.convertToDto(orders);
     }
 
     @DeleteMapping("/specialist/delete")
