@@ -13,6 +13,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Scope("singleton")
 public class CreditServiceImpl extends BaseServiceImpl<Credit, Long, CreditRepository> implements CreditService {
@@ -43,6 +45,16 @@ public class CreditServiceImpl extends BaseServiceImpl<Credit, Long, CreditRepos
         credit.withdraw(withdrawalAmount);
         update(credit);
         transactionService.save(new Transaction(credit, withdrawalAmount, TransactionType.WITHDRAW));
+    }
+
+    @Override
+    public Optional<Credit> loadBySpecialist(Long specialistId) {
+        return repository.findBySpecialistId(specialistId);
+    }
+
+    @Override
+    public Optional<Credit> loadByCustomer(Long customerId) {
+        return repository.findByCustomerId(customerId);
     }
 
     @Override
