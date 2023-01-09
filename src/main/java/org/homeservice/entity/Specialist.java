@@ -38,9 +38,10 @@ public class Specialist extends Person {
     @OneToMany(mappedBy = "specialist")
     private Set<SubServiceSpecialist> subServiceSpecialist;
 
-    //    @Max(307200)
-//    @Length(max = 307200)// 300KB
     private byte[] avatar;
+
+    @OneToOne
+    private VerifyCode verifyCode;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -179,6 +180,14 @@ public class Specialist extends Person {
 
     public void setSubServiceSpecialist(Set<SubServiceSpecialist> subServiceSpecialist) {
         this.subServiceSpecialist = subServiceSpecialist;
+    }
+
+    public VerifyCode getVerifyLink() {
+        return verifyCode;
+    }
+
+    public void setVerifyLink(VerifyCode verifyCode) {
+        this.verifyCode = verifyCode;
     }
 
     public boolean isVerified() {

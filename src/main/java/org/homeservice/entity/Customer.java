@@ -25,6 +25,9 @@ public class Customer extends Person {
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private Credit credit;
 
+    @OneToOne
+    private VerifyCode verifyCode;
+
     @Transient
     private List<Rate> rates;
 
@@ -84,6 +87,14 @@ public class Customer extends Person {
 
     public void setRates(List<Rate> rates) {
         this.rates = rates;
+    }
+
+    public VerifyCode getVerifyLink() {
+        return verifyCode;
+    }
+
+    public void setVerifyLink(VerifyCode verifyCode) {
+        this.verifyCode = verifyCode;
     }
 
     @Override
