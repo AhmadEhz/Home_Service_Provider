@@ -5,8 +5,12 @@ import org.homeservice.entity.Bid;
 import org.homeservice.entity.Service;
 import org.homeservice.entity.SubService;
 import org.homeservice.service.*;
+import org.homeservice.util.CaptchaChecker;
+import org.homeservice.util.Values;
+import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Map;
@@ -21,6 +25,7 @@ public class CustomerController {
     private final ServiceService serviceService;
     private final SubServiceService subServiceService;
 
+
     public CustomerController(CustomerService customerService, OrderService orderService,
                               RateService rateService, BidService bidService, ServiceService serviceService,
                               SubServiceService subServiceService) {
@@ -30,6 +35,7 @@ public class CustomerController {
         this.bidService = bidService;
         this.serviceService = serviceService;
         this.subServiceService = subServiceService;
+
     }
 
     @PostMapping("/save")
@@ -84,7 +90,19 @@ public class CustomerController {
         return BidDto.convertToDto(bids);
     }
 
-    @PutMapping("select-bid")
+    @CrossOrigin
+    @PostMapping("/payment")
+    String payment(@RequestBody PaymentDto payment) {
+
+        CaptchaChecker captchaChecker = new CaptchaChecker(payment.getCaptcha());
+        if (!captchaChecker.isValid())
+            throw new CustomIllegalArgumentException("Captcha is invalid.");
+        if ((int) Math.log10(payment.getCardNumber()) + 1 != Values.CARD_NUMBER_LENGTH)
+            throw new CustomIllegalArgumentException("Card number is not " + Values.CARD_NUMBER_LENGTH + " digits.");
+        return "true";
+    }
+
+    @PutMapping("/select-bid")
     void selectBid(@RequestParam Long bidId, @RequestParam Long customerId) {
         orderService.selectBid(bidId, customerId);
     }
