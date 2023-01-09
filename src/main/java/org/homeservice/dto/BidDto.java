@@ -15,8 +15,7 @@ public class BidDto {
     private Double offerPrice;
     private LocalDateTime startWorking;
     private LocalDateTime endWorking;
-    private SpecialistDto specialistDto;
-
+    private SpecialistDto specialist;
 
     public BidDto() {
     }
@@ -27,7 +26,7 @@ public class BidDto {
         startWorking = bid.getStartWorking();
         endWorking = bid.getEndWorking();
         if (bid.getSpecialist() != null)
-            specialistDto = new SpecialistDto(bid.getSpecialist());
+            specialist = new SpecialistDto(bid.getSpecialist());
     }
 
     public static List<BidDto> convertToDto(List<Bid> bids) {

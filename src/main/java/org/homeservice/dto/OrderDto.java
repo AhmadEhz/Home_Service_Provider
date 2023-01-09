@@ -2,7 +2,6 @@ package org.homeservice.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.homeservice.entity.Bid;
 import org.homeservice.entity.Order;
 import org.homeservice.entity.OrderStatus;
 
@@ -22,15 +21,16 @@ public class OrderDto {
     private LocalDateTime startWorking;
     private LocalDateTime endWorking;
     private OrderStatus status;
-    private List<BidDto> bids;
-    private SubServiceDto subServiceDto;
+    private BidDto2 bid;
+    private Long timeSpentMinutes;
+    private SubServiceDto subService;
+    private SpecialistDto specialist;
+    private CustomerDto customer;
 
     public OrderDto() {
-        bids = new ArrayList<>();
     }
 
     public OrderDto(Order order) {
-        this();
         id = order.getId();
         offerPrice = order.getCustomerOfferPrice();
         description = order.getDescription();
@@ -39,14 +39,12 @@ public class OrderDto {
         finalPrice = order.getFinalPrice();
         startWorking = order.getStartWorking();
         endWorking = order.getEndWorking();
-        setBids(new ArrayList<>(order.getBids()));
-    }
-
-    public void setBids(List<Bid> bids) {
-        if (bids == null)
-            return;
-        for (Bid b : bids)
-            this.bids.add(new BidDto(b));
+        status = order.getStatus();
+        timeSpentMinutes = order.getTimeSpent() != null ? order.getTimeSpent().toMinutes() : null;
+        subService = order.getSubService() != null ? new SubServiceDto(order.getSubService()) : null;
+        specialist = order.getSpecialist() != null ? new SpecialistDto(order.getSpecialist()) : null;
+        customer = order.getCustomer() != null ? new CustomerDto(order.getCustomer()) : null;
+        bid = order.getAcceptedBid() != null ? new BidDto2(order.getAcceptedBid()) : null;
     }
 
     public static List<OrderDto> convertToDto(List<Order> orders) {

@@ -33,9 +33,9 @@ public class SpecialistDto {
 
     @JsonIgnore
     public Specialist getSpecialist() {
-       Specialist specialist = new Specialist(firstName, lastName, username, null, email);
-       specialist.setStatus(status);
-       return specialist;
+        Specialist specialist = new Specialist(firstName, lastName, username, null, email);
+        specialist.setStatus(status);
+        return specialist;
     }
 
     public static List<SpecialistDto> convertToDto(List<Specialist> specialists) {
