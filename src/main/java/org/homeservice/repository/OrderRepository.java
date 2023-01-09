@@ -2,6 +2,7 @@ package org.homeservice.repository;
 
 import org.homeservice.entity.Order;
 import org.homeservice.entity.OrderStatus;
+import org.homeservice.repository.custom.OrderRepositoryCustom;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -12,7 +13,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface OrderRepository extends JpaRepository<Order, Long> , JpaSpecificationExecutor<Order> {
+public interface OrderRepository extends JpaRepository<Order, Long> , JpaSpecificationExecutor<Order>,
+        OrderRepositoryCustom {
     List<Order> findAllByCustomer_Id(Long customerId);
 
     List<Order> findAllBySpecialist_Id(Long specialistId);

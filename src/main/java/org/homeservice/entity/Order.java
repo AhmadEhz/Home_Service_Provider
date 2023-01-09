@@ -66,7 +66,14 @@ public class Order {
     private Rate rate;
 
     @CreationTimestamp
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @Transient
+    private Duration timeSpent;
+
+    @Transient
+    private Bid acceptedBid;
 
     {
         bids = new HashSet<>();
@@ -75,6 +82,12 @@ public class Order {
     @PrePersist
     private void prePersist() {
         status = OrderStatus.WAITING_FOR_BID;
+    }
+
+    @PostLoad
+    private void postLoad() {
+        if (startWorking != null && endWorking != null)
+            timeSpent = Duration.between(startWorking,endWorking);
     }
 
     public Order() {
@@ -217,6 +230,22 @@ public class Order {
         this.createdAt = createdAt;
     }
 
+    public Duration getTimeSpent() {
+        return timeSpent;
+    }
+
+    public void setTimeSpent(Duration timeSpent) {
+        this.timeSpent = timeSpent;
+    }
+
+    public Bid getAcceptedBid() {
+        return acceptedBid;
+    }
+
+    public void setAcceptedBid(Bid acceptedBid) {
+        this.acceptedBid = acceptedBid;
+    }
+
     public boolean checkStatusIfWaitingForBids() {
         return status != OrderStatus.STARTED && status != OrderStatus.FINISHED && status != OrderStatus.PAID
                && status != OrderStatus.WAITING_FOR_COMING_SPECIALIST;
@@ -257,6 +286,6 @@ public class Order {
     @Override
     public int hashCode() {
         return Objects.hash(id, customerOfferPrice, description, workingTime, address,
-                finalPrice, startWorking, endWorking, status, customer, subService, specialist, rate, createdAt);
+                finalPrice, startWorking, endWorking, status, customer, subService, specialist, createdAt);
     }
 }
