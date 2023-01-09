@@ -1,17 +1,27 @@
+function submitForm() {
+    var xhr = new XMLHttpRequest();
+    var forms = document.getElementById("forms");
+    const form = {
+        cardNumber: document.getElementById("card-number").value,
+        cvv2: document.getElementById("cvv2").value,
+        expireDate: document.getElementById("expire-date").value,
+        captcha: grecaptcha.getResponse()
 
-function reCaptcha($recaptcha){
-    $secret = "YOUR SECRET KEY";
-    $ip = $_SERVER['REMOTE_ADDR'];
-  
-    $postvars = array("secret"=>$secret, "response"=>$recaptcha, "remoteip"=>$ip);
-    $url = "https://www.google.com/recaptcha/api/siteverify";
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $postvars);
-    $data = curl_exec($ch);
-    curl_close($ch);
-  
-    return json_decode($data, true);
-  }
+    };
+    // if (xhr.readyState === 4 && xhr.status === 200) {
+
+    //     // Print received data from server
+    //     result.innerHTML = this.responseText;
+
+    // }
+
+xhr.open("POST", "http://localhost:8080/customer/payment", true);
+xhr.setRequestHeader("Content-Type", "application/json");
+xhr.setRequestHeader("Access-Control-Allow-Origin","*");
+var data = JSON.stringify(form);
+console.log(data);
+xhr.send(data);
+forms.submit();
+location.href = "http://google.com";
+// return false;
+}

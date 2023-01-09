@@ -1,70 +1,74 @@
 <!DOCTYPE html>
 <html dir="rtl" lang="fa">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="payment.css">
-  <!-- <link rel="stylesheet" href="css/bootstrap.min.css"> -->
-  <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.rtl.min.css" integrity="sha384-gXt9imSW0VcJVHezoNQsP+TNrjYXoGcrqBZJpry9zJt8PCQjobwmhMGaDHTASo9N" crossorigin="anonymous"> -->
-  <link rel="stylesheet" href="rtl/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css">
-  <title>Document</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="payment.css">
+    <!-- <link rel="stylesheet" href="css/bootstrap.min.css"> -->
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.rtl.min.css" integrity="sha384-gXt9imSW0VcJVHezoNQsP+TNrjYXoGcrqBZJpry9zJt8PCQjobwmhMGaDHTASo9N" crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="rtl/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css">
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+    <title>Document</title>
 </head>
 <body>
-  <div class="container mt-5 d-flex justify-content-center  vazir-font">
+<div class="container mt-5 d-flex justify-content-center  vazir-font">
     <div class="w-full mb-1 py-0 sm:px-0 bg-[#202020] rounded-md overflow-hidden shadow-md">
-	<div class="card p-4">
+        <form id="forms" class="card p-4" method="dialog" action="http://localhost:8080/customer/payment" onsubmit="return submitForm()">
 
-		<div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex justify-content-between align-items-center">
 
-			<h5 class="total-amount">قابل پرداخت</h5>
-			<div class="amount-container"><span class="amount-text">۳۷۵۰۰۰</span></div>
-				
-		</div>
+                <h5 class="total-amount">قابل پرداخت</h5>
+                <div class="amount-container"><span class="amount-text">۳۷۵۰۰۰</span></div>
 
-
-		<div class="pt-4">
-			<label class="d-flex justify-content-between"> <span class="label-text label-text-cc-number">شماره کارت</span></label>
-			<input type="tel" name="credit-number" class="form-control credit-card-number" maxlength="19"  placeholder="شماره کارت">
-		</div>
+            </div>
 
 
-		<div class="d-flex justify-content-between pt-4">
-			
-			<div>
-				<label class="label-text"><span class="label-text">تاریخ انقضا</span>	</label>
-				<input type="text" name="expiry-date" class="form-control expiry-class" maxlength="5" placeholder="سال / ماه  ">
-		
-			</div>
-
-			<div>
-				<label><span class="label-text">CVV2</span></label>
-				<input type="tel" name="cvv-number" class="form-control cvv-class" maxlength="4" pattern="\d*">
-			
-			</div>
-      
-		</div>
-    <div class="pt-4 g-recaptcha" data-sitekey="6LdrHbgjAAAAACdljN2OWfVQ6N92UqPvjtZ1bcGF"></div>
+            <div class="pt-4">
+                <label class="d-flex justify-content-between"> <span
+                        class="label-text label-text-cc-number">شماره کارت</span></label>
+                <input id="card-number" type="tel" name="credit-number" class="form-control credit-card-number" maxlength="16"
+                       placeholder="شماره کارت">
+            </div>
 
 
+            <div class="d-flex justify-content-between pt-4">
+
+                <div>
+                    <label class="label-text"><span class="label-text">تاریخ انقضا</span> </label>
+                    <input id="expire-date" type="text" name="expiry-date" class="form-control expiry-class" maxlength="5"
+                           placeholder="سال / ماه  ">
+
+                </div>
+
+                <div>
+                    <label><span class="label-text">CVV2</span></label>
+                    <input id="cvv2" type="number" name="cvv-number" class="form-control cvv-class" maxlength="4" pattern="\d*">
+
+                </div>
+
+            </div>
+            <div class="pt-4 g-recaptcha" id="captcha"
+                 data-sitekey="6LfFGuQjAAAAAJk2eci74Mnz4Vl1nyK2obhwso60"></div>
 
 
-		<div class="d-flex justify-content-between pt-5 align-items-center">
-			
-      <button type="button" class="btn payment-btn">پرداخت</button>
-			<button type="button" class="btn cancel-btn">انصراف</button>
+            <div class="d-flex justify-content-between pt-5 align-items-center">
 
-		</div>
-		
+                <button type="submit" class="btn payment-btn">پرداخت</button>
+                <button type="button" class="btn cancel-btn">انصراف</button>
 
+            </div>
+
+
+        </form>
+    </div>
 
 </div>
-	</div>
-	
-</div>
+<script src="js/payment.js"></script>
 <script src="https://www.google.com/recaptcha/api.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
