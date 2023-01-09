@@ -1,12 +1,13 @@
 package org.homeservice.util;
 
 import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Root;
 import org.homeservice.entity.*;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class Specifications {
@@ -17,13 +18,8 @@ public class Specifications {
         Specification<Order> specification = Specification.where(null);
         for (Map.Entry<String, String> entry : filters.entrySet()) {
             Specification<Order> spec = (root, cq, cb) -> switch (entry.getKey().toLowerCase()) {
-                case "customerid" -> cb.equal(root.get(Order_.specialist), toDouble(entry.getValue()));
-                case "status" -> {
-                    OrderStatus status = OrderStatus.valueOf(entry.getValue());
-                    if (status == null)
-                        throw new CustomIllegalArgumentException("Order status is not correct");
-                    yield cb.equal(root.get(Order_.status), status);
-                }
+                case "customerid" -> cb.equal(root.join(Order_.customer).get(Customer_.id), toLong(entry.getValue()));
+                case "status" -> root.get(Order_.status).in(toOrderStatus(entry.getValue()));
                 case "order" -> switch (entry.getValue().toLowerCase()) {
                     case "time", "time.asc" -> {
                         cq.orderBy(cb.asc(root.get(Order_.createdAt)));
@@ -44,21 +40,21 @@ public class Specifications {
 
     public static Specification<Order> getOrderByAdmin(Map<String, String> filters) {
         if (filters == null || filters.isEmpty())
-            return null;
+            return Specification.where((root, cq, cb) -> cb.and());
         Specification<Order> specification = Specification.where(null);
         for (Map.Entry<String, String> entry : filters.entrySet()) {
             Specification<Order> spec = (root, cq, cb) -> switch (entry.getKey().toLowerCase()) {
                 case "from" -> cb.greaterThanOrEqualTo(root.get(Order_.createdAt), toDate(entry.getValue()));
                 case "to" -> cb.lessThanOrEqualTo(root.get(Order_.createdAt), toDate(entry.getValue()));
-                case "status" -> {
-                    OrderStatus orderStatus = OrderStatus.valueOf(entry.getValue());
-                    if (orderStatus == null)
-                        throw new CustomIllegalArgumentException("Order status is incorrect.");
-                    yield cb.equal(root.get(Order_.status), orderStatus);
-                }
+                case "status" -> cb.equal(root.get(Order_.status), toOrderStatus(entry.getValue()));
+                case "id", "orderid" -> cb.equal(root.get(Order_.id), toLong(entry.getValue()));
                 case "serviceid" -> {
                     Join<SubService, Service> serviceJoin = root.join(Order_.subService).join(SubService_.service);
                     yield cb.equal(serviceJoin.get(Service_.id), toLong(entry.getValue()));
+                }
+                case "servicename" -> {
+                    Join<SubService, Service> serviceJoin = root.join(Order_.subService).join(SubService_.service);
+                    yield cb.equal(serviceJoin.get(Service_.name), entry.getValue());
                 }
                 case "subserviceid" -> {
                     Join<Order, SubService> subServiceJoin = root.join(Order_.subService);
@@ -76,11 +72,11 @@ public class Specifications {
                     }
                     case "price", "price.asc" -> {
                         cq.orderBy(cb.asc(root.get(Order_.finalPrice)));
-                        yield cb.and();
+                        yield cb.isNotNull(root.get(Order_.finalPrice));
                     }
                     case "price.desc" -> {
                         cq.orderBy(cb.desc(root.get(Order_.finalPrice)));
-                        yield cb.and();
+                        yield cb.isNotNull(root.get(Order_.finalPrice));
                     }
                     default -> throw new CustomIllegalArgumentException("Filter is incorrect.");
                 };
@@ -153,6 +149,19 @@ public class Specifications {
             return Double.parseDouble(value);
         } catch (NumberFormatException e) {
             throw new CustomIllegalArgumentException("Filter is not correct.");
+        }
+    }
+
+    private static OrderStatus toOrderStatus(String orderStatus) {
+        String[] statuses = orderStatus.split(",");
+        List<OrderStatus> orderStatuses = new ArrayList<>();
+        try {
+            for (String s : statuses) {
+                orderStatuses.add(OrderStatus.valueOf(s.toUpperCase()));
+            }
+            return orderStatuses.get(0);
+        } catch (IllegalArgumentException e) {
+            throw new CustomIllegalArgumentException("Order status is incorrect.");
         }
     }
 
