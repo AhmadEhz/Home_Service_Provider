@@ -42,11 +42,12 @@ public class CustomerController {
     }
 
     @PostMapping("/save")
-    void save(@RequestBody CustomerCreationDto customerDto) {
+    String save(@RequestBody CustomerCreationDto customerDto) {
         Customer customer = customerDto.getCustomer();
         customerService.save(customer);
         String verifyCode = verifyCodeService.generateAndSaveForCustomer(customer.getId());
-        emailSender.sendVerifyingEmail(customer.getEmail(), verifyCode);
+        emailSender.sendVerifyingEmail(customer.getEmail(), verifyCode, EmailSender.EmailFor.CUSTOMER);
+        return "Signup success. please verify your email.";
     }
 
     @PutMapping("change-password")
@@ -127,5 +128,11 @@ public class CustomerController {
     @PutMapping("/end-work")
     void changeOrderStatusToFinished(@RequestParam Long orderId, @RequestParam Long customerId) {
         orderService.changeStatusToEnded(orderId, customerId);
+    }
+
+    @GetMapping("/verifyEmail")
+    String verifyEmail(@RequestParam("verify") String verificationCode) {
+        verifyCodeService.verifyCustomerEmail(verificationCode);
+        return "Your email is verified.";
     }
 }

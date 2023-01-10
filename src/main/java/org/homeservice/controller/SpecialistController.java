@@ -61,7 +61,7 @@ public class SpecialistController {
         Specialist specialist = specialistDto.getSpecialist();
         specialistService.save(specialist);
         String generatedCode = verifyCodeService.generateAndSaveForSpecialist(specialist.getId());
-        emailSender.sendVerifyingEmail(specialist.getEmail(), generatedCode);
+        emailSender.sendVerifyingEmail(specialist.getEmail(), generatedCode, EmailSender.EmailFor.SPECIALIST);
     }
 
     @PutMapping("/change-password")
@@ -74,8 +74,14 @@ public class SpecialistController {
         specialistService.addAvatar(id, avatar);
     }
 
-    @PostMapping ("/set-bid")
+    @PostMapping("/set-bid")
     void saveBid(@RequestBody BidCreationDto bidCreationDto) {
         bidService.save(bidCreationDto.getBid(), bidCreationDto.getOrderId(), bidCreationDto.getSpecialistId());
+    }
+
+    @GetMapping("/verifyEmail")
+    String verifyEmail(@RequestParam("verify") String verificationCode) {
+        verifyCodeService.verifySpecialistEmail(verificationCode);
+        return "Your email is verified.";
     }
 }
