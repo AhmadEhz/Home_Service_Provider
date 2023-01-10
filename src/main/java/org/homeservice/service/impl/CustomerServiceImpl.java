@@ -1,11 +1,13 @@
 package org.homeservice.service.impl;
 
+import jakarta.validation.Valid;
 import org.homeservice.entity.Customer;
 import org.homeservice.repository.CustomerRepository;
 import org.homeservice.service.CustomerService;
 import org.homeservice.service.base.BaseServiceImpl;
 import org.homeservice.util.Specifications;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
+import org.homeservice.util.exception.NonUniqueException;
 import org.homeservice.util.exception.NotFoundException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,14 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
         implements CustomerService {
     public CustomerServiceImpl(CustomerRepository repository) {
         super(repository);
+    }
+    @Override
+    public void save(@Valid Customer customer) {
+        if(isExistedUsername(customer.getUsername()))
+            throw new NonUniqueException("Username is exist.");
+        if(isExistedEmail(customer.getEmail()))
+            throw new NonUniqueException("Email is exist.");
+        super.save(customer);
     }
 
     @Override
