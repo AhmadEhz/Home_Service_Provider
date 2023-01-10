@@ -32,6 +32,8 @@ public interface SpecialistService extends BaseService<Specialist, Long> {
 
     void updateScoreByRateId(Long rateId);
 
+    void setVerificationId(Long id, Long verificationId);
+
     void changePassword(String username, String oldPassword, String newPassword);
 
     void addAvatar(Long id, File file);

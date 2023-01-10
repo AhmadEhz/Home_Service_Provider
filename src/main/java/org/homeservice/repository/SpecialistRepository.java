@@ -55,6 +55,10 @@ public interface SpecialistRepository extends JpaRepository<Specialist, Long>, J
             where s.id = :id and s.score < 0""")
     void suspendSpecialistIfScoreIsNegative(Long id);
 
+    @Modifying
+    @Query("update Specialist s set s.verifyCode.id = :verificationId where s.id = :id")
+    void setVerificationCodeId(Long id, Long verificationId);
+
     @Query("select ssp.specialist from SubServiceSpecialist ssp where ssp.subService.id = :subServiceId")
     List<Specialist> findAllBySubService(Long subServiceId);
 }

@@ -125,6 +125,12 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
 
     @Override
     @Transactional
+    public void setVerificationId(Long id, Long verificationId) {
+        repository.setVerificationCodeId(id, verificationId);
+    }
+
+    @Override
+    @Transactional
     public void changePassword(String username, String oldPassword, String newPassword) {
         Specialist specialist = repository.findSpecialistByUsername(username)
                 .orElseThrow(() -> new NotFoundException("Specialist not found."));

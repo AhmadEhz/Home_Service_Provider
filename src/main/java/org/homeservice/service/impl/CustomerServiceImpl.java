@@ -4,12 +4,12 @@ import org.homeservice.entity.Customer;
 import org.homeservice.repository.CustomerRepository;
 import org.homeservice.service.CustomerService;
 import org.homeservice.service.base.BaseServiceImpl;
-import org.homeservice.util.QueryUtil;
 import org.homeservice.util.Specifications;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -40,6 +40,12 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
     @Override
     public boolean isExistedUsername(String username) {
         return repository.findCustomerByUsername(username).isPresent();
+    }
+
+    @Override
+    @Transactional
+    public void setVerificationId(Long id, Long verificationId) {
+        repository.setVerificationCodeId(id, verificationId);
     }
 
     @Override

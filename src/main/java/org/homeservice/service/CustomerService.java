@@ -15,6 +15,8 @@ public interface CustomerService extends BaseService<Customer, Long> {
 
     boolean isExistedUsername(String username);
 
+    void setVerificationId(Long id, Long verificationId);
+
     boolean isExistedEmail(String email);
 
     void deleteByAdmin(Customer customer);
