@@ -13,6 +13,13 @@ public class VerifyCode {
     private String code;
     private boolean isVerified;
 
+    public VerifyCode() {
+    }
+
+    public VerifyCode(String code) {
+        this.code = code;
+    }
+
     public Long getId() {
         return id;
     }
