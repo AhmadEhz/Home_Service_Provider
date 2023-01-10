@@ -6,10 +6,9 @@ import org.homeservice.dto.OrderDto;
 import org.homeservice.dto.SpecialistCreationDto;
 import org.homeservice.entity.Credit;
 import org.homeservice.entity.Order;
-import org.homeservice.service.BidService;
-import org.homeservice.service.CreditService;
-import org.homeservice.service.OrderService;
-import org.homeservice.service.SpecialistService;
+import org.homeservice.entity.Specialist;
+import org.homeservice.service.*;
+import org.homeservice.util.EmailSender;
 import org.homeservice.util.exception.NotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,12 +23,18 @@ public class SpecialistController {
     private final BidService bidService;
     private final OrderService orderService;
     private final CreditService creditService;
+    private final VerifyCodeService verifyCodeService;
+    private final EmailSender emailSender;
 
-    public SpecialistController(SpecialistService specialistService, BidService bidService, OrderService orderService, CreditService creditService) {
+    public SpecialistController(SpecialistService specialistService, BidService bidService, OrderService orderService,
+                                CreditService creditService, VerifyCodeService verifyCodeService,
+                                EmailSender emailSender) {
         this.specialistService = specialistService;
         this.bidService = bidService;
         this.orderService = orderService;
         this.creditService = creditService;
+        this.verifyCodeService = verifyCodeService;
+        this.emailSender = emailSender;
     }
 
     @GetMapping("/order/showAll")
@@ -53,7 +58,10 @@ public class SpecialistController {
 
     @PostMapping("/save")
     void save(@RequestBody SpecialistCreationDto specialistDto) {
-        specialistService.save(specialistDto.getSpecialist());
+        Specialist specialist = specialistDto.getSpecialist();
+        specialistService.save(specialist);
+        String generatedCode = verifyCodeService.generateAndSaveForSpecialist(specialist.getId());
+        emailSender.sendVerifyingEmail(specialist.getEmail(), generatedCode);
     }
 
     @PutMapping("/change-password")
@@ -67,7 +75,7 @@ public class SpecialistController {
     }
 
     @PostMapping ("/set-bid")
-    void saveBid(@RequestBody BidCreationDto bidCreationDTO) {
-        bidService.save(bidCreationDTO.getBid(), bidCreationDTO.getOrderId(), bidCreationDTO.getSpecialistId());
+    void saveBid(@RequestBody BidCreationDto bidCreationDto) {
+        bidService.save(bidCreationDto.getBid(), bidCreationDto.getOrderId(), bidCreationDto.getSpecialistId());
     }
 }

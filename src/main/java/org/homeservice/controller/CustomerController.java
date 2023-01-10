@@ -1,12 +1,10 @@
 package org.homeservice.controller;
 
 import org.homeservice.dto.*;
-import org.homeservice.entity.Bid;
-import org.homeservice.entity.Credit;
-import org.homeservice.entity.Service;
-import org.homeservice.entity.SubService;
+import org.homeservice.entity.*;
 import org.homeservice.service.*;
 import org.homeservice.util.CaptchaChecker;
+import org.homeservice.util.EmailSender;
 import org.homeservice.util.Values;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
@@ -25,24 +23,30 @@ public class CustomerController {
     private final ServiceService serviceService;
     private final SubServiceService subServiceService;
     private final CreditService creditService;
+    private final VerifyCodeService verifyCodeService;
+    private final EmailSender emailSender;
 
 
     public CustomerController(CustomerService customerService, OrderService orderService,
                               RateService rateService, BidService bidService, ServiceService serviceService,
-                              SubServiceService subServiceService, CreditService creditService) {
+                              SubServiceService subServiceService, CreditService creditService, VerifyCodeService verifyCodeService, EmailSender emailSender) {
         this.customerService = customerService;
         this.orderService = orderService;
         this.rateService = rateService;
         this.bidService = bidService;
         this.serviceService = serviceService;
         this.subServiceService = subServiceService;
-
         this.creditService = creditService;
+        this.verifyCodeService = verifyCodeService;
+        this.emailSender = emailSender;
     }
 
     @PostMapping("/save")
     void save(@RequestBody CustomerCreationDto customerDto) {
-        customerService.save(customerDto.getCustomer());
+        Customer customer = customerDto.getCustomer();
+        customerService.save(customer);
+        String verifyCode = verifyCodeService.generateAndSaveForCustomer(customer.getId());
+        emailSender.sendVerifyingEmail(customer.getEmail(), verifyCode);
     }
 
     @PutMapping("change-password")
