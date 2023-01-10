@@ -9,4 +9,9 @@ public interface VerifyCodeService extends BaseService<VerifyCode,Long> {
     String generateAndSaveForCustomer(Long customerId);
 
     String generateAndSaveForSpecialist(Long specialistId);
+
+    //    @Transactional
+    void verifySpecialistEmail(String verificationCode);
+
+    void verifyCustomerEmail(String verificationCode);
 }

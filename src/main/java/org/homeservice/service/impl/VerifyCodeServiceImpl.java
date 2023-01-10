@@ -8,6 +8,8 @@ import org.homeservice.service.SpecialistService;
 import org.homeservice.service.VerifyCodeService;
 import org.homeservice.service.base.BaseServiceImpl;
 import org.homeservice.util.Values;
+import org.homeservice.util.exception.CustomIllegalArgumentException;
+import org.homeservice.util.exception.NotFoundException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +42,29 @@ public class VerifyCodeServiceImpl extends BaseServiceImpl<VerifyCode, Long, Ver
         VerifyCode verifyCode = generateAndSave();
         specialistService.setVerificationId(specialistId, verifyCode.getId());
         return verifyCode.getCode();
+    }
+
+    @Override
+    @Transactional
+    public void verifySpecialistEmail(String verificationCode) {
+        VerifyCode verifyCode = repository.findByCodeForSpecialist(verificationCode)
+                .orElseThrow(() -> new NotFoundException("Verification code is not correct."));
+        verifyEmail(verifyCode);
+    }
+
+    @Override
+    @Transactional
+    public void verifyCustomerEmail(String verificationCode) {
+        VerifyCode verifyCode = repository.findByCodeForCustomer(verificationCode)
+                .orElseThrow(() -> new NotFoundException("Verification code is not correct."));
+        verifyEmail(verifyCode);
+    }
+
+    private void verifyEmail(VerifyCode verifyCode) {
+        if (verifyCode.isVerified())
+            throw new CustomIllegalArgumentException("Verification code is used before.");
+        verifyCode.setVerified(true);
+        super.update(verifyCode);
     }
 
     private VerifyCode generateAndSave() {
