@@ -1,11 +1,14 @@
 package org.homeservice.util;
 
-import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.*;
 import org.homeservice.entity.*;
+import org.homeservice.entity.Order;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -103,11 +106,40 @@ public class Specifications {
                 case "username", "username.eq" -> cb.equal(root.get(Specialist_.username), entry.getValue());
                 case "email", "email.eq" -> cb.equal(root.get(Specialist_.email), entry.getValue());
                 case "email.like" -> cb.like(root.get(Specialist_.email), '%' + entry.getValue() + '%');
-                case "subserviceid" -> {
+                case "subservice", "subserviceid" -> {
                     Join<SubServiceSpecialist, SubService> subServiceJoin =
                             root.join(Specialist_.subServiceSpecialist)
                                     .join(SubServiceSpecialist_.subService);
                     yield cb.equal(subServiceJoin.get(SubService_.id), toDouble(entry.getValue()));
+                }
+                case "orders", "orders.eq" -> {
+                    cq.distinct(true); //Prevent duplicate result.
+                    Subquery<Long> subquery = specialistSubqueryForCountOrder(root, cq, cb);
+                    yield cb.equal(subquery, toLong(entry.getValue()));
+                }
+                case "orders.gt" -> {
+                    cq.distinct(true);
+                    Subquery<Long> subquery = specialistSubqueryForCountOrder(root, cq, cb);
+                    yield cb.greaterThanOrEqualTo(subquery, toLong(entry.getValue()));
+                }
+                case "orders.lt" -> {
+                    cq.distinct(true);
+                    Subquery<Long> subquery = specialistSubqueryForCountOrder(root, cq, cb);
+                    yield cb.lessThanOrEqualTo(subquery, toLong(entry.getValue()));
+                }
+                case "created" -> {
+                    LocalDateTime date = toDate(entry.getValue());
+                    LocalDateTime fromDate = timeToZero(date);
+                    LocalDateTime toDate = setLastSecondOfDay(fromDate); //Set the last second of the day.
+                    yield cb.between(root.get(Specialist_.createdAt), fromDate, toDate);
+                }
+                case "created.after" -> cb.greaterThanOrEqualTo
+                        (root.get(Specialist_.createdAt), toDate(entry.getValue()));
+                case "created.before" -> {
+                    LocalDateTime date = toDate(entry.getValue());
+                    if (isZeroTime(date)) //Inclusive date.
+                        date = setLastSecondOfDay(date);
+                    yield cb.lessThanOrEqualTo(root.get(Specialist_.createdAt), date);
                 }
                 default -> throw new CustomIllegalArgumentException("Filter is not correct.");
             };
@@ -129,6 +161,25 @@ public class Specifications {
                 case "username", "username.eq" -> cb.equal(root.get(Customer_.username), entry.getValue());
                 case "email", "email.eq" -> cb.equal(root.get(Customer_.email), entry.getValue());
                 case "email.like" -> cb.like(root.get(Customer_.email), '%' + entry.getValue() + '%');
+                case "orders", "orders.eq" -> {
+                    cq.distinct(true);
+                    Subquery<Long> subquery = customerSubqueryForCountOrder(root, cq, cb);
+                    yield cb.equal(subquery, toLong(entry.getValue()));
+                }
+                case "orders.gt" -> {
+                    cq.distinct(true);
+                    Subquery<Long> subquery = customerSubqueryForCountOrder(root, cq, cb);
+                    yield cb.greaterThanOrEqualTo(subquery, toLong(entry.getValue()));
+                }
+                case "orders.lt" -> {
+                    cq.distinct(true);
+                    Subquery<Long> subquery = customerSubqueryForCountOrder(root, cq, cb);
+                    yield cb.lessThanOrEqualTo(subquery, toLong(entry.getValue()));
+                }
+                case "created.after" ->
+                        cb.greaterThanOrEqualTo(root.get(Customer_.createdAt), toDate(entry.getValue()));
+                case "created.before" -> cb.lessThanOrEqualTo(root.get(Customer_.createdAt), toDate(entry.getValue()));
+
                 default -> throw new CustomIllegalArgumentException("Filter is not correct.");
             };
             specification = specification.and(spec);
@@ -136,7 +187,23 @@ public class Specifications {
         return specification;
     }
 
-    static Long toLong(String value) {
+    private static Subquery<Long> specialistSubqueryForCountOrder(Root<Specialist> root,
+                                                                  CriteriaQuery<?> cq, CriteriaBuilder cb) {
+        Subquery<Long> subquery = cq.subquery(Long.class);
+        Root<Order> orderRoot = subquery.from(Order.class);
+        return subquery.select(cb.count(orderRoot)).where( //For counting orders of this Specialist only.
+                cb.equal(orderRoot.get(Order_.specialist).get(Specialist_.id), root.get(Specialist_.id)));
+    }
+
+    private static Subquery<Long> customerSubqueryForCountOrder(Root<Customer> root,
+                                                                CriteriaQuery<?> cq, CriteriaBuilder cb) {
+        Subquery<Long> subquery = cq.subquery(Long.class);
+        Root<Order> orderRoot = subquery.from(Order.class);
+        return subquery.select(cb.count(orderRoot)).where( //For counting orders of this Customer only.
+                cb.equal(orderRoot.get(Order_.customer).get(Customer_.id), root.get(Customer_.id)));
+    }
+
+    private static Long toLong(String value) {
         try {
             return Long.parseLong(value);
         } catch (NumberFormatException e) {
@@ -168,8 +235,24 @@ public class Specifications {
     private static LocalDateTime toDate(String date) {
         try {
             return LocalDateTime.parse(date);
-        } catch (Exception e) {
-            throw new CustomIllegalArgumentException("Date format is invalid.");
+        } catch (Exception e1) {
+            try {
+                return LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE).atStartOfDay();
+            } catch (Exception e2) {
+                throw new CustomIllegalArgumentException("Date format is invalid.");
+            }
         }
+    }
+
+    private static boolean isZeroTime(LocalDateTime date) {
+        return date.getHour() == 0 && date.getMinute() == 0 && date.getSecond() == 0 && date.getNano() == 0;
+    }
+
+    private static LocalDateTime timeToZero(LocalDateTime date) {
+        return date.minusHours(date.getHour()).minusMinutes(date.getMinute())
+                .minusSeconds(date.getSecond()).minusNanos(date.getNano());
+    }
+    private static LocalDateTime setLastSecondOfDay(LocalDateTime date) {
+        return timeToZero(date).plusDays(1L).minusNanos(1L);
     }
 }
