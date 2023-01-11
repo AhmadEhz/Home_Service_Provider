@@ -8,6 +8,7 @@ import org.homeservice.util.EmailSender;
 import org.homeservice.util.Values;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,11 +43,12 @@ public class CustomerController {
     }
 
     @PostMapping("/save")
+    @Transactional
     String save(@RequestBody CustomerCreationDto customerDto) {
         Customer customer = customerDto.getCustomer();
         customerService.save(customer);
         String verifyCode = verifyCodeService.generateAndSaveForCustomer(customer.getId());
-        emailSender.sendVerifyingEmail(customer.getEmail(), verifyCode, EmailSender.EmailFor.CUSTOMER);
+        emailSender.sendSimpleMessage(customer.getEmail(), verifyCode, EmailSender.EmailFor.CUSTOMER);
         return "Signup success. please verify your email.";
     }
 

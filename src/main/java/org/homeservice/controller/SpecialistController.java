@@ -61,7 +61,7 @@ public class SpecialistController {
         Specialist specialist = specialistDto.getSpecialist();
         specialistService.save(specialist);
         String generatedCode = verifyCodeService.generateAndSaveForSpecialist(specialist.getId());
-        emailSender.sendVerifyingEmail(specialist.getEmail(), generatedCode, EmailSender.EmailFor.SPECIALIST);
+        emailSender.sendSimpleMessage(specialist.getEmail(), generatedCode, EmailSender.EmailFor.SPECIALIST);
     }
 
     @PutMapping("/change-password")
