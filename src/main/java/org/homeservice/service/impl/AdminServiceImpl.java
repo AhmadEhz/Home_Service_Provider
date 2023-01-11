@@ -8,6 +8,7 @@ import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NonUniqueException;
 import org.homeservice.util.exception.NotFoundException;
 import org.springframework.context.annotation.Scope;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,8 +17,11 @@ import java.util.Optional;
 @Service
 @Scope("singleton")
 public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminRepository> implements AdminService {
-    public AdminServiceImpl(AdminRepository repository) {
+    private final PasswordEncoder passwordEncoder;
+
+    public AdminServiceImpl(AdminRepository repository, PasswordEncoder passwordEncoder) {
         super(repository);
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -25,6 +29,7 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
     public void save(Admin admin) {
         if (isExistsByUsername(admin.getUsername()))
             throw new NonUniqueException("Username is exist.");
+        admin.setPassword(passwordEncoder.encode(admin.getPassword()));
         super.save(admin);
     }
 
@@ -32,9 +37,9 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
     public void changePassword(String username, String oldPassword, String newPassword) {
         Admin admin = repository.findAdminByUsername(username).orElseThrow
                 (() -> new NotFoundException("Admin not found."));
-        if (!admin.getPassword().equals(oldPassword))
+        if (!passwordEncoder.matches(oldPassword, admin.getPassword()))
             throw new CustomIllegalArgumentException("Old password is incorrect");
-        admin.setPassword(newPassword);
+        admin.setPassword(passwordEncoder.encode(newPassword));
         update(admin);
     }
 
