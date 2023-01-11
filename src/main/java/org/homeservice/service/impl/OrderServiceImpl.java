@@ -24,14 +24,16 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
     private final ApplicationContext applicationContext;
     private final CustomerService customerService;
     private final SubServiceService subServiceService;
+    private final Specifications specifications;
     private BidService bidService;
 
     public OrderServiceImpl(ApplicationContext applicationContext, OrderRepository repository,
-                            CustomerService customerService, SubServiceService subServiceService) {
+                            CustomerService customerService, SubServiceService subServiceService, Specifications specifications) {
         super(repository);
         this.applicationContext = applicationContext;
         this.customerService = customerService;
         this.subServiceService = subServiceService;
+        this.specifications = specifications;
     }
 
     @Override
@@ -82,7 +84,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
 
     @Override
     public List<Order> loadAllByFilter(Map<String, String> filters) {
-        return repository.findAll(Specifications.getOrder(filters));
+        return repository.findAll(specifications.getOrder(filters));
     }
 
     @Override

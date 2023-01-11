@@ -23,10 +23,12 @@ import java.util.*;
 @Scope("singleton")
 public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, SpecialistRepository>
         implements SpecialistService {
+    private final Specifications specifications;
     SubServiceService subServiceService;
 
-    public SpecialistServiceImpl(SpecialistRepository repository, SubServiceService subServiceService) {
+    public SpecialistServiceImpl(SpecialistRepository repository, Specifications specifications, SubServiceService subServiceService) {
         super(repository);
+        this.specifications = specifications;
         this.subServiceService = subServiceService;
     }
 
@@ -82,7 +84,7 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
 
     @Override
     public List<Specialist> loadAllByFilter(Map<String, String> filters) {
-        return repository.findAll(Specifications.getSpecialist(filters));
+        return repository.findAll(specifications.getSpecialist(filters));
     }
 
     @Override

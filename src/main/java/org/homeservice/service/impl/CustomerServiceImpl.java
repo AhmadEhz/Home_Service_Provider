@@ -20,8 +20,10 @@ import java.util.Map;
 @Scope("singleton")
 public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, CustomerRepository>
         implements CustomerService {
-    public CustomerServiceImpl(CustomerRepository repository) {
+    private final Specifications specifications;
+    public CustomerServiceImpl(CustomerRepository repository, Specifications specifications) {
         super(repository);
+        this.specifications = specifications;
     }
     @Override
     public void save(@Valid Customer customer) {
@@ -44,7 +46,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
 
     @Override
     public List<Customer> loadAllByFilter(Map<String, String> filters) {
-        return repository.findAll(Specifications.getCustomer(filters));
+        return repository.findAll(specifications.getCustomer(filters));
     }
 
     @Override

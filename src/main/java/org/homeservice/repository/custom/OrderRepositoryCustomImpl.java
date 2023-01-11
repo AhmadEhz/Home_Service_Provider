@@ -14,8 +14,13 @@ import java.util.Map;
 
 @Repository
 public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
+    private final Specifications specifications;
     @PersistenceContext
     private EntityManager em;
+
+    public OrderRepositoryCustomImpl(Specifications specifications) {
+        this.specifications = specifications;
+    }
 
     @Override
     public List<Order> findAllWithDetails(Map<String, String> filters) {
@@ -23,7 +28,7 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
         CriteriaQuery<Tuple> cq = cb.createTupleQuery();
         Root<Order> orderRoot = cq.from(Order.class);
         Root<Bid> bidRoot = cq.from(Bid.class);
-        Predicate orderPredicate = Specifications.getOrderByAdmin(filters).toPredicate(orderRoot, cq, cb);
+        Predicate orderPredicate = specifications.getOrderByAdmin(filters).toPredicate(orderRoot, cq, cb);
         //Without this predicate, result may contain duplicate value.
         Predicate bidPredicate = cb.equal(bidRoot.get(Bid_.id), orderRoot.get(Order_.id));
 

@@ -4,7 +4,9 @@ import jakarta.persistence.criteria.*;
 import org.homeservice.entity.*;
 import org.homeservice.entity.Order;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
+import org.springframework.context.annotation.Scope;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,9 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Component
+@Scope("singleton")
 public class Specifications {
 
-    public static Specification<Order> getOrder(Map<String, String> filters) {
+    public Specification<Order> getOrder(Map<String, String> filters) {
         if (filters == null || filters.isEmpty())
             return null;
         Specification<Order> specification = Specification.where(null);
@@ -41,7 +45,7 @@ public class Specifications {
         return specification;
     }
 
-    public static Specification<Order> getOrderByAdmin(Map<String, String> filters) {
+    public Specification<Order> getOrderByAdmin(Map<String, String> filters) {
         if (filters == null || filters.isEmpty())
             return Specification.where((root, cq, cb) -> cb.and());
         Specification<Order> specification = Specification.where(null);
@@ -90,7 +94,7 @@ public class Specifications {
         return specification;
     }
 
-    public static Specification<Specialist> getSpecialist(Map<String, String> filters) {
+    public Specification<Specialist> getSpecialist(Map<String, String> filters) {
         Specification<Specialist> specification = Specification.where(null);
         if (filters == null)
             throw new CustomIllegalArgumentException("Filter is empty.");
@@ -148,7 +152,7 @@ public class Specifications {
         return specification;
     }
 
-    public static Specification<Customer> getCustomer(Map<String, String> filters) {
+    public Specification<Customer> getCustomer(Map<String, String> filters) {
         if (filters == null || filters.isEmpty())
             return null;
         Specification<Customer> specification = Specification.where(null);
@@ -187,7 +191,7 @@ public class Specifications {
         return specification;
     }
 
-    private static Subquery<Long> specialistSubqueryForCountOrder(Root<Specialist> root,
+    private Subquery<Long> specialistSubqueryForCountOrder(Root<Specialist> root,
                                                                   CriteriaQuery<?> cq, CriteriaBuilder cb) {
         Subquery<Long> subquery = cq.subquery(Long.class);
         Root<Order> orderRoot = subquery.from(Order.class);
@@ -195,7 +199,7 @@ public class Specifications {
                 cb.equal(orderRoot.get(Order_.specialist).get(Specialist_.id), root.get(Specialist_.id)));
     }
 
-    private static Subquery<Long> customerSubqueryForCountOrder(Root<Customer> root,
+    private Subquery<Long> customerSubqueryForCountOrder(Root<Customer> root,
                                                                 CriteriaQuery<?> cq, CriteriaBuilder cb) {
         Subquery<Long> subquery = cq.subquery(Long.class);
         Root<Order> orderRoot = subquery.from(Order.class);
@@ -203,7 +207,7 @@ public class Specifications {
                 cb.equal(orderRoot.get(Order_.customer).get(Customer_.id), root.get(Customer_.id)));
     }
 
-    private static Long toLong(String value) {
+    private Long toLong(String value) {
         try {
             return Long.parseLong(value);
         } catch (NumberFormatException e) {
@@ -211,7 +215,7 @@ public class Specifications {
         }
     }
 
-    private static Double toDouble(String value) {
+    private Double toDouble(String value) {
         try {
             return Double.parseDouble(value);
         } catch (NumberFormatException e) {
@@ -219,7 +223,7 @@ public class Specifications {
         }
     }
 
-    private static OrderStatus toOrderStatus(String orderStatus) {
+    private OrderStatus toOrderStatus(String orderStatus) {
         String[] statuses = orderStatus.split(",");
         List<OrderStatus> orderStatuses = new ArrayList<>();
         try {
@@ -232,7 +236,7 @@ public class Specifications {
         }
     }
 
-    private static LocalDateTime toDate(String date) {
+    private LocalDateTime toDate(String date) {
         try {
             return LocalDateTime.parse(date);
         } catch (Exception e1) {
@@ -244,15 +248,15 @@ public class Specifications {
         }
     }
 
-    private static boolean isZeroTime(LocalDateTime date) {
+    private boolean isZeroTime(LocalDateTime date) {
         return date.getHour() == 0 && date.getMinute() == 0 && date.getSecond() == 0 && date.getNano() == 0;
     }
 
-    private static LocalDateTime timeToZero(LocalDateTime date) {
+    private LocalDateTime timeToZero(LocalDateTime date) {
         return date.minusHours(date.getHour()).minusMinutes(date.getMinute())
                 .minusSeconds(date.getSecond()).minusNanos(date.getNano());
     }
-    private static LocalDateTime setLastSecondOfDay(LocalDateTime date) {
+    private LocalDateTime setLastSecondOfDay(LocalDateTime date) {
         return timeToZero(date).plusDays(1L).minusNanos(1L);
     }
 }
