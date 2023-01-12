@@ -12,6 +12,7 @@ import org.homeservice.util.Specifications;
 import org.homeservice.util.Values;
 import org.homeservice.util.exception.*;
 import org.springframework.context.annotation.Scope;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,11 +25,13 @@ import java.util.*;
 public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, SpecialistRepository>
         implements SpecialistService {
     private final Specifications specifications;
+    private final PasswordEncoder passwordEncoder;
     SubServiceService subServiceService;
 
-    public SpecialistServiceImpl(SpecialistRepository repository, Specifications specifications, SubServiceService subServiceService) {
+    public SpecialistServiceImpl(SpecialistRepository repository, Specifications specifications, PasswordEncoder passwordEncoder, SubServiceService subServiceService) {
         super(repository);
         this.specifications = specifications;
+        this.passwordEncoder = passwordEncoder;
         this.subServiceService = subServiceService;
     }
 
@@ -38,6 +41,7 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
             throw new NonUniqueException("Username is not unique.");
         if (isExistEmail(specialist.getEmail()))
             throw new NonUniqueException("Email is not unique.");
+        specialist.setPassword(passwordEncoder.encode(specialist.getPassword()));
         super.save(specialist);
     }
 
@@ -136,9 +140,9 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
     public void changePassword(String username, String oldPassword, String newPassword) {
         Specialist specialist = repository.findSpecialistByUsername(username)
                 .orElseThrow(() -> new NotFoundException("Specialist not found."));
-        if (!specialist.getPassword().equals(oldPassword))
+        if (!passwordEncoder.matches(oldPassword, specialist.getPassword()))
             throw new CustomIllegalArgumentException("Old password is not incorrect.");
-        specialist.setPassword(newPassword);
+        specialist.setPassword(passwordEncoder.encode(newPassword));
         super.update(specialist);
     }
 
