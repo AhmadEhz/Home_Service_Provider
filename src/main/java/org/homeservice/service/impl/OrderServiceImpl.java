@@ -83,8 +83,10 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
     }
 
     @Override
-    public List<Order> loadAllByFilter(Map<String, String> filters) {
-        return repository.findAll(specifications.getOrder(filters));
+    public List<Order> loadAllByFilter(Map<String, String> filters, Long customerId) {
+        // Get CustomerId to filters to get Orders for this customer only.
+        filters.put("customerid", String.valueOf(customerId));
+        return repository.findAllWithDetails(filters);
     }
 
     @Override

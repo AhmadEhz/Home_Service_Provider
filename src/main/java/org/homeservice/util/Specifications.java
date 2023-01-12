@@ -19,10 +19,11 @@ import java.util.Map;
 @Scope("singleton")
 public class Specifications {
 
-    public Specification<Order> getOrder(Map<String, String> filters) {
+    public Specification<Order> getOrder(Map<String, String> filters, Long customerId) {
         if (filters == null || filters.isEmpty())
             return null;
-        Specification<Order> specification = Specification.where(null);
+        Specification<Order> specification = (root, cq, cb) ->
+                cb.equal(root.get(Order_.customer).get(Customer_.id), customerId);
         for (Map.Entry<String, String> entry : filters.entrySet()) {
             Specification<Order> spec = (root, cq, cb) -> switch (entry.getKey().toLowerCase()) {
                 case "customerid" -> cb.equal(root.join(Order_.customer).get(Customer_.id), toLong(entry.getValue()));
@@ -55,7 +56,7 @@ public class Specifications {
                 case "to" -> cb.lessThanOrEqualTo(root.get(Order_.createdAt), toDate(entry.getValue()));
                 case "status" -> cb.equal(root.get(Order_.status), toOrderStatus(entry.getValue()));
                 case "id", "orderid" -> cb.equal(root.get(Order_.id), toLong(entry.getValue()));
-                case "serviceid" -> {
+                case "serviceid", "service" -> {
                     Join<SubService, Service> serviceJoin = root.join(Order_.subService).join(SubService_.service);
                     yield cb.equal(serviceJoin.get(Service_.id), toLong(entry.getValue()));
                 }
@@ -63,10 +64,15 @@ public class Specifications {
                     Join<SubService, Service> serviceJoin = root.join(Order_.subService).join(SubService_.service);
                     yield cb.equal(serviceJoin.get(Service_.name), entry.getValue());
                 }
-                case "subserviceid" -> {
-                    Join<Order, SubService> subServiceJoin = root.join(Order_.subService);
-                    yield cb.equal(subServiceJoin.get(SubService_.id), toLong(entry.getValue()));
-                }
+                case "subserviceid" ->
+                        cb.equal(root.get(Order_.subService).get(SubService_.id), toLong(entry.getValue()));
+
+                case "customerid", "customer" ->
+                    cb.equal(root.get(Order_.customer).get(Customer_.id), toLong(entry.getValue()));
+
+                case "specialistid", "specialist" ->
+                    cb.equal(root.get(Order_.specialist).get(Specialist_.id), toLong(entry.getValue()));
+
                 //Set order by
                 case "order" -> switch (entry.getValue().toLowerCase()) {
                     case "created", "created.asc" -> {
@@ -192,7 +198,7 @@ public class Specifications {
     }
 
     private Subquery<Long> specialistSubqueryForCountOrder(Root<Specialist> root,
-                                                                  CriteriaQuery<?> cq, CriteriaBuilder cb) {
+                                                           CriteriaQuery<?> cq, CriteriaBuilder cb) {
         Subquery<Long> subquery = cq.subquery(Long.class);
         Root<Order> orderRoot = subquery.from(Order.class);
         return subquery.select(cb.count(orderRoot)).where( //For counting orders of this Specialist only.
@@ -200,7 +206,7 @@ public class Specifications {
     }
 
     private Subquery<Long> customerSubqueryForCountOrder(Root<Customer> root,
-                                                                CriteriaQuery<?> cq, CriteriaBuilder cb) {
+                                                         CriteriaQuery<?> cq, CriteriaBuilder cb) {
         Subquery<Long> subquery = cq.subquery(Long.class);
         Root<Order> orderRoot = subquery.from(Order.class);
         return subquery.select(cb.count(orderRoot)).where( //For counting orders of this Customer only.
@@ -223,14 +229,14 @@ public class Specifications {
         }
     }
 
-    private OrderStatus toOrderStatus(String orderStatus) {
+    private List<OrderStatus> toOrderStatus(String orderStatus) {
         String[] statuses = orderStatus.split(",");
         List<OrderStatus> orderStatuses = new ArrayList<>();
         try {
             for (String s : statuses) {
                 orderStatuses.add(OrderStatus.valueOf(s.toUpperCase()));
             }
-            return orderStatuses.get(0);
+            return orderStatuses;
         } catch (IllegalArgumentException e) {
             throw new CustomIllegalArgumentException("Order status is incorrect.");
         }
@@ -256,6 +262,7 @@ public class Specifications {
         return date.minusHours(date.getHour()).minusMinutes(date.getMinute())
                 .minusSeconds(date.getSecond()).minusNanos(date.getNano());
     }
+
     private LocalDateTime setLastSecondOfDay(LocalDateTime date) {
         return timeToZero(date).plusDays(1L).minusNanos(1L);
     }

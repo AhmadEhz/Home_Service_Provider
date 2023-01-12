@@ -104,6 +104,12 @@ public class CustomerController {
         return BidDto.convertToDto(bids);
     }
 
+    @GetMapping("/orders/showAll")
+    List<OrderDto> showOrders(@RequestParam Map<String, String> filters, Authentication user) {
+        List<Order> orders = orderService.loadAllByFilter(filters, ((Customer) user.getPrincipal()).getId());
+        return OrderDto.convertToDto(orders);
+    }
+
     @GetMapping("/credit")
     CreditDto showCredit(Authentication user) {
         Credit credit = creditService.loadByCustomer(((Customer) user.getPrincipal()).getId())

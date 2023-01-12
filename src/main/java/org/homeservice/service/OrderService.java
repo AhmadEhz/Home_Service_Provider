@@ -21,7 +21,7 @@ public interface OrderService extends BaseService<Order, Long> {
 
     List<Order> loadAllByWaitingStatusAndSpecialist(Long specialistId);
 
-    List<Order> loadAllByFilter(Map<String, String> filters);
+    List<Order> loadAllByFilter(Map<String, String> filters, Long customerId);
 
     List<Order> loadAllWithDetails(Map<String, String> filters);
 
