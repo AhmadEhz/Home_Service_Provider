@@ -11,7 +11,6 @@ public class RateDto {
     private Integer score;
     private String comment;
     private Long orderId;
-    private Long customerId;
 
     @JsonIgnore
     public Rate getRate() {

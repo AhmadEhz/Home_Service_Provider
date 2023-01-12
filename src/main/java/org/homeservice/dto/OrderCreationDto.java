@@ -16,7 +16,6 @@ public class OrderCreationDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime workingTime;
     private String address;
-    private Long customerId;
     private Long subServiceId;
 
     @JsonIgnore

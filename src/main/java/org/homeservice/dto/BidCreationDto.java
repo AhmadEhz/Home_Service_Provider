@@ -21,8 +21,6 @@ public class BidCreationDto {
 
     private Long orderId;
 
-    private Long specialistId;
-
     public BidCreationDto() {
     }
 
@@ -32,8 +30,6 @@ public class BidCreationDto {
         endWorking = bid.getEndWorking();
         if (bid.getOrder() != null)
             orderId = bid.getOrder().getId();
-        if(bid.getSpecialist()!=null)
-            specialistId = bid.getSpecialist().getId();
     }
 
     @JsonIgnore
