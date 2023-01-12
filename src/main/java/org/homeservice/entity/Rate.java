@@ -101,7 +101,6 @@ public class Rate {
                "id=" + id +
                ", score=" + score +
                ", comment='" + comment + '\'' +
-               ", order=" + order +
                '}';
     }
 
