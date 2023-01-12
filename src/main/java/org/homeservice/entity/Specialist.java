@@ -80,6 +80,7 @@ public class Specialist extends Person {
 
     @PrePersist
     private void perPersist() {
+        setRole(Role.SPECIALIST);
         score = 0D;
         status = SpecialistStatus.NEW;
         credit = new Credit(0L);

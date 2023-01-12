@@ -46,6 +46,7 @@ public class Customer extends Person {
     }
     @PrePersist
     void prePersist() {
+        setRole(Role.CUSTOMER);
         credit = new Credit(0L);
     }
 

@@ -1,16 +1,10 @@
 package org.homeservice.entity;
 
 import jakarta.persistence.Entity;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
+import jakarta.persistence.PrePersist;
 
 @Entity
-public class Admin extends Person implements UserDetails {
+public class Admin extends Person {
     public Admin() {
     }
 
@@ -18,30 +12,9 @@ public class Admin extends Person implements UserDetails {
         super(firstName, lastName, username, password);
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        HashSet<GrantedAuthority> authorities = new HashSet<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-        return authorities;
+    @PrePersist
+    void prePersist() {
+        setRole(Role.ADMIN);
     }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 }

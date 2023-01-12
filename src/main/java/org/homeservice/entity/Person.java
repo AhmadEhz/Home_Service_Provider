@@ -8,12 +8,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
-//@MappedSuperclass
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Person implements UserDetails {
@@ -44,7 +40,7 @@ public abstract class Person implements UserDetails {
     @Pattern(regexp = "^[A-Za-z0-9 ._$%^&*#!@\\-/\\\\]+$",
             message = "The password should only contain letters, numbers, '._$%^&*#!@\\/' and space")
     private String password;
-    private String type;
+    private Role role;
 
     protected Person() {
     }
@@ -109,11 +105,17 @@ public abstract class Person implements UserDetails {
         this.password = password;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<GrantedAuthority> authorities = new HashSet<>();
-        authorities.add(new SimpleGrantedAuthority(type));
-        return authorities;
+        return List.of(new SimpleGrantedAuthority(role.getValue()));
     }
 
     @Override
