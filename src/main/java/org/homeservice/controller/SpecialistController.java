@@ -10,6 +10,8 @@ import org.homeservice.entity.Specialist;
 import org.homeservice.service.*;
 import org.homeservice.util.EmailSender;
 import org.homeservice.util.exception.NotFoundException;
+import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,7 +40,8 @@ public class SpecialistController {
     }
 
     @GetMapping("/order/showAll")
-    List<OrderDto> showOrders(@RequestParam("id") Long specialistId) {
+    List<OrderDto> showOrders(@RequestParam("id") Long specialistId, Authentication authentication) {
+        authentication.getPrincipal();
         List<Order> orders = orderService.loadAllBySpecialistSubServices(specialistId);
         return OrderDto.convertToDto(orders);
     }
@@ -57,11 +60,13 @@ public class SpecialistController {
     }
 
     @PostMapping("/save")
-    void save(@RequestBody SpecialistCreationDto specialistDto) {
+    @Transactional
+    String save(@RequestBody SpecialistCreationDto specialistDto) {
         Specialist specialist = specialistDto.getSpecialist();
         specialistService.save(specialist);
         String generatedCode = verifyCodeService.generateAndSaveForSpecialist(specialist.getId());
         emailSender.sendSimpleMessage(specialist.getEmail(), generatedCode, EmailSender.EmailFor.SPECIALIST);
+        return  "Signup success. please verify your email.";
     }
 
     @PutMapping("/change-password")

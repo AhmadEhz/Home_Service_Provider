@@ -30,7 +30,8 @@ public class CustomerController {
 
     public CustomerController(CustomerService customerService, OrderService orderService,
                               RateService rateService, BidService bidService, ServiceService serviceService,
-                              SubServiceService subServiceService, CreditService creditService, VerifyCodeService verifyCodeService, EmailSender emailSender) {
+                              SubServiceService subServiceService, CreditService creditService,
+                              VerifyCodeService verifyCodeService, EmailSender emailSender) {
         this.customerService = customerService;
         this.orderService = orderService;
         this.rateService = rateService;
@@ -109,6 +110,8 @@ public class CustomerController {
     @CrossOrigin
     @PostMapping("/payment")
     String payment(@RequestBody PaymentDto payment) {
+        if(payment.getCaptcha()==null || payment.getCardNumber() == null)
+            throw new CustomIllegalArgumentException("Necessary fields is empty.");
         CaptchaChecker captchaChecker = new CaptchaChecker(payment.getCaptcha());
         if (!captchaChecker.isValid())
             throw new CustomIllegalArgumentException("Captcha is invalid.");
