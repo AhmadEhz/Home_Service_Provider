@@ -4,11 +4,19 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
-@MappedSuperclass
-public abstract class Person {
+//@MappedSuperclass
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class Person implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,6 +44,7 @@ public abstract class Person {
     @Pattern(regexp = "^[A-Za-z0-9 ._$%^&*#!@\\-/\\\\]+$",
             message = "The password should only contain letters, numbers, '._$%^&*#!@\\/' and space")
     private String password;
+    private String type;
 
     protected Person() {
     }
@@ -98,6 +107,33 @@ public abstract class Person {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Set<GrantedAuthority> authorities = new HashSet<>();
+        authorities.add(new SimpleGrantedAuthority(type));
+        return authorities;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
     @Override
