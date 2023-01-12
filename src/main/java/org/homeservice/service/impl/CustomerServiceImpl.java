@@ -10,6 +10,7 @@ import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NonUniqueException;
 import org.homeservice.util.exception.NotFoundException;
 import org.springframework.context.annotation.Scope;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,9 +22,11 @@ import java.util.Map;
 public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, CustomerRepository>
         implements CustomerService {
     private final Specifications specifications;
-    public CustomerServiceImpl(CustomerRepository repository, Specifications specifications) {
+    private final PasswordEncoder passwordEncoder;
+    public CustomerServiceImpl(CustomerRepository repository, Specifications specifications, PasswordEncoder passwordEncoder) {
         super(repository);
         this.specifications = specifications;
+        this.passwordEncoder = passwordEncoder;
     }
     @Override
     public void save(@Valid Customer customer) {
@@ -31,6 +34,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
             throw new NonUniqueException("Username is exist.");
         if(isExistedEmail(customer.getEmail()))
             throw new NonUniqueException("Email is exist.");
+        customer.setPassword(passwordEncoder.encode(customer.getPassword()));
         super.save(customer);
     }
 
@@ -40,7 +44,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
                 orElseThrow(() -> new NotFoundException("Customer not found."));
         if (!customer.getPassword().equals(oldPassword))
             throw new CustomIllegalArgumentException("Old password is incorrect.");
-        customer.setPassword(newPassword);
+        customer.setPassword(passwordEncoder.encode(newPassword));
         update(customer);
     }
 
