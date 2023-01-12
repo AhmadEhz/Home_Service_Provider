@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.homeservice.entity.Customer;
 import org.homeservice.repository.CustomerRepository;
 import org.homeservice.service.CustomerService;
+import org.homeservice.service.PersonService;
 import org.homeservice.service.base.BaseServiceImpl;
 import org.homeservice.util.Specifications;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
@@ -21,10 +22,12 @@ import java.util.Map;
 @Scope("singleton")
 public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, CustomerRepository>
         implements CustomerService {
+    private final PersonService personService;
     private final Specifications specifications;
     private final PasswordEncoder passwordEncoder;
-    public CustomerServiceImpl(CustomerRepository repository, Specifications specifications, PasswordEncoder passwordEncoder) {
+    public CustomerServiceImpl(CustomerRepository repository, PersonService personService, Specifications specifications, PasswordEncoder passwordEncoder) {
         super(repository);
+        this.personService = personService;
         this.specifications = specifications;
         this.passwordEncoder = passwordEncoder;
     }
@@ -55,7 +58,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
 
     @Override
     public boolean isExistedUsername(String username) {
-        return repository.findCustomerByUsername(username).isPresent();
+        return personService.isExistsByUsername(username);
     }
 
     @Override

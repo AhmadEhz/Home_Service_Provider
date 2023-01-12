@@ -68,7 +68,7 @@ public class VerifyCodeServiceImpl extends BaseServiceImpl<VerifyCode, Long, Ver
     }
 
     private VerifyCode generateAndSave() {
-        String generatedCode = RandomStringUtils.randomAlphabetic(Values.VERIFY_CODE_LENGTH);
+        String generatedCode = RandomStringUtils.randomAlphanumeric(Values.VERIFY_CODE_LENGTH);
         VerifyCode verifyCode = new VerifyCode(generatedCode);
         super.save(verifyCode);
         return verifyCode;

@@ -4,12 +4,9 @@ import jakarta.validation.Valid;
 import org.homeservice.entity.Specialist;
 import org.homeservice.entity.SpecialistStatus;
 import org.homeservice.repository.SpecialistRepository;
-import org.homeservice.service.SpecialistService;
-import org.homeservice.service.SubServiceService;
+import org.homeservice.service.*;
 import org.homeservice.service.base.BaseServiceImpl;
-import org.homeservice.util.QueryUtil;
-import org.homeservice.util.Specifications;
-import org.homeservice.util.Values;
+import org.homeservice.util.*;
 import org.homeservice.util.exception.*;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,15 +21,16 @@ import java.util.*;
 @Scope("singleton")
 public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, SpecialistRepository>
         implements SpecialistService {
+    private final PersonService personService;
     private final Specifications specifications;
     private final PasswordEncoder passwordEncoder;
-    SubServiceService subServiceService;
 
-    public SpecialistServiceImpl(SpecialistRepository repository, Specifications specifications, PasswordEncoder passwordEncoder, SubServiceService subServiceService) {
+    public SpecialistServiceImpl(SpecialistRepository repository, Specifications specifications,
+                                 PasswordEncoder passwordEncoder, PersonService personService) {
         super(repository);
         this.specifications = specifications;
         this.passwordEncoder = passwordEncoder;
-        this.subServiceService = subServiceService;
+        this.personService = personService;
     }
 
     @Override
@@ -149,7 +147,7 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
 
     @Override
     public boolean isExistUsername(String username) {
-        return repository.findSpecialistByUsername(username).isPresent();
+        return personService.isExistsByUsername(username);
     }
 
     @Override

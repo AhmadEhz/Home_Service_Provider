@@ -3,6 +3,7 @@ package org.homeservice.service.impl;
 import org.homeservice.entity.Admin;
 import org.homeservice.repository.AdminRepository;
 import org.homeservice.service.AdminService;
+import org.homeservice.service.PersonService;
 import org.homeservice.service.base.BaseServiceImpl;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NonUniqueException;
@@ -18,10 +19,12 @@ import java.util.Optional;
 @Scope("singleton")
 public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminRepository> implements AdminService {
     private final PasswordEncoder passwordEncoder;
+    private final PersonService personService;
 
-    public AdminServiceImpl(AdminRepository repository, PasswordEncoder passwordEncoder) {
+    public AdminServiceImpl(AdminRepository repository, PasswordEncoder passwordEncoder, PersonService personService) {
         super(repository);
         this.passwordEncoder = passwordEncoder;
+        this.personService = personService;
     }
 
     @Override
@@ -50,6 +53,6 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
 
     @Override
     public boolean isExistsByUsername(String username) {
-        return repository.findAdminByUsername(username).isPresent();
+        return personService.isExistsByUsername(username);
     }
 }
