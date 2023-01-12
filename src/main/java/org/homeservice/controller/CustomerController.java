@@ -8,6 +8,7 @@ import org.homeservice.util.EmailSender;
 import org.homeservice.util.Values;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
+import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,8 +55,11 @@ public class CustomerController {
     }
 
     @PutMapping("change-password")
-    void changePassword(@RequestBody Map<String, String> map) {
-        customerService.changePassword(map.get("username"), map.get("oldPassword"), map.get("newPassword"));
+    void changePassword(@RequestBody Map<String, String> map, Authentication user) {
+        if (!map.containsKey("oldPassword") || !map.containsKey("newPassword"))
+            throw new CustomIllegalArgumentException();
+        customerService.changePassword(((Specialist) user.getPrincipal()).getUsername()
+                , map.get("oldPassword"), map.get("newPassword"));
     }
 
     @GetMapping("/show-service")
@@ -84,14 +88,14 @@ public class CustomerController {
     }
 
     @PostMapping("/set-order")
-    void setOrder(@RequestBody OrderCreationDto orderCreationDto) {
-        orderService.save(orderCreationDto.getOrder(), orderCreationDto.getCustomerId(),
+    void setOrder(@RequestBody OrderCreationDto orderCreationDto, Authentication user) {
+        orderService.save(orderCreationDto.getOrder(), ((Customer) user.getPrincipal()).getId(),
                 orderCreationDto.getSubServiceId());
     }
 
     @PostMapping("/send-rate")
-    void saveRate(@RequestBody RateDto rateDto) {
-        rateService.save(rateDto.getRate(), rateDto.getOrderId(), rateDto.getCustomerId());
+    void saveRate(@RequestBody RateDto rateDto, Authentication user) {
+        rateService.save(rateDto.getRate(), rateDto.getOrderId(), ((Customer) user.getPrincipal()).getId());
     }
 
     @GetMapping("/show-bids")
@@ -101,38 +105,38 @@ public class CustomerController {
     }
 
     @GetMapping("/credit")
-    CreditDto showCredit(@RequestParam Long customerId) {
-        Credit credit = creditService.loadByCustomer(customerId)
+    CreditDto showCredit(Authentication user) {
+        Credit credit = creditService.loadByCustomer(((Customer) user.getPrincipal()).getId())
                 .orElseThrow(() -> new NotFoundException("Customer not found."));
         return new CreditDto(credit);
+    }
+
+    @PutMapping("/select-bid")
+    void selectBid(@RequestParam Long bidId, Authentication user) {
+        orderService.selectBid(bidId, ((Customer) user.getPrincipal()).getId());
+    }
+
+    @PutMapping("/start-work")
+    void changeOrderStatusToStarted(@RequestParam Long orderId, Authentication user) {
+        orderService.changeStatusToStarted(orderId, ((Customer) user.getPrincipal()).getId());
+    }
+
+    @PutMapping("/end-work")
+    void changeOrderStatusToFinished(@RequestParam Long orderId, Authentication user) {
+        orderService.changeStatusToEnded(orderId, ((Customer) user.getPrincipal()).getId());
     }
 
     @CrossOrigin
     @PostMapping("/payment")
     String payment(@RequestBody PaymentDto payment) {
-        if(payment.getCaptcha()==null || payment.getCardNumber() == null)
+        if (payment.getCaptcha() == null || payment.getCardNumber() == null)
             throw new CustomIllegalArgumentException("Necessary fields is empty.");
         CaptchaChecker captchaChecker = new CaptchaChecker(payment.getCaptcha());
         if (!captchaChecker.isValid())
             throw new CustomIllegalArgumentException("Captcha is invalid.");
         if ((int) Math.log10(payment.getCardNumber()) + 1 != Values.CARD_NUMBER_LENGTH)
             throw new CustomIllegalArgumentException("Card number is not " + Values.CARD_NUMBER_LENGTH + " digits.");
-        return "true";
-    }
-
-    @PutMapping("/select-bid")
-    void selectBid(@RequestParam Long bidId, @RequestParam Long customerId) {
-        orderService.selectBid(bidId, customerId);
-    }
-
-    @PutMapping("/start-work")
-    void changeOrderStatusToStarted(@RequestParam Long orderId, @RequestParam Long customerId) {
-        orderService.changeStatusToStarted(orderId, customerId);
-    }
-
-    @PutMapping("/end-work")
-    void changeOrderStatusToFinished(@RequestParam Long orderId, @RequestParam Long customerId) {
-        orderService.changeStatusToEnded(orderId, customerId);
+        return "Success";
     }
 
     @GetMapping("/verifyEmail")

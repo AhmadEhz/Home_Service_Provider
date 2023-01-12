@@ -9,6 +9,7 @@ import org.homeservice.entity.Order;
 import org.homeservice.entity.Specialist;
 import org.homeservice.service.*;
 import org.homeservice.util.EmailSender;
+import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,26 +40,6 @@ public class SpecialistController {
         this.emailSender = emailSender;
     }
 
-    @GetMapping("/order/showAll")
-    List<OrderDto> showOrders(@RequestParam("id") Long specialistId, Authentication authentication) {
-        authentication.getPrincipal();
-        List<Order> orders = orderService.loadAllBySpecialistSubServices(specialistId);
-        return OrderDto.convertToDto(orders);
-    }
-
-    @GetMapping("/order/showAll-waiting-for-bid")
-    List<OrderDto> showOrdersByWaitingStatus(@RequestParam("id") Long specialistId) {
-        List<Order> orders = orderService.loadAllByWaitingStatusAndSpecialist(specialistId);
-        return OrderDto.convertToDto(orders);
-    }
-
-    @GetMapping("/credit")
-    CreditDto showCredit(@RequestParam Long specialistId) {
-        Credit credit = creditService.loadBySpecialist(specialistId)
-                .orElseThrow(() -> new NotFoundException("Specialist not found."));
-        return new CreditDto(credit);
-    }
-
     @PostMapping("/save")
     @Transactional
     String save(@RequestBody SpecialistCreationDto specialistDto) {
@@ -66,22 +47,46 @@ public class SpecialistController {
         specialistService.save(specialist);
         String generatedCode = verifyCodeService.generateAndSaveForSpecialist(specialist.getId());
         emailSender.sendSimpleMessage(specialist.getEmail(), generatedCode, EmailSender.EmailFor.SPECIALIST);
-        return  "Signup success. please verify your email.";
+        return "Signup success. please verify your email.";
     }
 
     @PutMapping("/change-password")
-    void changePassword(Map<String, String> map) {
-        specialistService.changePassword(map.get("username"), map.get("oldPassword"), map.get("newPassword"));
+    void changePassword(Map<String, String> map, Authentication user) {
+        if (!map.containsKey("oldPassword") || !map.containsKey("newPassword"))
+            throw new CustomIllegalArgumentException();
+        specialistService.changePassword(((Specialist) user.getPrincipal()).getUsername(),
+                map.get("oldPassword"), map.get("newPassword"));
+    }
+
+    @GetMapping("/order/showAll")
+    List<OrderDto> showOrders(Authentication user) {
+        List<Order> orders = orderService.loadAllBySpecialistSubServices(((Specialist) user.getPrincipal()).getId());
+        return OrderDto.convertToDto(orders);
+    }
+
+    @GetMapping("/order/showAll-waiting-for-bid")
+    List<OrderDto> showOrdersByWaitingStatus(Authentication user) {
+        List<Order> orders = orderService.loadAllByWaitingStatusAndSpecialist(
+                ((Specialist) user.getPrincipal()).getId());
+        return OrderDto.convertToDto(orders);
+    }
+
+    @GetMapping("/credit")
+    CreditDto showCredit(Authentication user) {
+        Credit credit = creditService.loadBySpecialist(((Specialist) user.getPrincipal()).getId())
+                .orElseThrow(() -> new NotFoundException("Specialist not found."));
+        return new CreditDto(credit);
     }
 
     @PutMapping("/add-avatar/")
-    void addAvatar(@RequestParam Long id, @RequestBody MultipartFile avatar) {
-        specialistService.addAvatar(id, avatar);
+    void addAvatar(@RequestBody MultipartFile avatar, Authentication user) {
+        specialistService.addAvatar(((Specialist) user.getPrincipal()).getId(), avatar);
     }
 
     @PostMapping("/set-bid")
-    void saveBid(@RequestBody BidCreationDto bidCreationDto) {
-        bidService.save(bidCreationDto.getBid(), bidCreationDto.getOrderId(), bidCreationDto.getSpecialistId());
+    void saveBid(@RequestBody BidCreationDto bidCreationDto, Authentication user) {
+        bidService.save(bidCreationDto.getBid(), bidCreationDto.getOrderId(),
+                ((Specialist) user.getPrincipal()).getId());
     }
 
     @GetMapping("/verifyEmail")

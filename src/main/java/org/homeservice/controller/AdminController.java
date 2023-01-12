@@ -3,7 +3,9 @@ package org.homeservice.controller;
 import org.homeservice.dto.*;
 import org.homeservice.entity.*;
 import org.homeservice.service.*;
+import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,8 +40,11 @@ public class AdminController {
     }
 
     @PutMapping("/change-password")
-    void changePassword(@RequestBody Map<String, String> map) {
-        adminService.changePassword(map.get("username"), map.get("oldPassword"), map.get("newPassword"));
+    void changePassword(@RequestBody Map<String, String> map, Authentication user) {
+        if (!map.containsKey("oldPassword") || !map.containsKey("newPassword"))
+            throw new CustomIllegalArgumentException();
+        adminService.changePassword(((Admin) user.getPrincipal()).getUsername()
+                , map.get("oldPassword"), map.get("newPassword"));
     }
 
     @PostMapping("/service/save")
@@ -135,7 +140,7 @@ public class AdminController {
     }
 
     @GetMapping("/orders")
-    List<OrderDto> showAllWithFilter(@RequestParam Map<String,String> filters) {
+    List<OrderDto> showAllWithFilter(@RequestParam Map<String, String> filters) {
         List<Order> orders = orderService.loadAllWithDetails(filters);
         return OrderDto.convertToDto(orders);
     }
