@@ -24,6 +24,12 @@ public class GlobalExceptionHandler {
         return ex.getMessage();
     }
 
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    @ExceptionHandler(ConnectionBrokenException.class)
+    public String connectionBroke(ConnectionBrokenException ex) {
+        return ex.getMessage();
+    }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)
     public String notValid(ConstraintViolationException ex) {
