@@ -19,34 +19,7 @@ import java.util.Map;
 @Scope("singleton")
 public class Specifications {
 
-    public Specification<Order> getOrder(Map<String, String> filters, Long customerId) {
-        if (filters == null || filters.isEmpty())
-            return null;
-        Specification<Order> specification = (root, cq, cb) ->
-                cb.equal(root.get(Order_.customer).get(Customer_.id), customerId);
-        for (Map.Entry<String, String> entry : filters.entrySet()) {
-            Specification<Order> spec = (root, cq, cb) -> switch (entry.getKey().toLowerCase()) {
-                case "customerid" -> cb.equal(root.join(Order_.customer).get(Customer_.id), toLong(entry.getValue()));
-                case "status" -> root.get(Order_.status).in(toOrderStatus(entry.getValue()));
-                case "order" -> switch (entry.getValue().toLowerCase()) {
-                    case "time", "time.asc" -> {
-                        cq.orderBy(cb.asc(root.get(Order_.createdAt)));
-                        yield cb.and();
-                    }
-                    case "time.desc" -> {
-                        cq.orderBy(cb.desc(root.get(Order_.createdAt)));
-                        yield cb.and();
-                    }
-                    default -> throw new CustomIllegalArgumentException("Filter is not correct.");
-                };
-                default -> throw new CustomIllegalArgumentException("filter is not correct.");
-            };
-            specification = specification.and(spec);
-        }
-        return specification;
-    }
-
-    public Specification<Order> getOrderByAdmin(Map<String, String> filters) {
+    public Specification<Order> getOrder(Map<String, String> filters) {
         if (filters == null || filters.isEmpty())
             return Specification.where((root, cq, cb) -> cb.and());
         Specification<Order> specification = Specification.where(null);
@@ -54,7 +27,7 @@ public class Specifications {
             Specification<Order> spec = (root, cq, cb) -> switch (entry.getKey().toLowerCase()) {
                 case "from" -> cb.greaterThanOrEqualTo(root.get(Order_.createdAt), toDate(entry.getValue()));
                 case "to" -> cb.lessThanOrEqualTo(root.get(Order_.createdAt), toDate(entry.getValue()));
-                case "status" -> cb.equal(root.get(Order_.status), toOrderStatus(entry.getValue()));
+                case "status" -> root.get(Order_.status).in(toOrderStatus(entry.getValue()));
                 case "id", "orderid" -> cb.equal(root.get(Order_.id), toLong(entry.getValue()));
                 case "serviceid", "service" -> {
                     Join<SubService, Service> serviceJoin = root.join(Order_.subService).join(SubService_.service);
@@ -68,10 +41,10 @@ public class Specifications {
                         cb.equal(root.get(Order_.subService).get(SubService_.id), toLong(entry.getValue()));
 
                 case "customerid", "customer" ->
-                    cb.equal(root.get(Order_.customer).get(Customer_.id), toLong(entry.getValue()));
+                        cb.equal(root.get(Order_.customer).get(Customer_.id), toLong(entry.getValue()));
 
                 case "specialistid", "specialist" ->
-                    cb.equal(root.get(Order_.specialist).get(Specialist_.id), toLong(entry.getValue()));
+                        cb.equal(root.get(Order_.specialist).get(Specialist_.id), toLong(entry.getValue()));
 
                 //Set order by
                 case "order" -> switch (entry.getValue().toLowerCase()) {

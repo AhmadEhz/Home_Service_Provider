@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Repository
 public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
@@ -27,17 +28,16 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Tuple> cq = cb.createTupleQuery();
         Root<Order> orderRoot = cq.from(Order.class);
-        Root<Bid> bidRoot = cq.from(Bid.class);
-        Predicate orderPredicate = specifications.getOrderByAdmin(filters).toPredicate(orderRoot, cq, cb);
-        //Without this predicate, result may contain duplicate value.
-        Predicate bidPredicate = cb.equal(bidRoot.get(Bid_.id), orderRoot.get(Order_.id));
+        SetJoin<Order, Bid> bidJoin = orderRoot.join(Order_.bids, JoinType.LEFT);
+        Predicate orderPredicate = specifications.getOrder(filters).toPredicate(orderRoot, cq, cb);
 
-        cq.multiselect(orderRoot, bidRoot).where(orderPredicate, bidPredicate);
+        cq.multiselect(orderRoot, bidJoin).where(orderPredicate);
         List<Tuple> resultList = em.createQuery(cq).getResultList();
         List<Bid> bids = resultList.stream().map(tuple -> tuple.get(1, Bid.class)).toList();
         return resultList.stream().map(tuple -> tuple.get(0, Order.class))
                 //Set accepted bid for orders.
-                .peek(order -> order.setAcceptedBid(bids.stream().filter(bid -> order.getId().equals(
-                bid.getOrder().getId())).findFirst().orElse(null))).toList();
+                .peek(order -> order.setAcceptedBid(bids.stream().filter(Objects::nonNull)
+                        .filter(bid -> order.getId().equals(
+                        bid.getOrder().getId())).findFirst().orElse(null))).toList();
     }
 }
