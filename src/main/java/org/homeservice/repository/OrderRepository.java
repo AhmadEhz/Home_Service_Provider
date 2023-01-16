@@ -20,7 +20,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> , JpaSpecifi
     List<Order> findAllBySpecialist_Id(Long specialistId);
     
     //If specialist is not null, It means Customer accepted a bid for this Order.
-    @Query("select o from Order as o where o.specialist is not null")
+    @Query("select o from Order as o where o.specialist is not null and o.id = :id")
     Optional<Order> findIfAcceptedABid(Long id);
 
     @Query("""
