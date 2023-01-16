@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface ServiceService extends BaseService<Service, Long> {
     void save(String name);
 
-    Optional<Service> findByName(String name);
+    Optional<Service> loadByName(String name);
 
     boolean isExistedName(String name);
 }

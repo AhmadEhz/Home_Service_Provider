@@ -76,7 +76,7 @@ public class AdminTest {
         assertEquals(service1, services.serviceService.loadById(service1.getId()).get());
         assertEquals(service2, services.serviceService.loadById(service2.getId()).get());
         assertEquals(service3, services.serviceService.loadById(service3.getId()).get());
-        assertEquals(service1, services.serviceService.findByName(service1.getName()).get());
+        assertEquals(service1, services.serviceService.loadByName(service1.getName()).get());
     }
 
     @Test

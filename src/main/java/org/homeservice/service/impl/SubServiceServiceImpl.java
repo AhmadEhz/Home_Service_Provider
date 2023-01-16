@@ -25,7 +25,7 @@ public class SubServiceServiceImpl extends BaseServiceImpl<SubService, Long, Sub
 
     @Override
     public void save(SubService subService, String serviceName) {
-        Service service = serviceService.findByName(serviceName).orElseThrow(() -> new NotFoundException("Service not found."));
+        Service service = serviceService.loadByName(serviceName).orElseThrow(() -> new NotFoundException("Service not found."));
         subService.setService(service);
         save(subService);
     }

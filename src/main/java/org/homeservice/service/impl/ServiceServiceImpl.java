@@ -32,12 +32,12 @@ public class ServiceServiceImpl extends BaseServiceImpl<Service, Long, ServiceRe
     }
 
     @Override
-    public Optional<Service> findByName(String name) {
+    public Optional<Service> loadByName(String name) {
         return repository.findServiceByName(name);
     }
 
     @Override
     public boolean isExistedName(String name) {
-        return findByName(name).isPresent();
+        return loadByName(name).isPresent();
     }
 }
