@@ -1,6 +1,5 @@
 package org.homeservice.service.impl;
 
-import jakarta.validation.Valid;
 import org.homeservice.entity.Specialist;
 import org.homeservice.entity.SpecialistStatus;
 import org.homeservice.repository.SpecialistRepository;
@@ -106,6 +105,12 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
     @Transactional
     public void suspendSpecialist(Long id) {
         changeStatus(id, SpecialistStatus.SUSPENDED);
+    }
+
+    @Override
+    @Transactional
+    public void changeStatusToWaitingByVerificationCode(String verificationCode) {
+        repository.changeStatusToWaitingByVerificationCode(verificationCode);
     }
 
     @Override

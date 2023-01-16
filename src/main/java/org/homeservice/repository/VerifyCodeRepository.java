@@ -9,9 +9,9 @@ import java.util.Optional;
 
 @Repository
 public interface VerifyCodeRepository extends JpaRepository<VerifyCode, Long> {
-    @Query("select v from Specialist s inner join VerifyCode v where v.code = :code")
+    @Query("select v from VerifyCode v inner join Specialist s on s.verifyCode.id=v.id where v.code = :code")
     Optional<VerifyCode> findByCodeForSpecialist(String code);
 
-    @Query("select v from Customer c inner join VerifyCode v where v.code =:code")
+    @Query("select v from VerifyCode v inner join Customer c on c.verifyCode.id=v.id where v.code =:code")
     Optional<VerifyCode> findByCodeForCustomer(String code);
 }

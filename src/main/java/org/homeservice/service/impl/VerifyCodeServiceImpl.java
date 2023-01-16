@@ -3,9 +3,7 @@ package org.homeservice.service.impl;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.homeservice.entity.VerifyCode;
 import org.homeservice.repository.VerifyCodeRepository;
-import org.homeservice.service.CustomerService;
-import org.homeservice.service.SpecialistService;
-import org.homeservice.service.VerifyCodeService;
+import org.homeservice.service.*;
 import org.homeservice.service.base.BaseServiceImpl;
 import org.homeservice.util.Values;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
@@ -50,6 +48,7 @@ public class VerifyCodeServiceImpl extends BaseServiceImpl<VerifyCode, Long, Ver
         VerifyCode verifyCode = repository.findByCodeForSpecialist(verificationCode)
                 .orElseThrow(() -> new NotFoundException("Verification code is not correct."));
         verifyEmail(verifyCode);
+        specialistService.changeStatusToWaitingByVerificationCode(verificationCode);
     }
 
     @Override

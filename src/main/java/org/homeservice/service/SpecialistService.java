@@ -26,6 +26,8 @@ public interface SpecialistService extends BaseService<Specialist, Long> {
 
     void suspendSpecialist(Long id);
 
+    void changeStatusToWaitingByVerificationCode(String verificationCode);
+
     void changeStatus(Long id, SpecialistStatus status);
 
     void updateScore(Long id);
