@@ -12,8 +12,10 @@ import java.util.Optional;
 @Repository
 public interface BidRepository extends JpaRepository<Bid, Long> {
     List<Bid> findAllByOrder_Id(Long orderId, Sort sort);
+
     @Query("select b from Bid as b where b.order.customer.id = :customerId and b.specialist.id = :specialistId")
     Optional<Bid> findByCustomerAndSpecialist(Long customerId, Long specialistId);
+
     @Query("select b from Bid as b where b.order.id = :orderId")
     Optional<Bid> findByOrderId(Long orderId);
 }

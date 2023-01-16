@@ -35,7 +35,7 @@ public interface SpecialistRepository extends JpaRepository<Specialist, Long>, J
     @Query(nativeQuery = true, value = """
             with sp as (select sp.id as sp_id, avg(r.score - r.lateness_end_working) as avg_score
             from specialist sp join orders o on sp.id = o.specialist_id join rate r on r.id = o.rate_id
-            where sp.id = (select sp2.id from specialist as sp2 join orders o2 on sp2.id = o2.specialist_id
+            where sp.id = (select distinct sp2.id from specialist as sp2 join orders o2 on sp2.id = o2.specialist_id
             where o.rate_id = :rateId) group by sp.id)
                         
             update specialist as s set score = sp.avg_score
