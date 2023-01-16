@@ -12,7 +12,7 @@ import java.util.Map;
 
 @Service
 public interface SpecialistService extends BaseService<Specialist, Long> {
-    void addAvatar(Long id, MultipartFile avatar);
+    void addAvatar(Specialist specialist, MultipartFile avatar);
 
     List<Specialist> loadAllVerified();
 
@@ -36,7 +36,7 @@ public interface SpecialistService extends BaseService<Specialist, Long> {
 
     void setVerificationId(Long id, Long verificationId);
 
-    void changePassword(String username, String oldPassword, String newPassword);
+    void changePassword(Specialist specialist, String oldPassword, String newPassword);
 
     void addAvatar(Long id, File file);
 

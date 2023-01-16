@@ -45,10 +45,18 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
     }
 
     @Override
-    public void addAvatar(Long id, MultipartFile avatar) {
+    @Transactional
+    public void changePassword(Specialist specialist, String oldPassword, String newPassword) {
+        if (!passwordEncoder.matches(oldPassword, specialist.getPassword()))
+            throw new CustomIllegalArgumentException("Old password is not incorrect.");
+        specialist.setPassword(passwordEncoder.encode(newPassword));
+        super.update(specialist);
+    }
+
+    @Override
+    public void addAvatar(Specialist specialist, MultipartFile avatar) {
         if (avatar == null)
             throw new CustomIllegalArgumentException("Avatar is empty.");
-        Specialist specialist = findById(id).orElseThrow(() -> new NotFoundException("Specialist not found."));
         if (avatar.getSize() > Values.MAX_AVATAR_SIZE) //avatar size > 300KB
             throw new CustomIllegalArgumentException
                     ("Image size is bigger than " + (Values.MAX_AVATAR_SIZE / 1024) + " KB");
@@ -138,17 +146,6 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
     @Transactional
     public void setVerificationId(Long id, Long verificationId) {
         repository.setVerificationCodeId(id, verificationId);
-    }
-
-    @Override
-    @Transactional
-    public void changePassword(String username, String oldPassword, String newPassword) {
-        Specialist specialist = repository.findSpecialistByUsername(username)
-                .orElseThrow(() -> new NotFoundException("Specialist not found."));
-        if (!passwordEncoder.matches(oldPassword, specialist.getPassword()))
-            throw new CustomIllegalArgumentException("Old password is not incorrect.");
-        specialist.setPassword(passwordEncoder.encode(newPassword));
-        super.update(specialist);
     }
 
 

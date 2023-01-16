@@ -36,10 +36,8 @@ public class BidServiceImpl extends BaseServiceImpl<Bid, Long, BidRepository> im
     }
 
     @Override
-    public void save(Bid bid, Long orderId, Long specialistId) {
+    public void save(Bid bid, Long orderId, Specialist specialist) {
         Order order = orderService.findById(orderId).orElseThrow(() -> new NotFoundException("Order not found"));
-        Specialist specialist = specialistService.findById(specialistId).
-                orElseThrow(() -> new NotFoundException("Specialist not found"));
         bid.setOrder(order);
         bid.setSpecialist(specialist);
         save(bid);

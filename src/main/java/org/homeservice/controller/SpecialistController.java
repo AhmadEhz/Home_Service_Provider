@@ -1,12 +1,10 @@
 package org.homeservice.controller;
 
-import jakarta.validation.Valid;
 import org.homeservice.dto.*;
 import org.homeservice.entity.*;
 import org.homeservice.service.*;
 import org.homeservice.util.EmailSender;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
-import org.homeservice.util.exception.NotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -21,17 +19,14 @@ public class SpecialistController {
     private final SpecialistService specialistService;
     private final BidService bidService;
     private final OrderService orderService;
-    private final CreditService creditService;
     private final VerifyCodeService verifyCodeService;
     private final EmailSender emailSender;
 
     public SpecialistController(SpecialistService specialistService, BidService bidService, OrderService orderService,
-                                CreditService creditService, VerifyCodeService verifyCodeService,
-                                EmailSender emailSender) {
+                                VerifyCodeService verifyCodeService, EmailSender emailSender) {
         this.specialistService = specialistService;
         this.bidService = bidService;
         this.orderService = orderService;
-        this.creditService = creditService;
         this.verifyCodeService = verifyCodeService;
         this.emailSender = emailSender;
     }
@@ -50,7 +45,7 @@ public class SpecialistController {
     void changePassword(Map<String, String> map, Authentication user) {
         if (!map.containsKey("oldPassword") || !map.containsKey("newPassword"))
             throw new CustomIllegalArgumentException();
-        specialistService.changePassword(((Specialist) user.getPrincipal()).getUsername(),
+        specialistService.changePassword((Specialist) user.getPrincipal(),
                 map.get("oldPassword"), map.get("newPassword"));
     }
 
@@ -76,20 +71,19 @@ public class SpecialistController {
 
     @GetMapping("/credit")
     CreditDto showCredit(Authentication user) {
-        Credit credit = creditService.loadBySpecialist(((Specialist) user.getPrincipal()).getId())
-                .orElseThrow(() -> new NotFoundException("Specialist not found."));
+        Credit credit = ((Specialist) user.getPrincipal()).getCredit();
         return new CreditDto(credit);
     }
 
     @PutMapping("/add-avatar/")
     void addAvatar(@RequestBody MultipartFile avatar, Authentication user) {
-        specialistService.addAvatar(((Specialist) user.getPrincipal()).getId(), avatar);
+        specialistService.addAvatar((Specialist) user.getPrincipal(), avatar);
     }
 
     @PostMapping("/set-bid")
     void saveBid(@RequestBody BidCreationDto bidCreationDto, Authentication user) {
         bidService.save(bidCreationDto.getBid(), bidCreationDto.getOrderId(),
-                ((Specialist) user.getPrincipal()).getId());
+                (Specialist) user.getPrincipal());
     }
 
     @GetMapping("/verifyEmail")
