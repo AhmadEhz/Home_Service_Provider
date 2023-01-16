@@ -24,7 +24,8 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
     private final PersonService personService;
     private final Specifications specifications;
     private final PasswordEncoder passwordEncoder;
-    public CustomerServiceImpl(CustomerRepository repository, PersonService personService, Specifications specifications, PasswordEncoder passwordEncoder) {
+    public CustomerServiceImpl(CustomerRepository repository, PersonService personService,
+                               Specifications specifications, PasswordEncoder passwordEncoder) {
         super(repository);
         this.personService = personService;
         this.specifications = specifications;
@@ -42,9 +43,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
     }
 
     @Override
-    public void changePassword(String username, String oldPassword, String newPassword) {
-        Customer customer = repository.findCustomerByUsername(username).
-                orElseThrow(() -> new NotFoundException("Customer not found."));
+    public void changePassword(Customer customer, String oldPassword, String newPassword) {
         if (!customer.getPassword().equals(oldPassword))
             throw new CustomIllegalArgumentException("Old password is incorrect.");
         customer.setPassword(passwordEncoder.encode(newPassword));
@@ -76,7 +75,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
     public void delete(Customer customer) {
         Customer loadCustomer = findById(customer.getId()).orElseThrow(() ->
                 new NotFoundException("Customer not found."));
-        if (checkBeforeDelete(customer, loadCustomer, false))
+        if (!checkBeforeDelete(customer, loadCustomer, false))
             throw new CustomIllegalArgumentException("Customer email or username or password is incorrect.");
 
         super.delete(customer);
@@ -86,7 +85,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
     public void deleteByAdmin(Customer customer) {
         Customer loadCustomer = findById(customer.getId()).orElseThrow(() ->
                 new NotFoundException("Customer not found."));
-        if (checkBeforeDelete(customer, loadCustomer, true))
+        if (!checkBeforeDelete(customer, loadCustomer, true))
             throw new CustomIllegalArgumentException("Customer email or username is incorrect.");
 
         super.delete(loadCustomer);
@@ -95,7 +94,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
     private boolean checkBeforeDelete(Customer customer, Customer loadCustomer, boolean deleteByAdmin) {
         if (customer.getUsername().equals(loadCustomer.getUsername()) &&
             customer.getEmail().equals(loadCustomer.getEmail()))
-            return customer.getPassword().equals(loadCustomer.getPassword()) || deleteByAdmin;
+            return passwordEncoder.matches(customer.getPassword(), loadCustomer.getPassword()) || deleteByAdmin;
         return false;
     }
 }

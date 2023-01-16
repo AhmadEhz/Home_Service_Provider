@@ -56,7 +56,7 @@ public class CustomerController {
     void changePassword(@RequestBody Map<String, String> map, Authentication user) {
         if (!map.containsKey("oldPassword") || !map.containsKey("newPassword"))
             throw new CustomIllegalArgumentException();
-        customerService.changePassword(((Specialist) user.getPrincipal()).getUsername()
+        customerService.changePassword((Customer) user.getPrincipal()
                 , map.get("oldPassword"), map.get("newPassword"));
     }
 
@@ -87,13 +87,13 @@ public class CustomerController {
 
     @PostMapping("/set-order")
     void setOrder(@RequestBody OrderCreationDto orderCreationDto, Authentication user) {
-        orderService.save(orderCreationDto.getOrder(), ((Customer) user.getPrincipal()).getId(),
+        orderService.save(orderCreationDto.getOrder(), (Customer) user.getPrincipal(),
                 orderCreationDto.getSubServiceId());
     }
 
     @PostMapping("/send-rate")
     void saveRate(@RequestBody RateDto rateDto, Authentication user) {
-        rateService.save(rateDto.getRate(), rateDto.getOrderId(), ((Customer) user.getPrincipal()).getId());
+        rateService.save(rateDto.getRate(), rateDto.getOrderId(), (Customer) user.getPrincipal());
     }
 
     @GetMapping("/show-bids")
@@ -117,17 +117,17 @@ public class CustomerController {
 
     @PutMapping("/select-bid")
     void selectBid(@RequestParam Long bidId, Authentication user) {
-        orderService.selectBid(bidId, ((Customer) user.getPrincipal()).getId());
+        orderService.selectBid(bidId, (Customer) user.getPrincipal());
     }
 
     @PutMapping("/start-work")
     void changeOrderStatusToStarted(@RequestParam Long orderId, Authentication user) {
-        orderService.changeStatusToStarted(orderId, ((Customer) user.getPrincipal()).getId());
+        orderService.changeStatusToStarted(orderId, (Customer) user.getPrincipal());
     }
 
     @PutMapping("/end-work")
     void changeOrderStatusToFinished(@RequestParam Long orderId, Authentication user) {
-        orderService.changeStatusToEnded(orderId, ((Customer) user.getPrincipal()).getId());
+        orderService.changeStatusToEnded(orderId, (Customer) user.getPrincipal());
     }
 
     @CrossOrigin

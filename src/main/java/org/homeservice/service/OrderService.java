@@ -1,5 +1,6 @@
 package org.homeservice.service;
 
+import org.homeservice.entity.Customer;
 import org.homeservice.entity.Order;
 import org.homeservice.service.base.BaseService;
 import org.springframework.stereotype.Service;
@@ -10,7 +11,7 @@ import java.util.Map;
 @Service
 public interface OrderService extends BaseService<Order, Long> {
 
-    void save(Order order, Long customerId, Long subServiceId);
+    void save(Order order, Customer customer, Long subServiceId);
 
     List<Order> loadAllByCustomer(Long customerId);
 
@@ -26,13 +27,13 @@ public interface OrderService extends BaseService<Order, Long> {
 
     List<Order> loadAllWithDetails(Map<String, String> filters);
 
-    void selectBid(Long bidId, Long customerId);
+    void selectBid(Long bidId, Customer customer);
 
-    void changeStatusToChooseSpecialist(Long id, Long customerId);
+    void changeStatusToChooseSpecialist(Order order, Customer customer);
 
-    void changeStatusToStarted(Long id, Long customerId);
+    void changeStatusToStarted(Long id, Customer customer);
 
-    void changeStatusToEnded(Long id, Long customerId);
+    void changeStatusToEnded(Long id, Customer customer);
     
     void setRateId(Long orderId, Long rateId);
 

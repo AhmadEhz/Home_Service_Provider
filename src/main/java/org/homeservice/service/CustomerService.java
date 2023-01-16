@@ -9,7 +9,7 @@ import java.util.Map;
 
 @Service
 public interface CustomerService extends BaseService<Customer, Long> {
-    void changePassword(String username, String oldPassword, String newPassword);
+    void changePassword(Customer customer, String oldPassword, String newPassword);
 
     List<Customer> loadAllByFilter(Map<String, String> filters);
 

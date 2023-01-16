@@ -22,25 +22,20 @@ import java.util.Map;
 public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderRepository> implements OrderService {
 
     private final ApplicationContext applicationContext;
-    private final CustomerService customerService;
     private final SubServiceService subServiceService;
     private final Specifications specifications;
     private BidService bidService;
 
     public OrderServiceImpl(ApplicationContext applicationContext, OrderRepository repository,
-                            CustomerService customerService, SubServiceService subServiceService,
-                            Specifications specifications) {
+                            SubServiceService subServiceService, Specifications specifications) {
         super(repository);
         this.applicationContext = applicationContext;
-        this.customerService = customerService;
         this.subServiceService = subServiceService;
         this.specifications = specifications;
     }
 
     @Override
-    public void save(Order order, Long customerId, Long subServiceId) {
-        Customer customer = customerService.findById(customerId).orElseThrow(
-                () -> new NotFoundException("Customer not found."));
+    public void save(Order order, Customer customer, Long subServiceId) {
         SubService subService = subServiceService.findById(subServiceId).orElseThrow(
                 () -> new NotFoundException("SubService not found."));
 
@@ -85,7 +80,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
 
     @Override
     public List<Order> loadAllByFilterAndCustomer(Map<String, String> filters, Long customerId) {
-        // Get CustomerId to filters to get Orders for this customer only.
+        // Put CustomerId to filters to get Orders for this customer only.
         filters.put("customerId", String.valueOf(customerId));
         return repository.findAllWithDetails(filters);
     }
@@ -102,10 +97,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
     }
 
     @Override
-    public void selectBid(Long bidId, Long customerId) {
+    public void selectBid(Long bidId, Customer customer) {
         Bid bid = getBidService().findById(bidId).orElseThrow(() -> new NotFoundException("Bid not found."));
-        Customer customer = customerService.findById(customerId).orElseThrow(
-                () -> new NotFoundException("Customer not found."));
         Order order = bid.getOrder();
 
         if (!order.getCustomer().equals(customer))
@@ -121,25 +114,20 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
 
     @Override
     @Transactional
-    public void changeStatusToChooseSpecialist(Long id, Long customerId) {
-        Order order = findById(id).orElseThrow(() -> new NotFoundException("Order not found."));
-        Customer customer = customerService.findById(customerId).
-                orElseThrow(() -> new NotFoundException("Customer not found."));
+    public void changeStatusToChooseSpecialist(Order order, Customer customer) {
         if (!order.getCustomer().equals(customer))
             throw new CustomIllegalArgumentException("This Order is not for this Customer.");
         if (!order.checkStatusIfWaitingForBids()) {
             throw new CustomIllegalArgumentException
                     ("Can't change order status to \"Waiting for Specialist\". Customer accepted a bid.");
         }
-        repository.changeStatus(id, OrderStatus.WAITING_FOR_CHOOSE_SPECIALIST);
+        repository.changeStatus(order.getId(), OrderStatus.WAITING_FOR_CHOOSE_SPECIALIST);
     }
 
     @Override
     @Transactional
-    public void changeStatusToStarted(Long id, Long customerId) {
+    public void changeStatusToStarted(Long id, Customer customer) {
         Order order = findById(id).orElseThrow(() -> new NotFoundException("Order not found."));
-        Customer customer = customerService.findById(customerId).orElseThrow
-                (() -> new NotFoundException("Customer not found."));
         Bid bid;
 
         if (!order.getCustomer().equals(customer))
@@ -150,7 +138,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
         if (!isAcceptedBid(id))
             throw new CustomIllegalArgumentException("This Order not yet accepted a Bid.");
 
-        bid = getBidService().loadByCustomerAndSpecialist(customerId, order.getSpecialist().getId())
+        bid = getBidService().loadByCustomerAndSpecialist(customer.getId(), order.getSpecialist().getId())
                 .orElseThrow(() -> new NotFoundException("The Bid for this Order not found."));
         if (LocalDateTime.now().isBefore(bid.getStartWorking()))
             throw new CustomIllegalArgumentException("Starting the work should be after Bid start time");
@@ -161,17 +149,15 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
 
     @Override
     @Transactional
-    public void changeStatusToEnded(Long id, Long customerId) {
+    public void changeStatusToEnded(Long id, Customer customer) {
         Order order = findById(id).orElseThrow(() -> new NotFoundException("Order not found."));
-        Customer customer = customerService.findById(customerId).orElseThrow
-                (() -> new NotFoundException("Customer not found."));
         Bid bid;
         if (!order.getCustomer().equals(customer))
             throw new CustomIllegalArgumentException("This Order is not for this Customer.");
         if (order.getStatus() != OrderStatus.STARTED)
             throw new CustomIllegalArgumentException
                     ("The status of Order is not in \"Started\"");
-        bid = getBidService().loadByCustomerAndSpecialist(customerId, order.getSpecialist().getId())
+        bid = getBidService().loadByCustomerAndSpecialist(customer.getId(), order.getSpecialist().getId())
                 .orElseThrow(() -> new NotFoundException("The Bid for this Order not found."));
         Duration lateness = Duration.between(bid.getEndWorking(), LocalDateTime.now());
         order.setLatenessEndWorking(lateness.getSeconds() > 0 ? lateness : Duration.ZERO);

@@ -20,14 +20,24 @@ public class RateServiceImpl extends BaseServiceImpl<Rate, Long, RateRepository>
 
     private final SpecialistService specialistService;
     private final OrderService orderService;
-    private final CustomerService customerService;
 
     public RateServiceImpl(RateRepository repository, SpecialistService specialistService,
-                           OrderService orderService, CustomerService customerService) {
+                           OrderService orderService) {
         super(repository);
         this.specialistService = specialistService;
         this.orderService = orderService;
-        this.customerService = customerService;
+    }
+
+    @Override
+    @Transactional
+    public void save(Rate rate, Long orderId, Customer customer) {
+        Order order = orderService.findById(orderId).orElseThrow(() -> new NotFoundException("Order not found."));
+        if (!order.getCustomer().equals(customer))
+            throw new IllegalArgumentException("This Order is not for this Customer.");
+
+        rate.setOrder(order);
+        rate.setLatenessEndWorking((int) order.getLatenessEndWorking().toHours());
+        save(rate);
     }
 
     @Override
@@ -39,19 +49,5 @@ public class RateServiceImpl extends BaseServiceImpl<Rate, Long, RateRepository>
         super.save(rate);
         orderService.setRateId(rate.getOrder().getId(), rate.getId());
         specialistService.updateScoreByRateId(rate.getId());
-    }
-
-    @Override
-    @Transactional
-    public void save(Rate rate, Long orderId, Long customerId) {
-        Order order = orderService.findById(orderId).orElseThrow(() -> new NotFoundException("Order not found."));
-        Customer customer = customerService.findById(customerId).orElseThrow(
-                () -> new NotFoundException("Customer not found."));
-        if (!order.getCustomer().equals(customer))
-            throw new IllegalArgumentException("This Order is not for this Customer.");
-
-        rate.setOrder(order);
-        rate.setLatenessEndWorking((int) order.getLatenessEndWorking().toHours());
-        save(rate);
     }
 }
