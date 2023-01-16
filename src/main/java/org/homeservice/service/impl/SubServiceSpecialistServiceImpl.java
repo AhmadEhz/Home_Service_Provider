@@ -54,7 +54,7 @@ public class SubServiceSpecialistServiceImpl extends BaseServiceImpl<SubServiceS
         Specialist specialist = specialistService.findById(subServiceSpecialist.getSpecialist().getId()).orElseThrow(
                 () -> new NotFoundException("Specialist not found."));
         if (isExist(subService.getId(), specialist.getId()))
-            throw new CustomIllegalArgumentException("This Specialist is part of SubService before.");
+            throw new CustomIllegalArgumentException("This Specialist was added to this SubServiceBefore.");
         if (!specialist.isVerified())
             throw new NotVerifiedException("Specialist not verified or suspended.");
 
