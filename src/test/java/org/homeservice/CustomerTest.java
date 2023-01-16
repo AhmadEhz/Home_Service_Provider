@@ -112,8 +112,8 @@ public class CustomerTest {
     void selectBidForOrder() {
         assertEquals(OrderStatus.WAITING_FOR_CHOOSE_SPECIALIST, services.loadOrder(order1.getId()).getStatus());
         services.orderService.selectBid(SpecialistTest.bid1.getId(), SpecialistTest.bid1.getOrder().getCustomer());
-        assertTrue(services.bidService.loadByCustomerAndSpecialist
-                (customer1.getId(), SpecialistTest.specialist1.getId()).isPresent());
+        assertTrue(services.bidService.loadByOrderAndSpecialist
+                (SpecialistTest.bid1.getOrder().getId(), SpecialistTest.specialist1.getId()).isPresent());
         assertEquals(OrderStatus.WAITING_FOR_COMING_SPECIALIST, services.loadOrder(order1.getId()).getStatus());
     }
 
@@ -143,7 +143,7 @@ public class CustomerTest {
                 (order1.getId(), customer1));
 
         order1 = services.loadOrder(order1.getId());
-        Bid bid = services.bidService.loadByOrderId(order1.getId()).get();
+        Bid bid = services.bidService.loadByOrderAndSpecialist(order1.getId(), order1.getSpecialist().getId()).get();
         bid.setStartWorking(LocalDateTime.now().minusMinutes(5));
         services.bidService.update(bid);
         assertEquals(OrderStatus.WAITING_FOR_COMING_SPECIALIST, services.loadOrder(order1.getId()).getStatus());
