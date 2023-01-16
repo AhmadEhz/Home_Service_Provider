@@ -83,7 +83,7 @@ public class HibernateSpecialistServiceImpl extends HibernateBaseServiceImpl<Spe
         if (optionalOrder.isEmpty())
             throw new NotFoundException("Order not found");
         if (optionalSpecialist.get().getStatus() != SpecialistStatus.ACCEPTED)
-            throw new NotVerifiedException("Specialist not verified");
+            throw new SpecialistNotAccessException("Specialist not verified");
         if(offerPrice < optionalOrder.get().getSubService().getBasePrice())
             throw new CustomIllegalArgumentException("Your bid is lower than base price of this SubService.");
 

@@ -13,7 +13,7 @@ import org.homeservice.service.base.BaseServiceImpl;
 import org.homeservice.util.QueryUtil;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
-import org.homeservice.util.exception.NotVerifiedException;
+import org.homeservice.util.exception.SpecialistNotAccessException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,9 +56,9 @@ public class BidServiceImpl extends BaseServiceImpl<Bid, Long, BidRepository> im
 
         Order order = bid.getOrder();
         if (!subServiceSpecialistService.isExist(bid.getSpecialist().getId(), order.getSubService().getId()))
-            throw new NotVerifiedException("Specialist not registered to this SubService.");
+            throw new SpecialistNotAccessException("Specialist not registered to this SubService.");
         if (!bid.getSpecialist().isVerified())
-            throw new NotVerifiedException("Specialist is not verified yet or suspended.");
+            throw new SpecialistNotAccessException("Specialist is not verified yet or suspended.");
         if (bid.getOfferPrice() < order.getSubService().getBasePrice())
             throw new CustomIllegalArgumentException
                     ("Offer price should not be less than base price of the BaseService.");

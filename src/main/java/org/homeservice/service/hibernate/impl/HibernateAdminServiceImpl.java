@@ -7,7 +7,7 @@ import org.homeservice.service.hibernate.*;
 import org.homeservice.service.hibernate.base.HibernateBaseServiceImpl;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
-import org.homeservice.util.exception.NotVerifiedException;
+import org.homeservice.util.exception.SpecialistNotAccessException;
 
 import java.util.List;
 import java.util.Optional;
@@ -145,9 +145,9 @@ public class HibernateAdminServiceImpl extends HibernateBaseServiceImpl<Admin, L
         executeUpdate(() -> repository.update(optionalAdmin.get()));
     }
 
-    private void checkSpecialistStatus(Specialist specialist) throws NotVerifiedException {
+    private void checkSpecialistStatus(Specialist specialist) throws SpecialistNotAccessException {
         if (specialist.getStatus() != SpecialistStatus.ACCEPTED)
-            throw new NotVerifiedException("This specialist is not verified");
+            throw new SpecialistNotAccessException("This specialist is not verified");
     }
 
     public static HibernateAdminService getAdminService() {

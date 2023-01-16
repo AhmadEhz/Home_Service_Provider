@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    @ExceptionHandler(NotVerifiedException.class)
+    @ExceptionHandler(SpecialistNotAccessException.class)
     public String notVerified(Exception ex) {
         return ex.getMessage();
     }

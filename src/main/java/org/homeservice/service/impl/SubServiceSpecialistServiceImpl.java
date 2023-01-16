@@ -11,7 +11,7 @@ import org.homeservice.service.SubServiceSpecialistService;
 import org.homeservice.service.base.BaseServiceImpl;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
-import org.homeservice.util.exception.NotVerifiedException;
+import org.homeservice.util.exception.SpecialistNotAccessException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,7 +56,7 @@ public class SubServiceSpecialistServiceImpl extends BaseServiceImpl<SubServiceS
         if (isExist(subService.getId(), specialist.getId()))
             throw new CustomIllegalArgumentException("This Specialist was added to this SubServiceBefore.");
         if (!specialist.isVerified())
-            throw new NotVerifiedException("Specialist not verified or suspended.");
+            throw new SpecialistNotAccessException("Specialist not verified or suspended.");
 
         //No need to set SubService and Specialist to SubServiceSpecialist. both id was set to it before.
         super.save(subServiceSpecialist);
