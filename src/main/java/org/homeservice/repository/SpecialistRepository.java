@@ -21,6 +21,12 @@ public interface SpecialistRepository extends JpaRepository<Specialist, Long>, J
     Optional<Specialist> findSpecialistByEmail(String email);
 
     @Modifying
+    @Query("""
+            update Specialist as s set s.status = org.homeservice.entity.SpecialistStatus.WAITING_TO_ACCEPT
+            where s.verifyCode.code = :verificationCode""")
+    void changeStatusToWaitingByVerificationCode(String verificationCode);
+
+    @Modifying
     @Query("update Specialist as s set s.status = :status where s.id = :id")
     int updateStatus(Long id, SpecialistStatus status);
 
@@ -29,7 +35,7 @@ public interface SpecialistRepository extends JpaRepository<Specialist, Long>, J
             update Specialist as s set s.score =
             (select avg(r.score) from Rate as r where r.order.specialist.id = :id)
             where s.id = :id""")
-    int updateScore(Long id);
+    void updateScore(Long id);
 
     @Modifying
     @Query(nativeQuery = true, value = """
