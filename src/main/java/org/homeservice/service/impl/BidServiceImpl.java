@@ -62,7 +62,8 @@ public class BidServiceImpl extends BaseServiceImpl<Bid, Long, BidRepository> im
                     ("Offer price should not be less than base price of the BaseService.");
         if (!order.checkStatusIfWaitingForBids()) //Check order not accepted a bid.
             throw new CustomIllegalArgumentException("This order did not accepted new bid.");
-
+        if (isExistByOrderAndSpecialistAndCustomer(order.getId(), bid.getSpecialist().getId()))
+            throw new CustomIllegalArgumentException("Specialist sent a Bid for this Order before.");
         super.save(bid);
         if (order.getStatus() == OrderStatus.WAITING_FOR_BID)
             orderService.changeStatusToChooseSpecialist(order, order.getCustomer());
@@ -74,12 +75,12 @@ public class BidServiceImpl extends BaseServiceImpl<Bid, Long, BidRepository> im
     }
 
     @Override
-    public Optional<Bid> loadByCustomerAndSpecialist(Long customerId, Long specialistId) {
-        return repository.findByCustomerAndSpecialist(customerId, specialistId);
+    public Optional<Bid> loadByOrderAndSpecialist(Long orderId, Long specialistId) {
+        return repository.findByOrderAndSpecialist(orderId, specialistId);
     }
 
     @Override
-    public Optional<Bid> loadByOrderId(Long orderId) {
-        return repository.findByOrderId(orderId);
+    public boolean isExistByOrderAndSpecialistAndCustomer(Long orderId, Long specialistId) {
+        return repository.findByOrderAndSpecialist(orderId, specialistId).isPresent();
     }
 }

@@ -14,7 +14,7 @@ public interface BidService extends BaseService<Bid, Long> {
 
     List<Bid> loadAllByOrder(Long orderId, String sortBy);
 
-    Optional<Bid> loadByCustomerAndSpecialist(Long customerId, Long specialistId);
+    Optional<Bid> loadByOrderAndSpecialist(Long orderId, Long specialistId);
 
-    Optional<Bid> loadByOrderId(Long orderId);
+    boolean isExistByOrderAndSpecialistAndCustomer(Long orderId, Long specialistId);
 }

@@ -138,7 +138,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
         if (!isAcceptedBid(id))
             throw new CustomIllegalArgumentException("This Order not yet accepted a Bid.");
 
-        bid = getBidService().loadByCustomerAndSpecialist(customer.getId(), order.getSpecialist().getId())
+        bid = getBidService().loadByOrderAndSpecialist(id, order.getSpecialist().getId())
                 .orElseThrow(() -> new NotFoundException("The Bid for this Order not found."));
         if (LocalDateTime.now().isBefore(bid.getStartWorking()))
             throw new CustomIllegalArgumentException("Starting the work should be after Bid start time");
@@ -157,7 +157,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
         if (order.getStatus() != OrderStatus.STARTED)
             throw new CustomIllegalArgumentException
                     ("The status of Order is not in \"Started\"");
-        bid = getBidService().loadByCustomerAndSpecialist(customer.getId(), order.getSpecialist().getId())
+        bid = getBidService().loadByOrderAndSpecialist(order.getId(), order.getSpecialist().getId())
                 .orElseThrow(() -> new NotFoundException("The Bid for this Order not found."));
         Duration lateness = Duration.between(bid.getEndWorking(), LocalDateTime.now());
         order.setLatenessEndWorking(lateness.getSeconds() > 0 ? lateness : Duration.ZERO);
