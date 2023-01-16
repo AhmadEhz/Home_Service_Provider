@@ -2,6 +2,7 @@ package org.homeservice.util;
 
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
+import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.springframework.data.domain.Sort;
 
 import java.util.HashMap;
@@ -28,8 +29,8 @@ public class QueryUtil {
     }
 
     public static Sort sortBy(String sort) {
-        if (sort == null)
-            return null;
+        if (sort == null || !Values.containsKey(sort))
+            throw new CustomIllegalArgumentException("Filter is incorrect.");
         return Values.getSort(sort);
     }
 
@@ -45,6 +46,10 @@ public class QueryUtil {
 
         static Sort getSort(String key) {
             return sortValues.get(key.toLowerCase());
+        }
+
+        static boolean containsKey(String key) {
+            return sortValues.containsKey(key.toLowerCase());
         }
     }
 }
