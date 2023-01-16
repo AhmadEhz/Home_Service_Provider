@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @Service
 public interface AdminService extends BaseService<Admin, Long> {
-    void changePassword(String username, String oldPassword, String newPassword);
+    void changePassword(Admin admin, String oldPassword, String newPassword);
 
     boolean isExistsByUsername(String username);
 

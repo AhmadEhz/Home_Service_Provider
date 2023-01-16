@@ -38,9 +38,7 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
     }
 
     @Override
-    public void changePassword(String username, String oldPassword, String newPassword) {
-        Admin admin = repository.findAdminByUsername(username).orElseThrow
-                (() -> new NotFoundException("Admin not found."));
+    public void changePassword(Admin admin, String oldPassword, String newPassword) {
         if (!passwordEncoder.matches(oldPassword, admin.getPassword()))
             throw new CustomIllegalArgumentException("Old password is incorrect");
         admin.setPassword(passwordEncoder.encode(newPassword));

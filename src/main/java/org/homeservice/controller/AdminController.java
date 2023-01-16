@@ -43,8 +43,7 @@ public class AdminController {
     void changePassword(@RequestBody Map<String, String> map, Authentication user) {
         if (!map.containsKey("oldPassword") || !map.containsKey("newPassword"))
             throw new CustomIllegalArgumentException();
-        adminService.changePassword(((Admin) user.getPrincipal()).getUsername()
-                , map.get("oldPassword"), map.get("newPassword"));
+        adminService.changePassword((Admin) user.getPrincipal(), map.get("oldPassword"), map.get("newPassword"));
     }
 
     @PostMapping("/service/save")
