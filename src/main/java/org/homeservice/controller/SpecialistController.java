@@ -1,12 +1,8 @@
 package org.homeservice.controller;
 
-import org.homeservice.dto.BidCreationDto;
-import org.homeservice.dto.CreditDto;
-import org.homeservice.dto.OrderDto;
-import org.homeservice.dto.SpecialistCreationDto;
-import org.homeservice.entity.Credit;
-import org.homeservice.entity.Order;
-import org.homeservice.entity.Specialist;
+import jakarta.validation.Valid;
+import org.homeservice.dto.*;
+import org.homeservice.entity.*;
 import org.homeservice.service.*;
 import org.homeservice.util.EmailSender;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
@@ -46,7 +42,7 @@ public class SpecialistController {
         Specialist specialist = specialistDto.getSpecialist();
         specialistService.save(specialist);
         String generatedCode = verifyCodeService.generateAndSaveForSpecialist(specialist.getId());
-        emailSender.sendSimpleMessage(specialist.getEmail(), generatedCode, EmailSender.EmailFor.SPECIALIST);
+        emailSender.send(specialist.getEmail(), generatedCode, EmailSender.EmailFor.SPECIALIST);
         return "Signup success. please verify your email.";
     }
 
@@ -58,9 +54,16 @@ public class SpecialistController {
                 map.get("oldPassword"), map.get("newPassword"));
     }
 
-    @GetMapping("/order/showAll")
+    @GetMapping("/order/showAll-related")
     List<OrderDto> showOrders(Authentication user) {
         List<Order> orders = orderService.loadAllBySpecialistSubServices(((Specialist) user.getPrincipal()).getId());
+        return OrderDto.convertToDto(orders);
+    }
+
+    @GetMapping("/order/showAll")
+    List<OrderDto> showDoneOrders(@RequestParam Map<String, String> filters, Authentication user) {
+        List<Order> orders = orderService.loadAllByFilterAndCustomer(filters, (
+                (Specialist) user.getPrincipal()).getId());
         return OrderDto.convertToDto(orders);
     }
 

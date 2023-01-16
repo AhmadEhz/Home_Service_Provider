@@ -3,9 +3,7 @@ package org.homeservice.controller;
 import org.homeservice.dto.*;
 import org.homeservice.entity.*;
 import org.homeservice.service.*;
-import org.homeservice.util.CaptchaChecker;
-import org.homeservice.util.EmailSender;
-import org.homeservice.util.Values;
+import org.homeservice.util.*;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
 import org.springframework.security.core.Authentication;
@@ -50,7 +48,7 @@ public class CustomerController {
         Customer customer = customerDto.getCustomer();
         customerService.save(customer);
         String verifyCode = verifyCodeService.generateAndSaveForCustomer(customer.getId());
-        emailSender.sendSimpleMessage(customer.getEmail(), verifyCode, EmailSender.EmailFor.CUSTOMER);
+        emailSender.send(customer.getEmail(), verifyCode, EmailSender.EmailFor.CUSTOMER);
         return "Signup success. please verify your email.";
     }
 
@@ -106,7 +104,7 @@ public class CustomerController {
 
     @GetMapping("/orders/showAll")
     List<OrderDto> showOrders(@RequestParam Map<String, String> filters, Authentication user) {
-        List<Order> orders = orderService.loadAllByFilter(filters, ((Customer) user.getPrincipal()).getId());
+        List<Order> orders = orderService.loadAllByFilterAndCustomer(filters, ((Customer) user.getPrincipal()).getId());
         return OrderDto.convertToDto(orders);
     }
 
