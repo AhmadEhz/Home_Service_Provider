@@ -3,7 +3,6 @@ package org.homeservice.service;
 import org.homeservice.entity.Order;
 import org.homeservice.service.base.BaseService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -21,7 +20,9 @@ public interface OrderService extends BaseService<Order, Long> {
 
     List<Order> loadAllByWaitingStatusAndSpecialist(Long specialistId);
 
-    List<Order> loadAllByFilter(Map<String, String> filters, Long customerId);
+    List<Order> loadAllByFilterAndCustomer(Map<String, String> filters, Long customerId);
+
+    List<Order> loadAllByFilterAndSpecialist(Map<String, String> filters, Long specialistId);
 
     List<Order> loadAllWithDetails(Map<String, String> filters);
 

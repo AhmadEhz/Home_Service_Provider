@@ -28,7 +28,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
     private BidService bidService;
 
     public OrderServiceImpl(ApplicationContext applicationContext, OrderRepository repository,
-                            CustomerService customerService, SubServiceService subServiceService, Specifications specifications) {
+                            CustomerService customerService, SubServiceService subServiceService,
+                            Specifications specifications) {
         super(repository);
         this.applicationContext = applicationContext;
         this.customerService = customerService;
@@ -79,14 +80,20 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
     @Override
     public List<Order> loadAllByWaitingStatusAndSpecialist(Long specialistId) {
         return repository.findAllBySpecialistAndStatus(specialistId,
-                new OrderStatus[]{OrderStatus.WAITING_FOR_CHOOSE_SPECIALIST, OrderStatus.WAITING_FOR_BID});
+                OrderStatus.WAITING_FOR_CHOOSE_SPECIALIST, OrderStatus.WAITING_FOR_BID);
     }
 
     @Override
-    public List<Order> loadAllByFilter(Map<String, String> filters, Long customerId) {
+    public List<Order> loadAllByFilterAndCustomer(Map<String, String> filters, Long customerId) {
         // Get CustomerId to filters to get Orders for this customer only.
-        filters.put("customerid", String.valueOf(customerId));
+        filters.put("customerId", String.valueOf(customerId));
         return repository.findAllWithDetails(filters);
+    }
+
+    @Override
+    public List<Order> loadAllByFilterAndSpecialist(Map<String, String> filters, Long specialistId) {
+        filters.put("specialistId", String.valueOf(specialistId));
+        return repository.findAll(specifications.getOrder(filters));
     }
 
     @Override

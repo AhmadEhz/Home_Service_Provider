@@ -29,7 +29,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> , JpaSpecifi
     List<Order> findBySpecialistSubServices(Long specialistId);
 
     @Query("select o from Order as o where o.specialist.id = :specialistId and o.status in :statuses")
-    List<Order> findAllBySpecialistAndStatus(Long specialistId, OrderStatus[] statuses);
+    List<Order> findAllBySpecialistAndStatus(Long specialistId, OrderStatus... statuses);
 
     @Modifying
     @Query("update Order as o set o.status = :status where o.id = :id")
