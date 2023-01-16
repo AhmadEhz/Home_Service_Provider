@@ -87,10 +87,10 @@ public class CustomerTest {
 
 
     void addOrderWithLowerOfferPrice() {
-        int orders = services.orderService.findAll().size();
+        int orders = services.orderService.loadAll().size();
         assertThrows(CustomIllegalArgumentException.class, () ->
                 services.orderService.save(order2, customer2, AdminTest.subService2.getId()));
-        assertEquals(orders, services.orderService.findAll().size());
+        assertEquals(orders, services.orderService.loadAll().size());
     }
 
     void addOrderWithNotFoundCustomerAndSubService() {

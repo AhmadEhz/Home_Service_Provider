@@ -36,7 +36,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
 
     @Override
     public void save(Order order, Customer customer, Long subServiceId) {
-        SubService subService = subServiceService.findById(subServiceId).orElseThrow(
+        SubService subService = subServiceService.loadById(subServiceId).orElseThrow(
                 () -> new NotFoundException("SubService not found."));
 
         order.setCustomer(customer);
@@ -98,7 +98,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
 
     @Override
     public void selectBid(Long bidId, Customer customer) {
-        Bid bid = getBidService().findById(bidId).orElseThrow(() -> new NotFoundException("Bid not found."));
+        Bid bid = getBidService().loadById(bidId).orElseThrow(() -> new NotFoundException("Bid not found."));
         Order order = bid.getOrder();
 
         if (!order.getCustomer().equals(customer))
@@ -127,7 +127,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
     @Override
     @Transactional
     public void changeStatusToStarted(Long id, Customer customer) {
-        Order order = findById(id).orElseThrow(() -> new NotFoundException("Order not found."));
+        Order order = loadById(id).orElseThrow(() -> new NotFoundException("Order not found."));
         Bid bid;
 
         if (!order.getCustomer().equals(customer))
@@ -150,7 +150,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
     @Override
     @Transactional
     public void changeStatusToEnded(Long id, Customer customer) {
-        Order order = findById(id).orElseThrow(() -> new NotFoundException("Order not found."));
+        Order order = loadById(id).orElseThrow(() -> new NotFoundException("Order not found."));
         Bid bid;
         if (!order.getCustomer().equals(customer))
             throw new CustomIllegalArgumentException("This Order is not for this Customer.");

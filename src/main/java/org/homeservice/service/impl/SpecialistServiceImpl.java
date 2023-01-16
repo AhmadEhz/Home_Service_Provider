@@ -71,7 +71,7 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
 
     @Override
     public void addAvatar(Long id, File avatar) {
-        Specialist specialist = findById(id).orElseThrow(() -> new NotFoundException("Specialist not found."));
+        Specialist specialist = loadById(id).orElseThrow(() -> new NotFoundException("Specialist not found."));
         if (avatar.length() > Values.MAX_AVATAR_SIZE)
             throw new CustomIllegalArgumentException
                     ("Image size is bigger than " + (Values.MAX_AVATAR_SIZE / 1024) + " KB");
@@ -161,7 +161,7 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
 
     @Override
     public void delete(Specialist specialist) {
-        Specialist loadSpecialist = findById(specialist.getId()).orElseThrow(() ->
+        Specialist loadSpecialist = loadById(specialist.getId()).orElseThrow(() ->
                 new NotFoundException("Specialist not found."));
         if (!checkBeforeDelete(specialist, loadSpecialist, false))
             throw new CustomIllegalArgumentException("Specialist properties is incorrect.");
@@ -170,7 +170,7 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
 
     @Override
     public void deleteByAdmin(Specialist specialist) {
-        Specialist loadSpecialist = findById(specialist.getId()).orElseThrow(() ->
+        Specialist loadSpecialist = loadById(specialist.getId()).orElseThrow(() ->
                 new NotFoundException("Specialist not found."));
         if (!checkBeforeDelete(specialist, loadSpecialist, true))
             throw new CustomIllegalArgumentException("Specialist properties is incorrect.");

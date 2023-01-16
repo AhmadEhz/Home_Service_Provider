@@ -73,7 +73,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
 
     @Override
     public void delete(Customer customer) {
-        Customer loadCustomer = findById(customer.getId()).orElseThrow(() ->
+        Customer loadCustomer = loadById(customer.getId()).orElseThrow(() ->
                 new NotFoundException("Customer not found."));
         if (!checkBeforeDelete(customer, loadCustomer, false))
             throw new CustomIllegalArgumentException("Customer email or username or password is incorrect.");
@@ -83,7 +83,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
 
     @Override
     public void deleteByAdmin(Customer customer) {
-        Customer loadCustomer = findById(customer.getId()).orElseThrow(() ->
+        Customer loadCustomer = loadById(customer.getId()).orElseThrow(() ->
                 new NotFoundException("Customer not found."));
         if (!checkBeforeDelete(customer, loadCustomer, true))
             throw new CustomIllegalArgumentException("Customer email or username is incorrect.");

@@ -83,14 +83,14 @@ public class AdminController {
 
     @GetMapping("/specialist/show")
     SpecialistDto loadSpecialist(@RequestParam Long specialistId) {
-        Specialist specialist = specialistService.findById(specialistId)
+        Specialist specialist = specialistService.loadById(specialistId)
                 .orElseThrow(() -> new NotFoundException("Specialist not found."));
         return new SpecialistDto(specialist);
     }
 
     @GetMapping("/customer/show")
     CustomerDto loadCustomer(@RequestParam Long customerId) {
-        Customer customer = customerService.findById(customerId)
+        Customer customer = customerService.loadById(customerId)
                 .orElseThrow(() -> new NotFoundException("Customer not found."));
         return new CustomerDto(customer);
     }
@@ -115,13 +115,13 @@ public class AdminController {
 
     @GetMapping("/show-service")
     ServiceDto showService(@RequestParam Long id) {
-        Service service = serviceService.findById(id).orElseThrow(() -> new NotFoundException("Service not found."));
+        Service service = serviceService.loadById(id).orElseThrow(() -> new NotFoundException("Service not found."));
         return new ServiceDto(service);
     }
 
     @GetMapping("/show-subService")
     SubServiceDto showSubService(@RequestParam Long id) {
-        SubService subService = subServiceService.findById(id).orElseThrow(() ->
+        SubService subService = subServiceService.loadById(id).orElseThrow(() ->
                 new NotFoundException("SubService not found."));
         return new SubServiceDto(subService);
     }
@@ -134,7 +134,7 @@ public class AdminController {
 
     @GetMapping("/show-services")
     List<ServiceDto> showServices() {
-        List<Service> services = serviceService.findAll();
+        List<Service> services = serviceService.loadAll();
         return ServiceDto.convertToDto(services);
     }
 

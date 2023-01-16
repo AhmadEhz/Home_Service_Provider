@@ -62,13 +62,13 @@ public class CustomerController {
 
     @GetMapping("/show-service")
     ServiceDto showService(@RequestParam Long id) {
-        Service service = serviceService.findById(id).orElseThrow(() -> new NotFoundException("Service not found."));
+        Service service = serviceService.loadById(id).orElseThrow(() -> new NotFoundException("Service not found."));
         return new ServiceDto(service);
     }
 
     @GetMapping("/show-subService")
     SubServiceDto showSubService(@RequestParam Long id) {
-        SubService subService = subServiceService.findById(id).orElseThrow(() ->
+        SubService subService = subServiceService.loadById(id).orElseThrow(() ->
                 new NotFoundException("SubService not found."));
         return new SubServiceDto(subService);
     }
@@ -81,7 +81,7 @@ public class CustomerController {
 
     @GetMapping("/show-services")
     List<ServiceDto> showServices() {
-        List<Service> services = serviceService.findAll();
+        List<Service> services = serviceService.loadAll();
         return ServiceDto.convertToDto(services);
     }
 

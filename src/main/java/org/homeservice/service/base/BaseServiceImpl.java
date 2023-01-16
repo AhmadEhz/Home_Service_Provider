@@ -28,12 +28,12 @@ public class BaseServiceImpl<T, ID, R extends JpaRepository<T, ID>> implements B
     }
 
     @Override
-    public Optional<T> findById(ID id) {
+    public Optional<T> loadById(ID id) {
         return repository.findById(id);
     }
 
     @Override
-    public List<T> findAll() {
+    public List<T> loadAll() {
         return repository.findAll();
     }
 

@@ -29,7 +29,7 @@ public class CreditServiceImpl extends BaseServiceImpl<Credit, Long, CreditRepos
     @Transactional
     public void deposit(Long id, Long amount) {
         checkAmount(amount);
-        Credit credit = findById(id).orElseThrow(() -> new NotFoundException("Credit not found."));
+        Credit credit = loadById(id).orElseThrow(() -> new NotFoundException("Credit not found."));
         credit.deposit(amount);
         update(credit);
         transactionService.save(new Transaction(credit, amount, TransactionType.DEPOSIT));
@@ -39,7 +39,7 @@ public class CreditServiceImpl extends BaseServiceImpl<Credit, Long, CreditRepos
     @Transactional
     public void withdraw(Long id, Long withdrawalAmount) {
         checkAmount(withdrawalAmount);
-        Credit credit = findById(id).orElseThrow(() -> new NotFoundException("Credit not found."));
+        Credit credit = loadById(id).orElseThrow(() -> new NotFoundException("Credit not found."));
         if (!credit.isSufficientAmount(withdrawalAmount))
             throw new InsufficientAmountException();
         credit.withdraw(withdrawalAmount);
@@ -61,8 +61,8 @@ public class CreditServiceImpl extends BaseServiceImpl<Credit, Long, CreditRepos
     @Transactional
     public void cardToCard(Long sourceId, Long destinationId, Long amount) {
         checkAmount(amount);
-        Credit sourceCredit = findById(sourceId).orElseThrow(() -> new NotFoundException("Source Credit not found."));
-        Credit destinationCredit = findById(destinationId).orElseThrow(
+        Credit sourceCredit = loadById(sourceId).orElseThrow(() -> new NotFoundException("Source Credit not found."));
+        Credit destinationCredit = loadById(destinationId).orElseThrow(
                 () -> new NotFoundException("Destination Credit not found."));
         if (!sourceCredit.isSufficientAmount(amount))
             throw new InsufficientAmountException();

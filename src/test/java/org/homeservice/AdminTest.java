@@ -55,14 +55,14 @@ public class AdminTest {
     void changePassword() {
         String newPassword = "adminNewPassword";
         services.adminService.changePassword(admin1, admin1.getPassword(), newPassword);
-        admin1 = services.adminService.findById(admin1.getId()).get();
+        admin1 = services.adminService.loadById(admin1.getId()).get();
         assertEquals(admin1.getPassword(), newPassword);
     }
 
     @Test
     @Order(3)
     void checkPassword() {
-        String password = services.adminService.findById(admin1.getId()).get().getPassword() + "ab";
+        String password = services.adminService.loadById(admin1.getId()).get().getPassword() + "ab";
         assertThrows(CustomIllegalArgumentException.class, () ->
                 services.adminService.changePassword(admin1, password, "newPass"));
     }
@@ -73,9 +73,9 @@ public class AdminTest {
         services.serviceService.save(service1);
         services.serviceService.save(service2);
         services.serviceService.save(service3);
-        assertEquals(service1, services.serviceService.findById(service1.getId()).get());
-        assertEquals(service2, services.serviceService.findById(service2.getId()).get());
-        assertEquals(service3, services.serviceService.findById(service3.getId()).get());
+        assertEquals(service1, services.serviceService.loadById(service1.getId()).get());
+        assertEquals(service2, services.serviceService.loadById(service2.getId()).get());
+        assertEquals(service3, services.serviceService.loadById(service3.getId()).get());
         assertEquals(service1, services.serviceService.findByName(service1.getName()).get());
     }
 

@@ -63,7 +63,7 @@ class SpecialistTest {
     void changePassword() {
         String newPassword = "SP1NewPass";
         services.specialistService.changePassword(specialist1, specialist1.getPassword(), newPassword);
-        specialist1 = services.specialistService.findById(specialist1.getId()).get();
+        specialist1 = services.specialistService.loadById(specialist1.getId()).get();
         assertEquals(specialist1.getPassword(), newPassword);
     }
 

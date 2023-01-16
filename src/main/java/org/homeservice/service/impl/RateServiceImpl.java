@@ -4,7 +4,6 @@ import org.homeservice.entity.Customer;
 import org.homeservice.entity.Order;
 import org.homeservice.entity.Rate;
 import org.homeservice.repository.RateRepository;
-import org.homeservice.service.CustomerService;
 import org.homeservice.service.OrderService;
 import org.homeservice.service.RateService;
 import org.homeservice.service.SpecialistService;
@@ -31,7 +30,7 @@ public class RateServiceImpl extends BaseServiceImpl<Rate, Long, RateRepository>
     @Override
     @Transactional
     public void save(Rate rate, Long orderId, Customer customer) {
-        Order order = orderService.findById(orderId).orElseThrow(() -> new NotFoundException("Order not found."));
+        Order order = orderService.loadById(orderId).orElseThrow(() -> new NotFoundException("Order not found."));
         if (!order.getCustomer().equals(customer))
             throw new IllegalArgumentException("This Order is not for this Customer.");
 

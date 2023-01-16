@@ -6,9 +6,9 @@ import java.util.Optional;
 public interface BaseService<T, ID> {
     void save(T t);
 
-    Optional<T> findById(ID id);
+    Optional<T> loadById(ID id);
 
-    List<T> findAll();
+    List<T> loadAll();
 
     void update(T t);
 

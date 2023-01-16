@@ -34,24 +34,24 @@ public class Services {
     }
 
     Order loadOrder(Long orderId) {
-        return orderService.findById(orderId).get();
+        return orderService.loadById(orderId).get();
     }
     Bid loadBid(Long bidId) {
-        return bidService.findById(bidId).get();
+        return bidService.loadById(bidId).get();
     }
     Specialist loadSpecialist(Long specialistId) {
-        return specialistService.findById(specialistId).get();
+        return specialistService.loadById(specialistId).get();
     }
     Customer loadCustomer(Long customerId) {
-        return customerService.findById(customerId).get();
+        return customerService.loadById(customerId).get();
     }
     Admin loadAdmin(Long adminId) {
-        return adminService.findById(adminId).get();
+        return adminService.loadById(adminId).get();
     }
     Service loadService(Long serviceId) {
-        return serviceService.findById(serviceId).get();
+        return serviceService.loadById(serviceId).get();
     }
     SubService loadSubService(Long subServiceId) {
-        return subServiceService.findById(subServiceId).get();
+        return subServiceService.loadById(subServiceId).get();
     }
 }
