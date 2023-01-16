@@ -33,6 +33,7 @@ public class RateServiceImpl extends BaseServiceImpl<Rate, Long, RateRepository>
     @Override
     @Transactional
     public void save(Rate rate) {
+        validate(rate);
         if (rate.getOrder() == null || rate.getOrder().getId() == null)
             throw new NullPointerException("Order or OrderId is null.");
         super.save(rate);

@@ -1,6 +1,5 @@
 package org.homeservice.service.impl;
 
-import jakarta.validation.Valid;
 import org.homeservice.entity.Customer;
 import org.homeservice.repository.CustomerRepository;
 import org.homeservice.service.CustomerService;
@@ -32,7 +31,8 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
         this.passwordEncoder = passwordEncoder;
     }
     @Override
-    public void save(@Valid Customer customer) {
+    public void save(Customer customer) {
+        validate(customer);
         if(isExistedUsername(customer.getUsername()))
             throw new NonUniqueException("Username is exist.");
         if(isExistedEmail(customer.getEmail()))

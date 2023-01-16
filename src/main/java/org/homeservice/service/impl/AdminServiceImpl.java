@@ -30,6 +30,7 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
     @Override
     @Transactional
     public void save(Admin admin) {
+        validate(admin);
         if (isExistsByUsername(admin.getUsername()))
             throw new NonUniqueException("Username is exist.");
         admin.setPassword(passwordEncoder.encode(admin.getPassword()));

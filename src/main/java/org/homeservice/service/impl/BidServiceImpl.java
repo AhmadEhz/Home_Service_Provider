@@ -15,6 +15,7 @@ import org.homeservice.util.exception.NotVerifiedException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,7 +43,9 @@ public class BidServiceImpl extends BaseServiceImpl<Bid, Long, BidRepository> im
     }
 
     @Override
+    @Transactional
     public void save(Bid bid) {
+        validate(bid);
         if (bid.getOrder() == null || bid.getOrder().getId() == null)
             throw new NullPointerException("Order or orderId is null.");
         if (bid.getSpecialist() == null || bid.getSpecialist().getId() == null)
@@ -58,16 +61,6 @@ public class BidServiceImpl extends BaseServiceImpl<Bid, Long, BidRepository> im
 
         super.save(bid);
         orderService.changeStatusToChooseSpecialist(bid.getOrder().getId(), bid.getOrder().getCustomer().getId());
-    }
-
-    @Override
-    public List<Bid> loadAllByOrderSortedByPrice(Long orderId) {
-        return repository.findAllByOrder_Id(orderId, Sort.by(Sort.Direction.ASC, "offerPrice"));
-    }
-
-    @Override
-    public List<Bid> loadAllByOrderSortedBySpecialistScore(Long orderId) {
-        return repository.findAllByOrder_Id(orderId, Sort.by(Sort.Direction.DESC, "specialist.score"));
     }
 
     @Override

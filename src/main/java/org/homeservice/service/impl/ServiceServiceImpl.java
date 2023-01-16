@@ -19,6 +19,7 @@ public class ServiceServiceImpl extends BaseServiceImpl<Service, Long, ServiceRe
 
     @Override
     public void save(Service service) {
+        validate(service);
         if (isExistedName(service.getName()))
             throw new NonUniqueException("Service name is exist.");
         super.save(service);

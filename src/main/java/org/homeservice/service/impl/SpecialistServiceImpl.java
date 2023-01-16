@@ -34,7 +34,9 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
     }
 
     @Override
-    public void save(@Valid Specialist specialist) {
+    @Transactional
+    public void save(Specialist specialist) {
+        validate(specialist);
         if (isExistUsername(specialist.getUsername()))
             throw new NonUniqueException("Username is not unique.");
         if (isExistEmail(specialist.getEmail()))
@@ -156,12 +158,6 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
     }
 
     @Override
-    public void checkStatusVerified(Long id) {
-        Specialist specialist = findById(id).orElseThrow(() -> new NotFoundException("Specialist not found."));
-        checkStatusVerified(specialist.getStatus());
-    }
-
-    @Override
     public void delete(Specialist specialist) {
         Specialist loadSpecialist = findById(specialist.getId()).orElseThrow(() ->
                 new NotFoundException("Specialist not found."));
@@ -186,12 +182,5 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
             specialist.getUsername().equals(loadSpecialist.getUsername()))
             return specialist.getPassword().equals(loadSpecialist.getPassword()) || deleteByAdmin;
         return false;
-    }
-
-    private void checkStatusVerified(SpecialistStatus status) throws CustomIllegalArgumentException {
-        if (status == SpecialistStatus.NEW)
-            throw new CustomIllegalArgumentException("Specialist not yet confirmed");
-        if (status == SpecialistStatus.SUSPENDED)
-            throw new CustomIllegalArgumentException("Specialist suspended");
     }
 }

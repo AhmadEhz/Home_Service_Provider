@@ -32,6 +32,7 @@ public class SubServiceServiceImpl extends BaseServiceImpl<SubService, Long, Sub
 
     @Override
     public void save(SubService subService) {
+        validate(subService);
         if (subService.getService() == null || subService.getService().getId() == null)
             throw new NullPointerException("Service or serviceId is null");
         if(isExistedByNameAndServiceId(subService.getName(),subService.getService().getId()))
