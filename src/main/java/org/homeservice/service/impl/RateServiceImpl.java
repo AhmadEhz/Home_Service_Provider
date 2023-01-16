@@ -8,6 +8,7 @@ import org.homeservice.service.OrderService;
 import org.homeservice.service.RateService;
 import org.homeservice.service.SpecialistService;
 import org.homeservice.service.base.BaseServiceImpl;
+import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,8 @@ public class RateServiceImpl extends BaseServiceImpl<Rate, Long, RateRepository>
     @Transactional
     public void save(Rate rate, Long orderId, Customer customer) {
         Order order = orderService.loadById(orderId).orElseThrow(() -> new NotFoundException("Order not found."));
+        if (order.getRate() != null)
+            throw new CustomIllegalArgumentException("A comment has already been registered for this order");
         if (!order.getCustomer().equals(customer))
             throw new IllegalArgumentException("This Order is not for this Customer.");
 
