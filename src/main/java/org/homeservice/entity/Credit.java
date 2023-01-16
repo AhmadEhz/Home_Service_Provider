@@ -15,8 +15,8 @@ public class Credit {
     private Long id;
 
     @Column(nullable = false)
-    @NotNull
-    @PositiveOrZero
+    @NotNull(message = "Amount must not be null.")
+    @PositiveOrZero(message = "Amount must not be negative")
     private Long amount;
 
     @OneToMany(mappedBy = "credit")

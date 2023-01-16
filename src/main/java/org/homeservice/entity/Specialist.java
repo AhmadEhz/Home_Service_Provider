@@ -3,8 +3,10 @@ package org.homeservice.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -16,10 +18,11 @@ import java.util.*;
 @Entity
 public class Specialist extends Person {
 
-    @Email
     @Column(nullable = false, unique = true)
-    @NotNull
+    @Email
+    @NotNull(message = "Email must not be null.")
     private String email;
+
     @Enumerated(value = EnumType.STRING)
     private SpecialistStatus status;
 

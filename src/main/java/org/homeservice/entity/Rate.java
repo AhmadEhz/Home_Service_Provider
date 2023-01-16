@@ -19,7 +19,7 @@ public class Rate {
     @Column(nullable = false)
     @PositiveOrZero(message = "Rate score should be positive")
     @Max(value = 5, message = "Max of score rating is 5")
-    @NotNull
+    @NotNull(message = "Score must not be null.")
     private Integer score;
 
     private String comment;

@@ -1,6 +1,7 @@
 package org.homeservice.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -12,7 +13,8 @@ public class Service {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
+    @NotNull(message = "Name must not be null.")
     private String name;
 
     @OneToMany(mappedBy = "service", cascade = CascadeType.PERSIST)

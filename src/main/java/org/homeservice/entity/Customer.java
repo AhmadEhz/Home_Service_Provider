@@ -13,7 +13,7 @@ public class Customer extends Person {
 
     @Column(unique = true, nullable = false)
     @Email
-    @NotNull
+    @NotNull(message = "Email must not be null.")
     private String email;
 
     @CreationTimestamp
@@ -31,7 +31,6 @@ public class Customer extends Person {
     @Transient
     private List<Rate> rates;
 
-    //prevent NullPointerException
     {
         rates = new ArrayList<>();
         orders = new HashSet<>();

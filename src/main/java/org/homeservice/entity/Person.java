@@ -26,7 +26,7 @@ public abstract class Person implements UserDetails {
     private String lastName;
 
     @Column(nullable = false, unique = true)
-    @NotNull
+    @NotNull(message = "Username must not be null.")
     @Length(min = 5, message = "Username should not be less than 5 characters.")
     @Length(max = 128, message = "Username should not be more than 128 characters.")
     @Pattern(regexp = "^[A-Za-z0-9_.]+$",
@@ -34,12 +34,14 @@ public abstract class Person implements UserDetails {
     private String username;
 
     @Column(nullable = false)
-    @NotNull
+    @NotNull(message = "Password must not be null.")
     @Length(min = 8, message = "Password should not be less than 8 characters.")
     @Length(max = 255, message = "Password should not be more than 255 characters.")
     @Pattern(regexp = "^[A-Za-z0-9 ._$%^&*#!@\\-/\\\\]+$",
             message = "The password should only contain letters, numbers, '._$%^&*#!@\\/' and space")
     private String password;
+
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     protected Person() {
@@ -89,6 +91,7 @@ public abstract class Person implements UserDetails {
         this.lastName = lastName;
     }
 
+    @Override
     public String getUsername() {
         return username;
     }
@@ -97,6 +100,7 @@ public abstract class Person implements UserDetails {
         this.username = username;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }

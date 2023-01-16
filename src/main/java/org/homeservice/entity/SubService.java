@@ -14,11 +14,11 @@ public class SubService {
     private Long id;
 
     @Column(unique = true, nullable = false)
-    @NotNull
+    @NotNull(message = "Name must not be null.")
     private String name;
 
     @Column(columnDefinition = "text", nullable = false)
-    @NotNull
+    @NotNull(message = "Description must not be null.")
     private String description;
 
     private Double basePrice;

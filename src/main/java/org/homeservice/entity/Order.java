@@ -18,19 +18,19 @@ public class Order {
     private Long id;
 
     @Column(nullable = false)
-    @NotNull
+    @NotNull(message = "Offer price must not be null.")
     private Double customerOfferPrice;
 
     @Column(columnDefinition = "text", nullable = false)
-    @NotNull
+    @NotNull(message = "Description must not be null.")
     private String description;
 
     @Column(nullable = false)
-    @NotNull
+    @NotNull(message = "Working time must not be null.")
     private LocalDateTime workingTime; //Customer offer working time
 
     @Column(nullable = false)
-    @NotNull
+    @NotNull(message = "Address must not be null.")
     private String address;
 
     private Double finalPrice;

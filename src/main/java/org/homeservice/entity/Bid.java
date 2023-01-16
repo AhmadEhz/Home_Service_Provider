@@ -22,11 +22,11 @@ public class Bid {
     private String description;
 
     @Column(nullable = false)
-    @NotNull
+    @NotNull(message = "Start working must not be null.")
     private LocalDateTime startWorking;
 
     @Column(nullable = false)
-    @NotNull
+    @NotNull(message = "End working must not be null.")
     private LocalDateTime endWorking;
 
     @Transient
@@ -40,7 +40,7 @@ public class Bid {
 
     @ManyToOne
     @JoinColumn(nullable = false)
-    @NotNull
+    @NotNull(message = "Order must not be null.")
     private Order order;
 
     @CreationTimestamp
