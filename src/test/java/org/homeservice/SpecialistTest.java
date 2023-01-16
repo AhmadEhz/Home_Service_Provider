@@ -5,7 +5,7 @@ import org.homeservice.entity.OrderStatus;
 import org.homeservice.entity.Specialist;
 import org.homeservice.entity.SpecialistStatus;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
-import org.homeservice.util.exception.NotVerifiedException;
+import org.homeservice.util.exception.SpecialistNotAccessException;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -63,7 +62,7 @@ class SpecialistTest {
     @Order(2)
     void changePassword() {
         String newPassword = "SP1NewPass";
-        services.specialistService.changePassword(specialist1.getUsername(), specialist1.getPassword(), newPassword);
+        services.specialistService.changePassword(specialist1, specialist1.getPassword(), newPassword);
         specialist1 = services.specialistService.findById(specialist1.getId()).get();
         assertEquals(specialist1.getPassword(), newPassword);
     }
@@ -101,11 +100,11 @@ class SpecialistTest {
 
     void setBid() {
         assertFalse(services.loadSpecialist(specialist2.getId()).isVerified());
-        assertThrows(NotVerifiedException.class,
-                () -> services.bidService.save(bid1, CustomerTest.order1.getId(), specialist2.getId()));
+        assertThrows(SpecialistNotAccessException.class,
+                () -> services.bidService.save(bid1, CustomerTest.order1.getId(), specialist2));
 
         assertEquals(OrderStatus.WAITING_FOR_BID, services.loadOrder(CustomerTest.order1.getId()).getStatus());
-        services.bidService.save(bid1, CustomerTest.order1.getId(), specialist1.getId());
+        services.bidService.save(bid1, CustomerTest.order1.getId(), specialist1);
         assertEquals(OrderStatus.WAITING_FOR_CHOOSE_SPECIALIST, services.loadOrder(CustomerTest.order1.getId()).getStatus());
         //Order status changed to "Waiting to choose Specialist" after save Bid. Order need to refresh.
         CustomerTest.order1 = services.loadOrder(CustomerTest.order1.getId());
@@ -116,7 +115,7 @@ class SpecialistTest {
 
     void setBidWithPriceLowerThanBasePrice() {
         assertThrows(CustomIllegalArgumentException.class,
-                () -> services.bidService.save(bid2, CustomerTest.order1.getId(), specialist3.getId()));
+                () -> services.bidService.save(bid2, CustomerTest.order1.getId(), specialist3));
     }
 
 

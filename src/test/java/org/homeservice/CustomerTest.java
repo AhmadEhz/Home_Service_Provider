@@ -64,7 +64,7 @@ public class CustomerTest {
     void changePassword() {
         String newPassword = "customer1newPass";
         assertEquals(customer1.getPassword(), services.loadCustomer(customer1.getId()).getPassword());
-        services.customerService.changePassword(customer1.getUsername(), customer1.getPassword(), newPassword);
+        services.customerService.changePassword(customer1, customer1.getPassword(), newPassword);
         customer1 = services.loadCustomer(customer1.getId());
         assertEquals(newPassword, customer1.getPassword());
     }
@@ -74,13 +74,13 @@ public class CustomerTest {
     void checkPassword() {
         String incorrectPassword = customer1.getPassword() + "in";
         assertThrows(CustomIllegalArgumentException.class, () -> services.customerService
-                .changePassword(customer1.getUsername(), incorrectPassword, "newPassword"));
+                .changePassword(customer1, incorrectPassword, "newPassword"));
     }
 
     //Following tests fails if run this class. run MainTest.
 
     void addOrder() {
-        services.orderService.save(order1, CustomerTest.customer1.getId(), AdminTest.subService1.getId());
+        services.orderService.save(order1, CustomerTest.customer1, AdminTest.subService1.getId());
         assertEquals(order1, services.loadOrder(order1.getId()));
         assertEquals(OrderStatus.WAITING_FOR_BID, services.loadOrder(order1.getId()).getStatus());
     }
@@ -89,15 +89,17 @@ public class CustomerTest {
     void addOrderWithLowerOfferPrice() {
         int orders = services.orderService.findAll().size();
         assertThrows(CustomIllegalArgumentException.class, () ->
-                services.orderService.save(order2, customer2.getId(), AdminTest.subService2.getId()));
+                services.orderService.save(order2, customer2, AdminTest.subService2.getId()));
         assertEquals(orders, services.orderService.findAll().size());
     }
 
     void addOrderWithNotFoundCustomerAndSubService() {
+        Customer customer = new Customer();
+        customer.setId(Long.MAX_VALUE);
         assertThrows(NotFoundException.class, () ->
-                services.orderService.save(order2, Long.MAX_VALUE, AdminTest.subService2.getId()));
+                services.orderService.save(order2, customer, AdminTest.subService2.getId()));
         assertThrows(NotFoundException.class, () ->
-                services.orderService.save(order2, customer2.getId(), Long.MAX_VALUE));
+                services.orderService.save(order2, customer2, Long.MAX_VALUE));
     }
 
     void showSubServiceForAService() {
@@ -109,7 +111,7 @@ public class CustomerTest {
 
     void selectBidForOrder() {
         assertEquals(OrderStatus.WAITING_FOR_CHOOSE_SPECIALIST, services.loadOrder(order1.getId()).getStatus());
-        services.orderService.selectBid(SpecialistTest.bid1.getId(), SpecialistTest.bid1.getId());
+        services.orderService.selectBid(SpecialistTest.bid1.getId(), SpecialistTest.bid1.getOrder().getCustomer());
         assertTrue(services.bidService.loadByCustomerAndSpecialist
                 (customer1.getId(), SpecialistTest.specialist1.getId()).isPresent());
         assertEquals(OrderStatus.WAITING_FOR_COMING_SPECIALIST, services.loadOrder(order1.getId()).getStatus());
@@ -137,14 +139,15 @@ public class CustomerTest {
 
     void startOrder() {
         //Order time is after now.
-        assertThrows(CustomIllegalArgumentException.class, () -> services.orderService.changeStatusToStarted(order1.getId(), customer1.getId()));
+        assertThrows(CustomIllegalArgumentException.class, () -> services.orderService.changeStatusToStarted
+                (order1.getId(), customer1));
 
         order1 = services.loadOrder(order1.getId());
         Bid bid = services.bidService.loadByOrderId(order1.getId()).get();
         bid.setStartWorking(LocalDateTime.now().minusMinutes(5));
         services.bidService.update(bid);
         assertEquals(OrderStatus.WAITING_FOR_COMING_SPECIALIST, services.loadOrder(order1.getId()).getStatus());
-        services.orderService.changeStatusToStarted(order1.getId(), customer1.getId());
+        services.orderService.changeStatusToStarted(order1.getId(), customer1);
         assertEquals(OrderStatus.STARTED, services.loadOrder(order1.getId()).getStatus());
     }
 }

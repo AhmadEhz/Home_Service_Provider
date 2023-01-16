@@ -5,12 +5,11 @@ import org.homeservice.entity.Service;
 import org.homeservice.entity.SubService;
 import org.homeservice.util.exception.CustomIllegalArgumentException;
 import org.homeservice.util.exception.NotFoundException;
-import org.homeservice.util.exception.NotVerifiedException;
+import org.homeservice.util.exception.SpecialistNotAccessException;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestComponent;
-import org.springframework.stereotype.Component;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -55,7 +54,7 @@ public class AdminTest {
     @Order(2)
     void changePassword() {
         String newPassword = "adminNewPassword";
-        services.adminService.changePassword(admin1.getUsername(), admin1.getPassword(), newPassword);
+        services.adminService.changePassword(admin1, admin1.getPassword(), newPassword);
         admin1 = services.adminService.findById(admin1.getId()).get();
         assertEquals(admin1.getPassword(), newPassword);
     }
@@ -65,7 +64,7 @@ public class AdminTest {
     void checkPassword() {
         String password = services.adminService.findById(admin1.getId()).get().getPassword() + "ab";
         assertThrows(CustomIllegalArgumentException.class, () ->
-                services.adminService.changePassword(admin1.getUsername(), password, "newPass"));
+                services.adminService.changePassword(admin1, password, "newPass"));
     }
 
     @Test
@@ -112,7 +111,7 @@ public class AdminTest {
         assertTrue(services.subServiceSpecialistService.isExist(SpecialistTest.specialist1.getId(), subService1.getId()));
         assertFalse(services.subServiceSpecialistService.isExist(SpecialistTest.specialist1.getId(), subService2.getId()));
         assertFalse(services.subServiceSpecialistService.isExist(SpecialistTest.specialist2.getId(), subService2.getId()));
-        assertThrows(NotVerifiedException.class, () ->
+        assertThrows(SpecialistNotAccessException.class, () ->
                 services.subServiceSpecialistService.save(SpecialistTest.specialist2.getId(), subService2.getId()));
     }
 
