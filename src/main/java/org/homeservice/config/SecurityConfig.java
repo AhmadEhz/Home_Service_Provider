@@ -1,13 +1,9 @@
 package org.homeservice.config;
 
-import org.homeservice.repository.PersonRepository;
-import org.homeservice.service.AdminService;
 import org.homeservice.service.PersonService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,15 +28,15 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(request -> request.requestMatchers(
                         "/specialist/save/**", "/specialist/verifyEmail/**").permitAll())
-                .authorizeHttpRequests(request -> request.requestMatchers("/specialist/**")
-                        .hasRole("SPECIALIST"))
+                .authorizeHttpRequests(request ->
+                        request.requestMatchers("/specialist/**").hasRole("SPECIALIST"))
 
                 .authorizeHttpRequests(request -> request.requestMatchers(
                         "/customer/save/**", "/customer/verifyEmail/**", "/customer/payment/**").permitAll())
-                .authorizeHttpRequests(request -> request.requestMatchers("/customer/**").authenticated())
+                .authorizeHttpRequests(request -> request.requestMatchers("/customer/**").hasRole("CUSTOMER"))
+
                 .authorizeHttpRequests(request -> request.anyRequest().permitAll())
                 .httpBasic();
-//                .authorizeHttpRequests().anyRequest().permitAll();
         return http.build();
     }
 
