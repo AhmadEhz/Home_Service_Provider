@@ -43,7 +43,6 @@ public class Order {
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
-    @NotNull
     private OrderStatus status;
 
     @ManyToOne
