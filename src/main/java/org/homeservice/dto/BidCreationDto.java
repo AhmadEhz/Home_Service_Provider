@@ -19,18 +19,9 @@ public class BidCreationDto {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     private LocalDateTime endWorking;
 
+    private String description;
+
     private Long orderId;
-
-    public BidCreationDto() {
-    }
-
-    public BidCreationDto(Bid bid) {
-        offerPrice = bid.getOfferPrice();
-        startWorking = bid.getStartWorking();
-        endWorking = bid.getEndWorking();
-        if (bid.getOrder() != null)
-            orderId = bid.getOrder().getId();
-    }
 
     @JsonIgnore
     public Bid getBid() {
@@ -38,6 +29,7 @@ public class BidCreationDto {
         bid.setOfferPrice(offerPrice);
         bid.setStartWorking(startWorking);
         bid.setEndWorking(endWorking);
+        bid.setDescription(description);
         return bid;
     }
 }

@@ -19,6 +19,8 @@ public class Bid {
     @NotNull
     private Double offerPrice;
 
+    private String description;
+
     @Column(nullable = false)
     @NotNull
     private LocalDateTime startWorking;
@@ -79,6 +81,14 @@ public class Bid {
 
     public void setOfferPrice(Double offerPrice) {
         this.offerPrice = offerPrice;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public LocalDateTime getStartWorking() {

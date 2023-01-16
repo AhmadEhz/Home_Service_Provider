@@ -11,15 +11,17 @@ import java.time.LocalDateTime;
 public class BidDto2 {
     private Long id;
     private Double offerPrice;
+    private String description;
     private LocalDateTime startWorking;
     private LocalDateTime endWorking;
 
-    public BidDto2 () {
-
+    public BidDto2() {
     }
+
     public BidDto2(Bid bid) {
         id = bid.getId();
         offerPrice = bid.getOfferPrice();
+        description = bid.getDescription();
         startWorking = bid.getStartWorking();
         endWorking = bid.getEndWorking();
     }

@@ -13,6 +13,7 @@ import java.util.List;
 public class BidDto {
     private Long id;
     private Double offerPrice;
+    private String description;
     private LocalDateTime startWorking;
     private LocalDateTime endWorking;
     private SpecialistDto specialist;
@@ -23,6 +24,7 @@ public class BidDto {
     public BidDto(Bid bid) {
         id = bid.getId();
         offerPrice = bid.getOfferPrice();
+        description = bid.getDescription();
         startWorking = bid.getStartWorking();
         endWorking = bid.getEndWorking();
         if (bid.getSpecialist() != null)
