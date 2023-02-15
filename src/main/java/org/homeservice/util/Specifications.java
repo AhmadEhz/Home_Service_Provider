@@ -219,7 +219,7 @@ public class Specifications {
         try {
             return LocalDateTime.parse(date);
         } catch (Exception e1) {
-            try {
+            try {                                      
                 return LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE).atStartOfDay();
             } catch (Exception e2) {
                 throw new CustomIllegalArgumentException("Date format is invalid.");

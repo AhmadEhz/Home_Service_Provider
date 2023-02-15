@@ -29,7 +29,9 @@ public class QueryUtil {
     }
 
     public static Sort sortBy(String sort) {
-        if (sort == null || !Values.containsKey(sort))
+        if (sort == null)
+            return null;
+        else if (!Values.containsKey(sort))
             throw new CustomIllegalArgumentException("Filter is incorrect.");
         return Values.getSort(sort);
     }
