@@ -12,6 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 public class SpecialistDto {
+    private Long id;
     private String firstName;
     private String lastName;
     private String email;
@@ -23,6 +24,7 @@ public class SpecialistDto {
     }
 
     public SpecialistDto(Specialist specialist) {
+        id = specialist.getId();
         firstName = specialist.getFirstName();
         lastName = specialist.getLastName();
         email = specialist.getEmail();

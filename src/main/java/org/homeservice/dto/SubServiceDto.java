@@ -12,6 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 public class SubServiceDto {
+    private Long id;
     private String name;
     private String description;
     private Double basePrice;
@@ -21,11 +22,12 @@ public class SubServiceDto {
     }
 
     public SubServiceDto(SubService subService) {
-        this.name = subService.getName();
-        this.description = subService.getDescription();
-        this.basePrice = subService.getBasePrice();
+        id = subService.getId();
+        name = subService.getName();
+        description = subService.getDescription();
+        basePrice = subService.getBasePrice();
         if (subService.getService() != null)
-            this.serviceName = subService.getService().getName();
+            serviceName = subService.getService().getName();
     }
 
     @JsonIgnore

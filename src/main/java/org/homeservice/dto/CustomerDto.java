@@ -11,6 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 public class CustomerDto {
+    private Long id;
     private String firstName;
     private String lastName;
     private String username;
@@ -20,6 +21,7 @@ public class CustomerDto {
     }
 
     public CustomerDto(Customer customer) {
+        id = customer.getId();
         firstName = customer.getFirstName();
         lastName  = customer.getLastName();
         username = customer.getUsername();
