@@ -49,7 +49,7 @@ public class SubServiceSpecialistServiceImpl extends BaseServiceImpl<SubServiceS
 
     @Override
     public void save(SubServiceSpecialist subServiceSpecialist) {
-        SubService subService = subServiceService.loadById(subServiceSpecialist.getSpecialist().getId()).orElseThrow(
+        SubService subService = subServiceService.loadById(subServiceSpecialist.getSubService().getId()).orElseThrow(
                 () -> new NotFoundException("SubService not found."));
         Specialist specialist = specialistService.loadById(subServiceSpecialist.getSpecialist().getId()).orElseThrow(
                 () -> new NotFoundException("Specialist not found."));
